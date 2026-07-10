@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily News Quiz — July 10, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#ffffff;
+    --global:#1d6fa5;
+    --national:#b23a48;
+    --jam:#7a4fbf;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#e2ddd0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:20px;}
+  header h1{font-size:2rem;letter-spacing:.5px;}
+  header .date{
+    font-style:italic;color:#6b6455;margin-top:4px;font-size:.95rem;
+  }
+  .progress{
+    background:var(--line);height:8px;border-radius:4px;overflow:hidden;
+    margin:18px 0 6px;
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ink);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    color:#6b6455;margin-bottom:16px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:24px;box-shadow:0 2px 10px rgba(28,39,51,.06);
+  }
+  .badge{
+    display:inline-block;font-family:Verdana,Arial,sans-serif;
+    font-size:.68rem;font-weight:bold;letter-spacing:.08em;
+    text-transform:uppercase;color:#fff;padding:4px 10px;
+    border-radius:20px;margin-bottom:14px;
+  }
+  .badge.global{background:var(--global);}
+  .badge.national{background:var(--national);}
+  .badge.jam{background:var(--jam);}
+  .question{font-size:1.15rem;line-height:1.5;margin-bottom:18px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:8px;padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:hover:not(:disabled){border-color:var(--ink);background:#fdfcf8;}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ink);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    border-radius:0 8px 8px 0;display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ink);color:#fff;border:none;border-radius:8px;
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:#31404f;}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:22px;
+  }
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ink);color:#fff;border:none;border-radius:8px;
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:#31404f;}
+  footer{
+    text-align:center;margin-top:26px;font-size:.8rem;
+    color:#8a8272;font-style:italic;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The Daily Ten</h1>
+    <div class="date">Friday, July 10, 2026</div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <span class="badge" id="badge"></span>
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+  </div>
+
+  <footer>The Daily Ten · Fresh questions every day</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    cat:"global",
+    q:"The U.S. struck roughly 90 more military targets in which country on Thursday — the second straight day of strikes after a shaky ceasefire collapsed?",
+    options:["Iran","Yemen","Venezuela","North Korea"],
+    answer:"Iran",
+    explain:"The strikes came in retaliation for Iranian attacks on shipping in the Strait of Hormuz, following more than 80 targets hit the night before. President Trump said the ceasefire reached last month is likely over, while Democrats accused him of restarting a war Congress never authorized."
+  },
+  {
+    cat:"global",
+    q:"Exhausted frontline health workers walked off the job over unpaid wages in which country, threatening the response to the worst-starting Ebola outbreak on record?",
+    options:["Democratic Republic of the Congo","Sudan","Nigeria","Sierra Leone"],
+    answer:"Democratic Republic of the Congo",
+    explain:"Workers in Congo's hard-hit Ituri region protested this week, burning tires outside a treatment center over wages unpaid since the outbreak began in May. The death toll is nearing 600 out of more than 1,700 cases, and officials say the virus is spreading faster than they can contain it."
+  },
+  {
+    cat:"global",
+    q:"France became the first team to reach the 2026 World Cup semifinals with a 2-0 quarterfinal win over which team?",
+    options:["Morocco","Spain","Belgium","Uruguay"],
+    answer:"Morocco",
+    explain:"Second-half goals from Kylian Mbappé and Ousmane Dembélé sealed it, despite Mbappé missing a first-half penalty. France will face the winner of Spain vs. Belgium in the semifinals."
+  },
+  {
+    cat:"global",
+    q:"Welsh singer Bonnie Tyler, who died this week at age 75, was best known for which chart-topping hit?",
+    options:["\u201cTotal Eclipse of the Heart\u201d","\u201cGirls Just Want to Have Fun\u201d","\u201cWhat's Love Got to Do with It\u201d","\u201cTime After Time\u201d"],
+    answer:"\u201cTotal Eclipse of the Heart\u201d",
+    explain:"Born Gaynor Hopkins in Wales, Tyler scored several hits including \u201cHolding Out for a Hero\u201d from the Footloose soundtrack and earned three Grammy nominations. She had been hospitalized in Portugal since emergency surgery in May."
+  },
+  {
+    cat:"global",
+    q:"The Palestinian Authority scheduled its first elections since what year?",
+    options:["2006","1996","2013","2019"],
+    answer:"2006",
+    explain:"The announcement ends a two-decade electoral drought. The last Palestinian legislative elections, held in 2006, resulted in a Hamas victory that led to the political split between Gaza and the West Bank."
+  },
+  {
+    cat:"national",
+    q:"Citing security concerns, President Trump flew partway home from the NATO summit in Turkey aboard an older Air Force One instead of which aircraft?",
+    options:["The Qatari-gifted jet","Marine One","A commercial Delta flight","A B-2 stealth bomber"],
+    answer:"The Qatari-gifted jet",
+    explain:"Officials said the surprise swap was prompted by security concerns amid renewed U.S.-Iran hostilities, with the Qatari-donated plane sent ahead separately from Ankara."
+  },
+  {
+    cat:"national",
+    q:"An airport in which city officially celebrated its rebrand Thursday as \u201cPresident Donald J. Trump International Airport\u201d?",
+    options:["Palm Beach, Florida","Nashville, Tennessee","Newark, New Jersey","Tulsa, Oklahoma"],
+    answer:"Palm Beach, Florida",
+    explain:"Eric Trump marked the occasion by landing the first flight at the renamed hub aboard Trump Force One. A Tennessee bridge was renamed after the president the same day."
+  },
+  {
+    cat:"national",
+    q:"Under a new deal with the FTC, which company must give farmers access to the same repair tools as its dealerships for the next decade?",
+    options:["John Deere","Caterpillar","Ford","Monsanto"],
+    answer:"John Deere",
+    explain:"The agreement is a major win for the right-to-repair movement, which has long argued that Deere's dealership-only repair restrictions cost farmers time and money during critical planting and harvest windows."
+  },
+  {
+    cat:"national",
+    q:"Phoenix announced one-time $700 payments to households that lost which federal benefit?",
+    options:["SNAP food assistance","Social Security","Unemployment insurance","Housing vouchers"],
+    answer:"SNAP food assistance",
+    explain:"SNAP benefits have fallen by roughly half in Arizona in the year since President Trump's signature legislation took effect, prompting the city to step in with direct aid."
+  },
+  {
+    cat:"jam",
+    q:"Who made the majority of Jerry Garcia's guitars?",
+    options:["Leo Fender","Robert Hunter","Doug Irwin","Richard Stratocaster"],
+    answer:"Doug Irwin",
+    explain:"Luthier Doug Irwin built Jerry's most iconic custom guitars — Eagle, Wolf, Tiger, and Rosebud. Jerry willed the guitars back to Irwin, and after a legal battle with the band, Wolf and Tiger sold at auction in 2002 for a then-record combined $1.7 million. Robert Hunter wrote the words, not the wood."
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const badge = document.getElementById("badge");
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+const BADGES = {
+  global:{label:"Global", cls:"global"},
+  national:{label:"National", cls:"national"},
+  jam:{label:"Bonus: Jam Band", cls:"jam"}
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  const b = BADGES[q.cat];
+  badge.textContent = b.label;
+  badge.className = "badge " + b.cls;
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffle(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+  } else {
+    btn.classList.add("wrong");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. You read the news, you know your luthiers, and frankly you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down — now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+}
+
+render();
+</script>
+</body>
+</html>
