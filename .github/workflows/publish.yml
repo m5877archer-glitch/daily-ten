@@ -1,0 +1,41 @@
+name: Publish nightly edition
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Copy today's dated edition to index.html
+        run: |
+          TODAY=$(TZ="America/Los_Angeles" date +'%B-%-d' | tr '[:upper:]' '[:lower:]')
+          FILE="quiz-${TODAY}.html"
+          echo "Looking for $FILE"
+          if [ -f "$FILE" ]; then
+            cp "$FILE" index.html
+            echo "Published $FILE as index.html"
+          else
+            echo "No file named $FILE found. Skipping."
+            exit 0
+          fi
+
+      - name: Commit and push if index.html changed
+        run: |
+          git config user.name "nightly-bot"
+          git config user.email "nightly-bot@users.noreply.github.com"
+          if git diff --quiet index.html; then
+            echo "index.html unchanged."
+          else
+            git add index.html
+            git commit -m "Auto-publish nightly edition"
+            git push
+          fi
