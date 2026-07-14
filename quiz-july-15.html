@@ -112,6 +112,12 @@
     padding:12px 26px;cursor:pointer;
   }
   .replay:hover{background:#31404f;}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:#fff;color:var(--ink);border:2px solid var(--ink);
+    border-radius:8px;padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--paper);}
   footer{
     text-align:center;margin-top:26px;font-size:.8rem;
     color:#8a8272;font-style:italic;
@@ -146,6 +152,7 @@
     <div class="rank" id="rank"></div>
     <div class="flavor" id="flavor"></div>
     <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
 
@@ -328,9 +335,26 @@ function showResults(){
   }
   document.getElementById("rank").textContent = rank;
   document.getElementById("flavor").textContent = flavor;
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText = "I scored " + score + "/10 on today's 10Everyday.com news quiz \u2014 rank: " + rank + ". Think you can beat me? https://10everyday.com";
+  shareBtn.onclick = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
 }
 
 render();
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
