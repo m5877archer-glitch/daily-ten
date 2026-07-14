@@ -8,13 +8,17 @@
   :root{
     --ink:#1c2733;
     --paper:#f7f4ec;
-    --card:#ffffff;
-    --line:#e2ddd0;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --line:#d8d2c0;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:Georgia,'Times New Roman',serif;
-    background:var(--paper);
+    background:var(--pt);
     color:var(--ink);
     min-height:100vh;
     display:flex;
@@ -22,44 +26,56 @@
     padding:24px 16px 48px;
   }
   .wrap{width:100%;max-width:640px;}
-  header{text-align:center;margin-bottom:20px;}
-  header h1{font-size:2rem;letter-spacing:.5px;}
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  header{text-align:center;margin-bottom:16px;}
+  header h1{font-size:2.5rem;letter-spacing:.02em;}
+  header h1 .dot{color:#b23a48;}
   header .tagline{
-    font-style:italic;color:#6b6455;margin-top:4px;font-size:.95rem;
+    font-style:italic;color:#524b3e;margin-top:4px;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
   }
   .card{
-    background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:24px;box-shadow:0 2px 10px rgba(28,39,51,.06);
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
   }
   .edition{
     display:block;text-decoration:none;color:var(--ink);
-    padding:16px 4px;border-bottom:1px solid var(--line);
-    transition:background .15s;
+    padding:14px 12px;border-bottom:1px solid var(--line);
+    background:#fffdf7;transition:background .15s;
   }
+  .edition:nth-of-type(even){background:var(--ptrow);}
   .edition:last-child{border-bottom:none;}
-  .edition:hover{background:var(--paper);}
+  .edition:hover{outline:1px solid var(--ptmid);}
   .edition .date{font-size:1.1rem;font-weight:bold;}
   .edition .teaser{
     font-style:italic;color:#6b6455;font-size:.9rem;margin-top:4px;
   }
   .back{
     display:block;text-align:center;margin-top:22px;
-    color:#8a8272;font-size:.9rem;
+    color:#524b3e;font-size:.9rem;font-weight:bold;
   }
   footer{
-    text-align:center;margin-top:26px;font-size:.8rem;
-    color:#8a8272;font-style:italic;
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+ <div class="page">
   <header>
-    <h1>10Everyday.com</h1>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
     <div class="tagline">Past Editions</div>
   </header>
 
-  <div class="card">
+  <div style="display:flex;justify-content:space-between;font-size:.85rem;font-weight:bold;color:#fff;background:var(--ptmid);border:1px solid var(--ptdark);padding:7px 12px;">
+    <span>Edition</span><span>Bonus teaser</span>
+  </div>
+  <div class="card" style="border-top:none;">
     <!--
       HOW TO ADD A NEW EDITION:
       Copy the block below, paste it at the TOP of this list (newest first),
@@ -90,5 +106,6 @@
 
   <footer>10Everyday.com · Fresh questions every weekday · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a></footer>
 </div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
