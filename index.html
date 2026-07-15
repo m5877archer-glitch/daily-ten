@@ -3,68 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10Everyday.com — July 14, 2026</title>
+<title>10Everyday.com — July 15, 2026</title>
 <style>
   :root{
     --ink:#1c2733;
     --paper:#f7f4ec;
-    --card:#ffffff;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
     --global:#1d6fa5;
     --national:#b23a48;
     --jam:#7a4fbf;
     --correct:#2e7d4f;
     --wrong:#c0392b;
-    --line:#e2ddd0;
+    --line:#d8d2c0;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{
     font-family:Georgia,'Times New Roman',serif;
-    background:var(--paper);
+    background:var(--pt);
     color:var(--ink);
     min-height:100vh;
     display:flex;
     justify-content:center;
     padding:24px 16px 48px;
   }
-  .wrap{width:100%;max-width:640px;}
-  header{text-align:center;margin-bottom:20px;}
-  header h1{font-size:2rem;letter-spacing:.5px;}
-  header .date{
-    font-style:italic;color:#6b6455;margin-top:4px;font-size:.95rem;
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
   }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:2.5rem;letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:var(--national);}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
   .progress{
-    background:var(--line);height:8px;border-radius:4px;overflow:hidden;
-    margin:18px 0 6px;
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
   }
   .progress .bar{
-    height:100%;width:0;background:var(--ink);transition:width .35s ease;
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
   }
   .meta{
     display:flex;justify-content:space-between;font-size:.85rem;
-    color:#6b6455;margin-bottom:16px;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
   }
   .card{
-    background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:24px;box-shadow:0 2px 10px rgba(28,39,51,.06);
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
   }
   .badge{
     display:inline-block;font-family:Verdana,Arial,sans-serif;
     font-size:.68rem;font-weight:bold;letter-spacing:.08em;
     text-transform:uppercase;color:#fff;padding:4px 10px;
-    border-radius:20px;margin-bottom:14px;
+    margin-bottom:14px;
   }
   .badge.global{background:var(--global);}
   .badge.national{background:var(--national);}
   .badge.jam{background:var(--jam);}
-  .question{font-size:1.15rem;line-height:1.5;margin-bottom:18px;}
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
   .options{display:flex;flex-direction:column;gap:10px;}
   .opt{
     font-family:inherit;font-size:1rem;text-align:left;
-    background:var(--paper);border:1px solid var(--line);
-    border-radius:8px;padding:12px 14px;cursor:pointer;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
     transition:border-color .15s, background .15s;line-height:1.4;
   }
-  .opt:hover:not(:disabled){border-color:var(--ink);background:#fdfcf8;}
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
   .opt:disabled{cursor:default;}
   .opt.correct{
     background:#eaf5ee;border-color:var(--correct);
@@ -74,19 +99,19 @@
     background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
   }
   .explain{
-    margin-top:16px;padding:14px;border-left:4px solid var(--ink);
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
     background:var(--paper);font-size:.95rem;line-height:1.55;
-    border-radius:0 8px 8px 0;display:none;
+    display:none;
   }
   .explain.show{display:block;}
   .next{
     display:none;margin-top:18px;width:100%;
     font-family:inherit;font-size:1.05rem;font-weight:bold;
-    background:var(--ink);color:#fff;border:none;border-radius:8px;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
     padding:13px;cursor:pointer;
   }
   .next.show{display:block;}
-  .next:hover{background:#31404f;}
+  .next:hover{background:var(--ptdark);}
   .results{text-align:center;display:none;}
   .results.show{display:block;}
   .results .score{
@@ -103,26 +128,40 @@
     display:inline-block;text-decoration:none;margin-top:14px;
     font-family:inherit;font-size:.95rem;font-weight:bold;
     color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
-    border-radius:8px;padding:11px 22px;
+    padding:11px 22px;
   }
   .coffee:hover{background:#fbecc2;}
   .replay{
     font-family:inherit;font-size:1rem;font-weight:bold;
-    background:var(--ink);color:#fff;border:none;border-radius:8px;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
     padding:12px 26px;cursor:pointer;
   }
-  .replay:hover{background:#31404f;}
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
   footer{
-    text-align:center;margin-top:26px;font-size:.8rem;
-    color:#8a8272;font-style:italic;
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
   }
 </style>
 </head>
 <body>
 <div class="wrap">
+ <div class="page">
   <header>
-    <h1>10Everyday.com</h1>
-    <div class="date">Tuesday, July 14, 2026</div>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 4</span>
+      <span class="dl-date">Wednesday, July 15, 2026</span>
+      <span>Morning edition</span>
+    </div>
   </header>
 
   <div class="progress"><div class="bar" id="bar"></div></div>
@@ -146,83 +185,85 @@
     <div class="rank" id="rank"></div>
     <div class="flavor" id="flavor"></div>
     <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
 
   <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a></footer>
+ </div>
 </div>
 
 <script>
 const QUESTIONS = [
   {
-    cat:"national",
-    q:"Democratic Rep. Ro Khanna said he was detained for over an hour during a West Bank tour by armed Israeli settlers carrying what U.S.-made weapon?",
-    options:["M4 rifles","Stinger missiles","M1 tanks","Grenade launchers"],
-    answer:"M4 rifles",
-    explain:"Khanna, who is weighing a 2028 presidential run, said settlers wielding American-made M4 rifles blocked his delegation's van near the ruins of Khirbet Zanuta, and that Israeli soldiers who arrived sided with the settlers rather than freeing his group. The IDF denied detaining anyone. Netanyahu responded that Israel is \u201ca nation of laws.\u201d"
-  },
-  {
-    cat:"national",
-    q:"The Justice Department escalated its pursuit of journalists' sources this weekend, sending federal agents to reporters' homes and subpoenaing which newspaper over its Air Force One reporting?",
-    options:["The New York Times","The Wall Street Journal","The Washington Post","USA Today"],
-    answer:"The New York Times",
-    explain:"The subpoenas targeted Times reporters over their coverage of Air Force One, part of a broader administration effort to identify leakers. Press-freedom groups condemned the move as an intimidation tactic."
+    cat:"global",
+    q:"Norway's World Cup run ended in the quarterfinals against England \u2014 but the team still got a heroes' welcome home. Roughly how many fans packed the Royal Palace grounds in Oslo to celebrate them?",
+    options:["100,000","250","4 million","1,000"],
+    answer:"100,000",
+    explain:"An estimated 100,000 people filled the Royal Palace grounds to salute the squad after England ended their historic run 2-1 in the quarterfinals \u2014 Norway's deepest World Cup showing in a generation."
   },
   {
     cat:"global",
-    q:"Europe's record-breaking heat wave, now shifting east toward the Balkans and Ukraine, has driven the continent's excess-death toll past what grim milestone since June 21?",
-    options:["10,000 deaths","500 deaths","1 million deaths","100 deaths"],
-    answer:"10,000 deaths",
-    explain:"The WHO first reported more than 1,300 excess deaths in late June; by mid-July the toll had climbed past 10,000 as the heat persisted. Scientists say fossil-fuel-driven warming has made these European heat waves dramatically more intense. Berlin police even deployed water cannons to help residents cool off."
+    q:"As fighting with Iran reignited, President Trump declared the U.S. will be known as \u201cTHE GUARDIAN OF THE HORMUZ STRAIT\u201d \u2014 and announced ships will pay what for safe passage?",
+    options:["A 20% fee on all cargo","A flat $100 per boat","One barrel of oil per sailor","Nothing \u2014 passage is free"],
+    answer:"A 20% fee on all cargo",
+    explain:"The U.S. is reinstating a blockade on Iranian ports and charging a 20% fee on cargo shipped through the strait to cover security costs. Trump formally notified Congress that military action against Iran resumed last week, restarting the 60-day War Powers clock, as U.S. forces carried out a third straight night of strikes."
   },
   {
     cat:"global",
-    q:"Germany announced it will fund the production of how many drones for Ukraine, a major boost to Kyiv's defenses heading into winter?",
-    options:["50,000","500","5 million","50"],
-    answer:"50,000",
-    explain:"The pledge is part of a broader European push to shore up Ukraine as U.S. support wavers. It came the same week President Zelenskyy carried out a government reshuffle aimed at steadying the country through another difficult winter of the war."
+    q:"Iranian officials revealed that former president Mahmoud Ahmadinejad is now in Revolutionary Guard custody \u2014 after a failed plot by which country to install him as Iran's new leader?",
+    options:["Israel","Switzerland","North Korea","Brazil"],
+    answer:"Israel",
+    explain:"According to four Iranian officials, Israel spent years secretly cultivating Ahmadinejad as a candidate to lead Iran, complete with covert meetings in Budapest and secret payments for his housing and travel. The plan collapsed \u2014 and Ahmadinejad is now being held by the IRGC's intelligence wing."
   },
   {
     cat:"global",
-    q:"Israel set an October vote that will effectively serve as a referendum on the leadership of which long-serving prime minister?",
-    options:["Benjamin Netanyahu","Naftali Bennett","Yair Lapid","Isaac Herzog"],
-    answer:"Benjamin Netanyahu",
-    explain:"The October ballot puts Netanyahu's grip on power to the test amid ongoing fallout from the Gaza war and mounting domestic criticism of his government's handling of both the conflict and a wave of settler violence in the West Bank."
-  },
-  {
-    cat:"global",
-    q:"The World Cup semifinals are set. Which two undefeated European sides meet Tuesday in Arlington, Texas?",
-    options:["Spain vs. France","Germany vs. Italy","England vs. Portugal","Netherlands vs. Belgium"],
-    answer:"Spain vs. France",
-    explain:"Neither Spain nor France had lost a match all tournament heading into the semifinal. The other semi pits Argentina \u2014 the defending champions \u2014 against England, who advanced past Norway 2-1 behind a Jude Bellingham goal."
-  },
-  {
-    cat:"global",
-    q:"Typhoon Bavi forced the mass evacuation of coastal residents in which country before weakening to a tropical storm?",
-    options:["China","Japan","Vietnam","Philippines"],
-    answer:"China",
-    explain:"Authorities relocated large numbers of people from low-lying coastal areas as the storm approached. Bavi later weakened but still dumped heavy rain across the region."
-  },
-  {
-    cat:"global",
-    q:"Scientists warned this week that the coming 2026-27 cycle has a historically unprecedented chance of becoming what climate pattern?",
-    options:["El Ni\u00f1o","A new ice age","A permanent monsoon","La Ni\u00f1a"],
-    answer:"El Ni\u00f1o",
-    explain:"Forecasters flagged an unusually high probability of El Ni\u00f1o conditions developing. Combined with disruptions from the Iran conflict, analysts warned the pattern could threaten a global food-price shock."
+    q:"Actor Sam Neill, who died this week at 78, was best known for playing paleontologist Dr. Alan Grant in which blockbuster franchise?",
+    options:["Jurassic Park","Star Wars","Indiana Jones","The Terminator"],
+    answer:"Jurassic Park",
+    explain:"Tributes poured in from Nicole Kidman, Cillian Murphy, and others for the beloved New Zealand actor. Fellow Kiwi actor Rima Te Wiata said Neill had been suffering from pneumonia."
   },
   {
     cat:"national",
-    q:"Disney's live-action remake that topped the weekend box office opened to a soft $43 million \u2014 disappointing against a budget of roughly what?",
-    options:["A quarter of a billion dollars","$5 million","$2 billion","$50 million"],
-    answer:"A quarter of a billion dollars",
-    explain:"The live-action Moana \u2014 with Dwayne \u201cThe Rock\u201d Johnson reprising Maui \u2014 cost around $250 million before marketing, making its $43 million debut a letdown for the studio despite finishing first for the weekend."
+    q:"Senators returned to the Capitol on Monday mourning which long-serving South Carolina Republican, who died suddenly over the weekend at age 71?",
+    options:["Lindsey Graham","Tim Scott","Mitch McConnell","Rand Paul"],
+    answer:"Lindsey Graham",
+    explain:"Graham's office said he died Saturday night after a \u201cbrief and sudden illness\u201d \u2014 reports pointed to a torn aorta. He had just won his Republican primary in June, and tributes came in from U.S. and world leaders across the political spectrum."
+  },
+  {
+    cat:"national",
+    q:"A federal judge ruled Monday that President Trump and his family acted in \u201cbad faith\u201d by filing a $10 billion lawsuit against which government agency?",
+    options:["The IRS","The Postal Service","NASA","The National Park Service"],
+    answer:"The IRS",
+    explain:"U.S. District Judge Kathleen Williams said the suit was filed for an \u201cimproper purpose\u201d in a scathing rebuke of the president, his attorneys, and the Justice Department. The lawsuit had led to a controversial May agreement that included a proposed $1.8 billion \u201canti-weaponization fund,\u201d later dropped after pushback from lawmakers in both parties."
+  },
+  {
+    cat:"national",
+    q:"President Trump's National Guard deployment in Washington, D.C. \u2014 already extended several times \u2014 is now set to last until when?",
+    options:["Inauguration Day 2029","Labor Day","The next full moon","New Year's Eve"],
+    answer:"Inauguration Day 2029",
+    explain:"The deployment, which began as a temporary measure, has been repeatedly extended and is now scheduled to run through the end of Trump's term."
+  },
+  {
+    cat:"national",
+    q:"Trump signed an executive order shrinking two Utah national monuments \u2014 Bears Ears and Grand Staircase-Escalante \u2014 by more than what?",
+    options:["90%","10%","25%","50%"],
+    answer:"90%",
+    explain:"The two monuments, considered sacred by Native Americans, span more than 3.2 million acres \u2014 nearly the size of Connecticut. Critics say the order opens thousands of acres of protected land to developers and the oil and gas industry."
+  },
+  {
+    cat:"national",
+    q:"A Tyrannosaurus rex fossil goes up for auction Tuesday. What's the dinosaur's nickname?",
+    options:["Gus","Rexy","Bitey McBiteface","Gerald"],
+    answer:"Gus",
+    explain:"Gus follows a string of headline-grabbing dinosaur sales to the highest bidder \u2014 a practice that makes paleontologists wince, since privately sold specimens often disappear from scientific study."
   },
   {
     cat:"jam",
-    q:"Phish just wrapped a three-night run at a famous amphitheater outside Indianapolis, Indiana \u2014 neighbor to the infamous \u201cclose-by campground.\u201d This venue was formerly known as what?",
-    options:["The Indy 500 Racetrack and Smorgasbord","The Lemonade Stand","Deer Creek","Beer Creek"],
-    answer:"Deer Creek",
-    explain:"Now called Ruoff Music Center, the Noblesville amphitheater opened in 1989 as Deer Creek Music Center \u2014 and nostalgic heads still call it Deer Creek. The Grateful Dead played there 14 times, including the infamous July 1995 show where thousands of fence-crashers forced the next night's cancellation."
+    q:"Norway lost the World Cup, but their success is noteworthy. What else is Norway noteworthy for?",
+    options:["They are the most northern country in the world","They are the only country named after the water around the country","They brew their tea with last year's snowmelt for a drink called Ggnnatten","Their athletes are only allowed to train in the dark"],
+    answer:"They are the only country named after the water around the country",
+    explain:"Norway comes from the Old Norse nor\u00f0vegr \u2014 \u201cthe north way\u201d \u2014 the sheltered coastal sailing route through the waters hugging its shore. In other words, the country is named for the waterway around it rather than the land itself."
   }
 ];
 
@@ -312,7 +353,7 @@ function showResults(){
   let rank, flavor;
   if(score === 10){
     rank = "Front Page Legend";
-    flavor = "A perfect ten. You read the news, you know your stuff, and frankly you should be writing this quiz.";
+    flavor = "A perfect ten. You read the news, you know your fjords, and frankly you should be writing this quiz.";
   } else if(score >= 8){
     rank = "Editor-in-Chief";
     flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
@@ -328,9 +369,26 @@ function showResults(){
   }
   document.getElementById("rank").textContent = rank;
   document.getElementById("flavor").textContent = flavor;
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText = "I scored " + score + "/10 on today's 10Everyday.com news quiz \u2014 rank: " + rank + ". Think you can beat me? https://10everyday.com";
+  shareBtn.onclick = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
 }
 
 render();
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
