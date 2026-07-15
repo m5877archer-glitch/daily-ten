@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com — July 16, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --global:#1d6fa5;
+    --national:#b23a48;
+    --jam:#7a4fbf;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:var(--national);}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .badge{
+    display:inline-block;font-family:Verdana,Arial,sans-serif;
+    font-size:.68rem;font-weight:bold;letter-spacing:.08em;
+    text-transform:uppercase;color:#fff;padding:4px 10px;
+    margin-bottom:14px;
+  }
+  .badge.global{background:var(--global);}
+  .badge.national{background:var(--national);}
+  .badge.jam{background:var(--jam);}
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:22px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 5</span>
+      <span class="dl-date">Thursday, July 16, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <span class="badge" id="badge"></span>
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a></footer>
+ </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    cat:"global",
+    q:"British Prime Minister Keir Starmer announced his resignation this week. Which Labour figure is set to take over as party leader and PM?",
+    options:["Andy Burnham","Boris Johnson","Nicola Sturgeon","Nigel Farage"],
+    answer:"Andy Burnham",
+    explain:"Starmer is handing power to a new Labour Party leader, Greater Manchester's Andy Burnham, capping a stunning fall for a PM elected in a landslide just two years ago."
+  },
+  {
+    cat:"global",
+    q:"Around 30 world leaders gathered in France this week for a summit in support of Ukraine's defense. Who was notably absent?",
+    options:["President Trump — not invited, and he hadn't asked to attend","President Zelenskyy — his plane was grounded by weather","King Charles — attending Wimbledon instead","The UN Secretary-General — recovering from surgery"],
+    answer:"President Trump — not invited, and he hadn't asked to attend",
+    explain:"Roughly 30 leaders met in France to coordinate support for Ukraine's defense. The U.S. president wasn't invited — and reportedly hadn't asked to attend — a striking snapshot of the widening gap between Washington and Europe on the war."
+  },
+  {
+    cat:"global",
+    q:"The WHO warned that a deadly Ebola outbreak is now spreading faster than it can be tracked, with deaths passing 700 in which country?",
+    options:["Democratic Republic of Congo","Brazil","Indonesia","Egypt"],
+    answer:"Democratic Republic of Congo",
+    explain:"Eighty percent of new cases in eastern Congo are emerging from unknown chains of transmission, the WHO says — a sign the outbreak has outrun health officials' ability to trace it. The death toll has passed 700."
+  },
+  {
+    cat:"global",
+    q:"Firefighters contained two forest fires in Fontainebleau, just southeast of Paris — and investigators made what discovery about how they started?",
+    options:["Five people were arrested on suspicion of arson","A lightning strike hit a fireworks warehouse","A downed power line sparked the blaze","A discarded cigarette from a film crew was to blame"],
+    answer:"Five people were arrested on suspicion of arson",
+    explain:"With the two wildfires near the famous forest contained, the focus turned to how they began: five people have been arrested, suspected of setting the blazes intentionally."
+  },
+  {
+    cat:"national",
+    q:"The House just passed the Sunshine Protection Act, with President Trump signaling support. What would the bill do?",
+    options:["Make daylight saving time permanent, ending the twice-a-year clock change","Require all schools to start after sunrise","Mandate solar panels on federal buildings","Extend summer vacation by two weeks"],
+    answer:"Make daylight saving time permanent, ending the twice-a-year clock change",
+    explain:"The bill would lock the country on permanent daylight saving time, ending the spring-forward, fall-back ritual. It still needs the Senate — where a similar bill famously passed in 2022 before dying in the House."
+  },
+  {
+    cat:"national",
+    q:"The American League shut out the National League 4-0 in Tuesday's All-Star Game in Philadelphia — the first All-Star shutout since 2013. Which Yankee took home MVP honors?",
+    options:["Cody Bellinger","Aaron Judge","Juan Soto","Derek Jeter"],
+    answer:"Cody Bellinger",
+    explain:"Bellinger's two-run single in the first inning held up as the difference, making him the fourth Yankee to win All-Star MVP after Jeter, Rivera, and Stanton. AL pitchers struck out 15 — an All-Star Game record — and held the NL to three hits."
+  },
+  {
+    cat:"national",
+    q:"Millions of Americans across the Midwest and Northeast are under air quality alerts this week. What's the cause?",
+    options:["Smoke from wildfires burning in Canada and Minnesota","A volcanic ash cloud from Iceland","Dust storms sweeping up from Texas","A chemical plant fire in Ohio"],
+    answer:"Smoke from wildfires burning in Canada and Minnesota",
+    explain:"Heavy smoke from several large wildfires in Canada and Minnesota is expected to blanket large swaths of the Midwest and Northeast this week, exposing millions to unhealthy air."
+  },
+  {
+    cat:"national",
+    q:"Supreme Court Justices Amy Coney Barrett and Elena Kagan made a rare joint appearance before senators to plead for better security. How much did Kagan say threats against the Court have risen this year?",
+    options:["38%","5%","100%","They've actually declined"],
+    answer:"38%",
+    explain:"Kagan told senators threats against the justices are up 38% this year. Barrett described being the target of a 'swatting' attack, in which someone falsely reported an armed shooter at her home."
+  },
+  {
+    cat:"global",
+    q:"Argentina staged another miraculous comeback Wednesday, beating England 2-1 in the World Cup semifinal on two goals in the final minutes. Who assisted on BOTH of them?",
+    options:["Lionel Messi","Lautaro Mart\u00ednez","Enzo Fern\u00e1ndez","Diego Maradona"],
+    answer:"Lionel Messi",
+    explain:"Trailing until the 85th minute, Argentina got an Enzo Fern\u00e1ndez equalizer and a stoppage-time winner headed home by Lautaro Mart\u00ednez \u2014 both set up by Messi, who at 39 keeps strengthening the case that he's the greatest to ever play. The defending champs face Spain in Sunday's final, chasing the first back-to-back World Cup titles since Brazil in 1958 and 1962."
+  },
+  {
+    cat:"jam",
+    q:"The Grateful Dead played Buffalo NY many times, including today in 1990. This show was special, not only because of the coincidence of playing on 7/16 in the 716 area code, but for another reason as well:",
+    options:["They debuted the live version of Unbroken Chain","Set II opened with Sugar Magnolia > Scarlet and closed with Sunshine Daydream","Bobby broke a guitar string","Jerry played a Stradivarius violin MIDI patch"],
+    answer:"Set II opened with Sugar Magnolia > Scarlet and closed with Sunshine Daydream",
+    explain:"At Rich Stadium on 7/16/90, the Dead split Sugar Magnolia in two — opening the second set with Sugar Mag > Scarlet Begonias, then bringing it all the way back around to close the show with Sunshine Daydream. (Unbroken Chain's live debut didn't come until March 1995 in Philly.)"
+  }
+];
+
+let current = 0;
+let score = 0;
+
+const badge = document.getElementById("badge");
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+const BADGES = {
+  global:{label:"Global", cls:"global"},
+  national:{label:"National", cls:"national"},
+  jam:{label:"Bonus", cls:"jam"}
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  const b = BADGES[q.cat];
+  badge.textContent = b.label;
+  badge.className = "badge " + b.cls;
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffle(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+  } else {
+    btn.classList.add("wrong");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. You read the news, you know your Sugar Magnolias, and frankly you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down — now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText = "I scored " + score + "/10 on today's 10Everyday.com news quiz \u2014 rank: " + rank + ". Think you can beat me? https://10everyday.com";
+  shareBtn.onclick = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
+}
+
+render();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
