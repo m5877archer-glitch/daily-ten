@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10Everyday.com — July 15, 2026</title>
+<title>10Everyday.com — July 16, 2026</title>
 <style>
   :root{
     --ink:#1c2733;
@@ -39,7 +39,7 @@
   header .kicker{
     font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
   }
-  header h1{font-size:2.5rem;letter-spacing:.02em;margin:2px 0;}
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
   header h1 .dot{color:var(--national);}
   header .tagline{
     font-style:italic;color:#524b3e;font-size:.9rem;
@@ -158,8 +158,8 @@
     <h1>10Everyday<span class="dot">.</span>com</h1>
     <div class="tagline">Ten questions. Three minutes. No paywall.</div>
     <div class="dateline">
-      <span>Vol. I, No. 4</span>
-      <span class="dl-date">Wednesday, July 15, 2026</span>
+      <span>Vol. I, No. 5</span>
+      <span class="dl-date">Thursday, July 16, 2026</span>
       <span>Morning edition</span>
     </div>
   </header>
@@ -197,73 +197,73 @@
 const QUESTIONS = [
   {
     cat:"global",
-    q:"Norway's World Cup run ended in the quarterfinals against England \u2014 but the team still got a heroes' welcome home. Roughly how many fans packed the Royal Palace grounds in Oslo to celebrate them?",
-    options:["100,000","250","4 million","1,000"],
-    answer:"100,000",
-    explain:"An estimated 100,000 people filled the Royal Palace grounds to salute the squad after England ended their historic run 2-1 in the quarterfinals \u2014 Norway's deepest World Cup showing in a generation."
+    q:"British Prime Minister Keir Starmer announced his resignation this week. Which Labour figure is set to take over as party leader and PM?",
+    options:["Andy Burnham","Boris Johnson","Nicola Sturgeon","Nigel Farage"],
+    answer:"Andy Burnham",
+    explain:"Starmer is handing power to a new Labour Party leader, Greater Manchester's Andy Burnham, capping a stunning fall for a PM elected in a landslide just two years ago."
   },
   {
     cat:"global",
-    q:"As fighting with Iran reignited, President Trump declared the U.S. will be known as \u201cTHE GUARDIAN OF THE HORMUZ STRAIT\u201d \u2014 and announced ships will pay what for safe passage?",
-    options:["A 20% fee on all cargo","A flat $100 per boat","One barrel of oil per sailor","Nothing \u2014 passage is free"],
-    answer:"A 20% fee on all cargo",
-    explain:"The U.S. is reinstating a blockade on Iranian ports and charging a 20% fee on cargo shipped through the strait to cover security costs. Trump formally notified Congress that military action against Iran resumed last week, restarting the 60-day War Powers clock, as U.S. forces carried out a third straight night of strikes."
+    q:"Around 30 world leaders gathered in France this week for a summit in support of Ukraine's defense. Who was notably absent?",
+    options:["President Trump — not invited, and he hadn't asked to attend","President Zelenskyy — his plane was grounded by weather","King Charles — attending Wimbledon instead","The UN Secretary-General — recovering from surgery"],
+    answer:"President Trump — not invited, and he hadn't asked to attend",
+    explain:"Roughly 30 leaders met in France to coordinate support for Ukraine's defense. The U.S. president wasn't invited — and reportedly hadn't asked to attend — a striking snapshot of the widening gap between Washington and Europe on the war."
   },
   {
     cat:"global",
-    q:"Iranian officials revealed that former president Mahmoud Ahmadinejad is now in Revolutionary Guard custody \u2014 after a failed plot by which country to install him as Iran's new leader?",
-    options:["Israel","Switzerland","North Korea","Brazil"],
-    answer:"Israel",
-    explain:"According to four Iranian officials, Israel spent years secretly cultivating Ahmadinejad as a candidate to lead Iran, complete with covert meetings in Budapest and secret payments for his housing and travel. The plan collapsed \u2014 and Ahmadinejad is now being held by the IRGC's intelligence wing."
+    q:"The WHO warned that a deadly Ebola outbreak is now spreading faster than it can be tracked, with deaths passing 700 in which country?",
+    options:["Democratic Republic of Congo","Brazil","Indonesia","Egypt"],
+    answer:"Democratic Republic of Congo",
+    explain:"Eighty percent of new cases in eastern Congo are emerging from unknown chains of transmission, the WHO says — a sign the outbreak has outrun health officials' ability to trace it. The death toll has passed 700."
   },
   {
     cat:"global",
-    q:"Actor Sam Neill, who died this week at 78, was best known for playing paleontologist Dr. Alan Grant in which blockbuster franchise?",
-    options:["Jurassic Park","Star Wars","Indiana Jones","The Terminator"],
-    answer:"Jurassic Park",
-    explain:"Tributes poured in from Nicole Kidman, Cillian Murphy, and others for the beloved New Zealand actor. Fellow Kiwi actor Rima Te Wiata said Neill had been suffering from pneumonia."
+    q:"Firefighters contained two forest fires in Fontainebleau, just southeast of Paris — and investigators made what discovery about how they started?",
+    options:["Five people were arrested on suspicion of arson","A lightning strike hit a fireworks warehouse","A downed power line sparked the blaze","A discarded cigarette from a film crew was to blame"],
+    answer:"Five people were arrested on suspicion of arson",
+    explain:"With the two wildfires near the famous forest contained, the focus turned to how they began: five people have been arrested, suspected of setting the blazes intentionally."
   },
   {
     cat:"national",
-    q:"Senators returned to the Capitol on Monday mourning which long-serving South Carolina Republican, who died suddenly over the weekend at age 71?",
-    options:["Lindsey Graham","Tim Scott","Mitch McConnell","Rand Paul"],
-    answer:"Lindsey Graham",
-    explain:"Graham's office said he died Saturday night after a \u201cbrief and sudden illness\u201d \u2014 reports pointed to a torn aorta. He had just won his Republican primary in June, and tributes came in from U.S. and world leaders across the political spectrum."
+    q:"The House just passed the Sunshine Protection Act, with President Trump signaling support. What would the bill do?",
+    options:["Make daylight saving time permanent, ending the twice-a-year clock change","Require all schools to start after sunrise","Mandate solar panels on federal buildings","Extend summer vacation by two weeks"],
+    answer:"Make daylight saving time permanent, ending the twice-a-year clock change",
+    explain:"The bill would lock the country on permanent daylight saving time, ending the spring-forward, fall-back ritual. It still needs the Senate — where a similar bill famously passed in 2022 before dying in the House."
   },
   {
     cat:"national",
-    q:"A federal judge ruled Monday that President Trump and his family acted in \u201cbad faith\u201d by filing a $10 billion lawsuit against which government agency?",
-    options:["The IRS","The Postal Service","NASA","The National Park Service"],
-    answer:"The IRS",
-    explain:"U.S. District Judge Kathleen Williams said the suit was filed for an \u201cimproper purpose\u201d in a scathing rebuke of the president, his attorneys, and the Justice Department. The lawsuit had led to a controversial May agreement that included a proposed $1.8 billion \u201canti-weaponization fund,\u201d later dropped after pushback from lawmakers in both parties."
+    q:"The American League shut out the National League 4-0 in Tuesday's All-Star Game in Philadelphia — the first All-Star shutout since 2013. Which Yankee took home MVP honors?",
+    options:["Cody Bellinger","Aaron Judge","Juan Soto","Derek Jeter"],
+    answer:"Cody Bellinger",
+    explain:"Bellinger's two-run single in the first inning held up as the difference, making him the fourth Yankee to win All-Star MVP after Jeter, Rivera, and Stanton. AL pitchers struck out 15 — an All-Star Game record — and held the NL to three hits."
   },
   {
     cat:"national",
-    q:"President Trump's National Guard deployment in Washington, D.C. \u2014 already extended several times \u2014 is now set to last until when?",
-    options:["Inauguration Day 2029","Labor Day","The next full moon","New Year's Eve"],
-    answer:"Inauguration Day 2029",
-    explain:"The deployment, which began as a temporary measure, has been repeatedly extended and is now scheduled to run through the end of Trump's term."
+    q:"Millions of Americans across the Midwest and Northeast are under air quality alerts this week. What's the cause?",
+    options:["Smoke from wildfires burning in Canada and Minnesota","A volcanic ash cloud from Iceland","Dust storms sweeping up from Texas","A chemical plant fire in Ohio"],
+    answer:"Smoke from wildfires burning in Canada and Minnesota",
+    explain:"Heavy smoke from several large wildfires in Canada and Minnesota is expected to blanket large swaths of the Midwest and Northeast this week, exposing millions to unhealthy air."
   },
   {
     cat:"national",
-    q:"Trump signed an executive order shrinking two Utah national monuments \u2014 Bears Ears and Grand Staircase-Escalante \u2014 by more than what?",
-    options:["90%","10%","25%","50%"],
-    answer:"90%",
-    explain:"The two monuments, considered sacred by Native Americans, span more than 3.2 million acres \u2014 nearly the size of Connecticut. Critics say the order opens thousands of acres of protected land to developers and the oil and gas industry."
+    q:"Supreme Court Justices Amy Coney Barrett and Elena Kagan made a rare joint appearance before senators to plead for better security. How much did Kagan say threats against the Court have risen this year?",
+    options:["38%","5%","100%","They've actually declined"],
+    answer:"38%",
+    explain:"Kagan told senators threats against the justices are up 38% this year. Barrett described being the target of a 'swatting' attack, in which someone falsely reported an armed shooter at her home."
   },
   {
-    cat:"national",
-    q:"A Tyrannosaurus rex fossil goes up for auction Tuesday. What's the dinosaur's nickname?",
-    options:["Gus","Rexy","Bitey McBiteface","Gerald"],
-    answer:"Gus",
-    explain:"Gus follows a string of headline-grabbing dinosaur sales to the highest bidder \u2014 a practice that makes paleontologists wince, since privately sold specimens often disappear from scientific study."
+    cat:"global",
+    q:"Argentina staged another miraculous comeback Wednesday, beating England 2-1 in the World Cup semifinal on two goals in the final minutes. Who assisted on BOTH of them?",
+    options:["Lionel Messi","Lautaro Mart\u00ednez","Enzo Fern\u00e1ndez","Diego Maradona"],
+    answer:"Lionel Messi",
+    explain:"Trailing until the 85th minute, Argentina got an Enzo Fern\u00e1ndez equalizer and a stoppage-time winner headed home by Lautaro Mart\u00ednez \u2014 both set up by Messi, who at 39 keeps strengthening the case that he's the greatest to ever play. The defending champs face Spain in Sunday's final, chasing the first back-to-back World Cup titles since Brazil in 1958 and 1962."
   },
   {
     cat:"jam",
-    q:"Norway lost the World Cup, but their success is noteworthy. What else is Norway noteworthy for?",
-    options:["They are the most northern country in the world","They are the only country named after the water around the country","They brew their tea with last year's snowmelt for a drink called Ggnnatten","Their athletes are only allowed to train in the dark"],
-    answer:"They are the only country named after the water around the country",
-    explain:"Norway comes from the Old Norse nor\u00f0vegr \u2014 \u201cthe north way\u201d \u2014 the sheltered coastal sailing route through the waters hugging its shore. In other words, the country is named for the waterway around it rather than the land itself."
+    q:"The Grateful Dead played Buffalo NY many times, including today in 1990. This show was special, not only because of the coincidence of playing on 7/16 in the 716 area code, but for another reason as well:",
+    options:["They debuted the live version of Unbroken Chain","Set II opened with Sugar Magnolia > Scarlet and closed with Sunshine Daydream","Bobby broke a guitar string","Jerry played a Stradivarius violin MIDI patch"],
+    answer:"Set II opened with Sugar Magnolia > Scarlet and closed with Sunshine Daydream",
+    explain:"At Rich Stadium on 7/16/90, the Dead split Sugar Magnolia in two — opening the second set with Sugar Mag > Scarlet Begonias, then bringing it all the way back around to close the show with Sunshine Daydream. (Unbroken Chain's live debut didn't come until March 1995 in Philly.)"
   }
 ];
 
@@ -353,7 +353,7 @@ function showResults(){
   let rank, flavor;
   if(score === 10){
     rank = "Front Page Legend";
-    flavor = "A perfect ten. You read the news, you know your fjords, and frankly you should be writing this quiz.";
+    flavor = "A perfect ten. You read the news, you know your Sugar Magnolias, and frankly you should be writing this quiz.";
   } else if(score >= 8){
     rank = "Editor-in-Chief";
     flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
