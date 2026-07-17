@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 20, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 7</span>
+      <span class="dl-date">Monday, July 20, 2026</span>
+      <span>Week That Was</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <div class="stats" id="statsEl"></div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California</div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-20";
+const PREV_EDITION = "2026-07-17";
+const EDITION_LABEL = "July 20, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Flash floods tore through Texas Hill Country this week, almost exactly a year after the 2025 disaster that killed at least 130 people. The Guadalupe River near Comfort rose more than 30 feet in about three hours Thursday morning. What safety measure, installed after last year's tragedy, got its first real test?",
+    options:["New flood warning sirens along the river","An automated dam release system","A statewide camp evacuation app","Permanent National Guard river patrols"],
+    answer:"New flood warning sirens along the river",
+    explain:"Flood sirens blared in Comfort before dawn Thursday as the river gauge there topped last year's record level. Governor Abbott confirmed two deaths, and crews conducted water rescues across Kerr County. Officials will spend the coming weeks assessing whether the new sirens and warning systems, funded after the 2025 flood, made the difference on the same stretch of river."
+  },
+  {
+    q:"Sunday's World Cup final between Argentina and Spain was the first ever between the two countries, and a generational showdown: 39-year-old Lionel Messi against 19-year-old Lamine Yamal. What viral connection do the two stars share?",
+    options:["As a baby, Yamal appeared in a charity photo shoot with a young Messi, in a photo that went viral after his father shared it","Messi is Yamal's godfather","They were teammates for one season at Barcelona","Yamal's father played against Messi in a Champions League final"],
+    answer:"As a baby, Yamal appeared in a charity photo shoot with a young Messi, in a photo that went viral after his father shared it",
+    explain:"Yamal's family won a charity raffle organized by a Barcelona newspaper and UNICEF, landing baby Lamine in a promotional photo shoot with a then 20-year-old Messi. The photo resurfaced and went viral after Euro 2024. Argentina reached the final by coming from behind to beat England 2-1, while Spain shut out France 2-0 to set up the heavyweight matchup in New Jersey."
+  },
+  {
+    q:"Netflix stock fell to a 52-week low after Thursday's second-quarter earnings report. Beyond soft guidance, what disclosure decision did analysts say investors were punishing?",
+    options:["Cutting its viewership report from twice a year to once a year, after already scrapping subscriber counts","Ending its ad-supported tier","No longer breaking out advertising revenue","Canceling quarterly earnings calls"],
+    answer:"Cutting its viewership report from twice a year to once a year, after already scrapping subscriber counts",
+    explain:"Netflix said it will publish its viewing-hours report once a year instead of twice, two years after it stopped reporting subscriber numbers. One analyst put it plainly: take away a data point when results are soft and the market will punish you. The stock has lost roughly 45 percent from its all-time high, a wipeout of about $257 billion in market value."
+  },
+  {
+    q:"'Hacked' is a well known term today describing using computer technology to perform a task that it was not initially built for, but where does the term 'hack' come from?",
+    options:["A cooking term popularized by Julia Child in the early 1980's","Harvard chess club term used to insult MIT students","MIT railroad club term initially used to describe model railroad building","A term created in the parking lot of Giants Stadium during the Grateful Dead's June 5, 1993 appearance involving questionable methods for brewing mushroom tea"],
+    answer:"MIT railroad club term initially used to describe model railroad building",
+    explain:"The term traces to MIT's Tech Model Railroad Club in the 1950s, where a 'hack' meant a clever modification to the club's elaborate train and signal systems. The word migrated with club members into early computing and never left. And yes, the Grateful Dead really did play Giants Stadium on June 5, 1993, but no new vocabulary was recorded leaving that parking lot."
+  },
+  {
+    q:"The United States resumed strikes on Iran this week after President Trump declared last month's ceasefire over. According to the White House, what Iranian action broke the deal?",
+    options:["Iran attacked several commercial ships in the Strait of Hormuz","Iran restarted uranium enrichment at Natanz","Iran expelled international nuclear inspectors","Iran seized an American surveillance drone"],
+    answer:"Iran attacked several commercial ships in the Strait of Hormuz",
+    explain:"The June 17 memorandum of understanding required Iran to allow safe passage of commercial ships through the Strait of Hormuz. After Iran attacked several vessels, the ceasefire crumbled in under three weeks. The U.S. has since restored its naval blockade of Iranian ports and carried out multiple consecutive nights of strikes, even as both sides signal they want to keep negotiating."
+  },
+  {
+    q:"SpaceX's Starship, the world's biggest rocket, made history Thursday in a way the company didn't want. What happened?",
+    options:["Four of its 33 engines failed to ignite three seconds before liftoff, the first last-second pad abort of a full-scale Starship","It exploded on the launch pad","It was struck by lightning during fueling","The FAA grounded it mid-countdown"],
+    answer:"Four of its 33 engines failed to ignite three seconds before liftoff, the first last-second pad abort of a full-scale Starship",
+    explain:"Onscreen launch data showed four of the booster's 33 engines failing to fire, and the automatic abort system shut everything down with the rocket still anchored to the pad. Elon Musk said two Raptor engines will be replaced, with the next attempt likely early this week. It was the first launch attempt since SpaceX went public in June, and the newly listed stock briefly dipped below its IPO price on the news."
+  },
+  {
+    q:"America's most famous highway, Route 66, turns 100 this year. The historic route ran from Chicago to which city?",
+    options:["Santa Monica, California","San Francisco, California","Las Vegas, Nevada","Phoenix, Arizona"],
+    answer:"Santa Monica, California",
+    explain:"Commissioned in 1926, Route 66 stretched roughly 2,400 miles from Chicago to Santa Monica, picking up nicknames like the Mother Road and the Main Street of America along the way. Centennial celebrations are underway in all eight states along the old alignment."
+  },
+  {
+    q:"Bioethicists and researchers raised alarms this week after prediction market Kalshi began letting people bet real money on the outcomes of late-stage pharmaceutical trials and FDA drug approvals. Beyond insider trading, what patient-safety concern did researchers flag?",
+    options:["Patients might join or quit clinical trials based on betting odds instead of medical advice","Betting revenue would let drug companies skip safety testing","The FDA would be required to publish approval decisions early","Placebo groups would be eliminated to make outcomes easier to price"],
+    answer:"Patients might join or quit clinical trials based on betting odds instead of medical advice",
+    explain:"Kalshi launched the markets Thursday with AppliedXL and took in more than $128,000 in bets the first day, on questions like whether Eli Lilly's weight loss drug retatrutide wins approval or whether a Type 1 diabetes cure arrives before 2033. Researchers told Stat News the money could tempt insiders to alter or delay trial decisions, and that public odds could sway patients to withdraw from or stay in a study for the wrong reasons. Kalshi requires employment verification and bans trading on inside information, though that same policy just failed spectacularly elsewhere: Trump's teleprompter operator was suspended this week for allegedly winning six figures betting on the president's speeches."
+  },
+  {
+    q:"After three years of appeals, President Trump's payment of more than $5.6 million to writer E. Jean Carroll was disbursed this week. How did Carroll celebrate on social media?",
+    options:["She posted 'The Eagle has landed'","She posted 'Better late than never'","She posted a photo of herself holding an oversized check","She announced she was donating the full amount to a journalism school"],
+    answer:"She posted 'The Eagle has landed'",
+    explain:"A jury found Trump liable in 2023 for sexually abusing and defaming Carroll and awarded her $5 million. Three years of appeals and post-judgment interest brought the final payout to $5,625,005.48, and Carroll marked the transfer with a three word post: 'The Eagle has landed.' A separate $83.3 million defamation award in a second case is still under appeal."
+  },
+  {
+    q:"Meta plans to begin manufacturing its own custom AI data-center chip, codenamed Iris, in September. What is the main strategic goal?",
+    options:["Reducing its dependence on Nvidia and AMD hardware","Selling chips to rival social networks","Powering a new Meta smartphone","Meeting a government requirement for domestically made chips"],
+    answer:"Reducing its dependence on Nvidia and AMD hardware",
+    explain:"Iris was developed with Broadcom and will be manufactured by TSMC as part of a four-generation chip roadmap. Internal documents show Meta aims to scale its computing infrastructure to 14 gigawatts by 2027, roughly double this year's target, while cutting its reliance on the GPU makers that currently power the AI boom."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffle(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten on a week's worth of news. Frankly, you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com";
+  shareBtn.onclick = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
+}
+
+render();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
