@@ -405,7 +405,8 @@ function showResults(){
     score + "/10 · " + rank + " · " + timeStr + "\n" +
     "https://10everyday.com";
   shareBtn.onclick = async () => {
-    if (navigator.share) {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
       try { await navigator.share({ text: shareText }); } catch(e) {}
     } else {
       try {
