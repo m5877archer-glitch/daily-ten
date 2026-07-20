@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 21, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 8</span>
+      <span class="dl-date">Tuesday, July 21, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <div class="stats" id="statsEl"></div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California</div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-21";
+const PREV_EDITION = "2026-07-20";
+const EDITION_LABEL = "July 21, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Spain won the 2026 World Cup on Sunday, beating Argentina 1-0 in extra time before more than 80,000 fans at MetLife Stadium in New Jersey. Which substitute scored the winning goal in the 106th minute?",
+    options:["Ferran Torres","Lamine Yamal","Nico Williams","Rodri"],
+    answer:"Ferran Torres",
+    explain:"Torres came off the bench and finished a headed pass from Nico Williams to end a tense, scoreless final. It was Spain's second World Cup title and its first since 2010, capping a 48-team tournament hosted by the United States, Mexico, and Canada. The final also featured the first halftime show in World Cup history, with Shakira and BTS among the headliners, and captain Rodri lifted the trophy."
+  },
+  {
+    q:"The United Kingdom got a new prime minister Monday after Keir Starmer formally resigned to King Charles. Who now occupies 10 Downing Street?",
+    options:["Andy Burnham","David Lammy","Rachel Reeves","Nigel Farage"],
+    answer:"Andy Burnham",
+    explain:"Burnham, the former Greater Manchester mayor nicknamed the King of the North, was appointed unchallenged after winning support from 379 of 401 Labour lawmakers. He is Britain's seventh prime minister in roughly a decade, and in his first speech he promised a 'circuit breaker for Britain.' Because Labour holds a majority in Parliament, the party can change leaders, and therefore prime ministers, without a general election."
+  },
+  {
+    q:"Drivers are feeling the Middle East conflict at the pump. On Monday the national average price of regular gasoline crossed what threshold for the first time since mid-June, according to AAA?",
+    options:["$3.50 per gallon","$4.00 per gallon","$4.50 per gallon","$5.00 per gallon"],
+    answer:"$4.00 per gallon",
+    explain:"The average hit $4.00 as renewed fighting between the US and Iran again choked oil tanker traffic through the Strait of Hormuz, which normally carries about a fifth of the world's oil. Gas averaged $2.98 before the war began in February and peaked at $4.56 in early May. Diesel, which feeds into grocery and shipping costs, is now averaging above $5 a gallon."
+  },
+  {
+    q:"Russia launched one of its biggest ballistic missile barrages of the entire war early Sunday, firing roughly 40 missiles at a single city over several hours. Which city was the primary target?",
+    options:["Kyiv","Kharkiv","Odesa","Lviv"],
+    answer:"Kyiv",
+    explain:"Ukraine's air force said Russia launched 41 missiles and 125 drones overnight, most of them aimed at the capital, sparking fires in five districts and damaging homes, offices, and a dormitory. Ukrainian officials called it the largest ballistic missile attack on Kyiv since the full-scale invasion began. Ukraine's forces downed 18 missiles and more than 100 drones, but the barrage underscored the country's shortage of US-made Patriot interceptors."
+  },
+  {
+    q:"Jonas Vingegaard was knocked out of the Tour de France on Sunday with a broken collarbone, so he won't be winning this year's Tour. What did Jonas do before becoming a professional cyclist?",
+    options:["He painted landscapes of Dutch flower fields.","He worked in a fish processing factory.","He manufactured high-end ladies' footwear.","He was a unicyclist in the circus."],
+    answer:"He worked in a fish processing factory.",
+    explain:"The two-time Tour champion, who is Danish, spent his early racing years working at a fish factory in the port town of Hanstholm, skinning and packing fish from before dawn and training in the afternoons. He kept the job until 2018, shortly before reaching cycling's top level. Vingegaard crashed on a bend late in Sunday's 15th stage while sitting second overall, and his team says the fracture will require surgery."
+  },
+  {
+    q:"Smoke from hundreds of Canadian wildfires poured into the US last week, triggering air quality alerts for more than 100 million Americans. Which city announced it was experiencing the worst air quality in its recorded history?",
+    options:["Chicago","New York","Denver","Seattle"],
+    answer:"Chicago",
+    explain:"Chicago's mayor's office urged residents to stay indoors and mask up outside as smoke from roughly 900 fires burning in Ontario and Manitoba, plus blazes in northern Minnesota, blanketed the Midwest and East Coast. Cleveland postponed a Guardians home game over the haze, and Philadelphia declared a Code Purple air emergency. President Trump responded by threatening new tariffs on Canada, accusing it of 'willful negligence' in managing its forests."
+  },
+  {
+    q:"Social media influencers Andrew and Tristan Tate were arrested by US Marshals on Saturday as the United Kingdom seeks their extradition on dozens of charges including rape and sex trafficking. Where were they taken into custody?",
+    options:["Miami, Florida","Bucharest, Romania","Dubai, United Arab Emirates","London, England"],
+    answer:"Miami, Florida",
+    explain:"The brothers, who hold dual US and UK citizenship, were arrested on a sealed warrant in Miami after British prosecutors announced new charges that bring the total against them to 59, involving seven alleged victims between 2010 and 2017. They appeared shackled in federal court Monday and say they will fight extradition. The Tates separately face human trafficking charges in Romania and deny all the allegations."
+  },
+  {
+    q:"Hollywood's biggest deal in decades hit a wall Monday when a federal judge issued a 14-day pause on Paramount Skydance's $110 billion takeover of which company?",
+    options:["Warner Bros. Discovery","Netflix","NBCUniversal","Lionsgate"],
+    answer:"Warner Bros. Discovery",
+    explain:"US District Judge Araceli Martínez-Olguín granted a temporary restraining order requested by 12 state attorneys general, led by California's Rob Bonta, who argue the merger likely violates antitrust law by uniting two major studios, two streaming platforms, and two news organizations. The companies had hoped to close as soon as July 22. A hearing on a longer injunction is set for August 3."
+  },
+  {
+    q:"Belgium's Remco Evenepoel won Sunday's mountain stage at the Tour de France, his first career road-stage win at the race, and moved up to second place overall. Which rider holds the yellow jersey heading into the final week?",
+    options:["Tadej Pogačar","Sepp Kuss","Primož Roglič","Wout van Aert"],
+    answer:"Tadej Pogačar",
+    explain:"Pogačar, the four-time champion, leads Evenepoel by about five minutes after a stage 15 that reshuffled the podium when Jonas Vingegaard crashed out. Evenepoel's two previous Tour stage wins had both come in time trials. Racing resumes Tuesday after Monday's final rest day."
+  },
+  {
+    q:"Lionel Messi, 39, left the field in tears Sunday after what is widely expected to be his final World Cup. How many World Cup titles did Messi win in his career?",
+    options:["None","One","Two","Three"],
+    answer:"One",
+    explain:"Messi's lone title came in 2022 in Qatar, when Argentina beat France on penalties in one of the greatest finals ever played. He also reached the final in 2014 and again this year, finishing runner-up both times. Argentina's goalkeeper Emiliano Martínez gave him every chance Sunday, setting a World Cup final record with 11 saves before Spain finally broke through in extra time."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffle(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. From Downing Street to MetLife Stadium, nothing got past you. Frankly, you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com";
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
+}
+
+render();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
