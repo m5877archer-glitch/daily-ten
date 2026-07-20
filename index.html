@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>10Everyday.com — July 17, 2026</title>
+<title>10Everyday.com · July 20, 2026</title>
 <style>
   :root{
     --ink:#1c2733;
@@ -13,9 +13,6 @@
     --ptdark:#1e3a1e;
     --ptmid:#4a7c4a;
     --ptrow:#ffffcc;
-    --global:#1d6fa5;
-    --national:#b23a48;
-    --jam:#7a4fbf;
     --correct:#2e7d4f;
     --wrong:#c0392b;
     --line:#d8d2c0;
@@ -40,7 +37,7 @@
     font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
   }
   header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
-  header h1 .dot{color:var(--national);}
+  header h1 .dot{color:#b23a48;}
   header .tagline{
     font-style:italic;color:#524b3e;font-size:.9rem;
     border-bottom:3px double var(--ink);padding-bottom:12px;
@@ -67,15 +64,6 @@
     background:var(--card);border:1px solid var(--line);
     padding:22px;
   }
-  .badge{
-    display:inline-block;font-family:Verdana,Arial,sans-serif;
-    font-size:.68rem;font-weight:bold;letter-spacing:.08em;
-    text-transform:uppercase;color:#fff;padding:4px 10px;
-    margin-bottom:14px;
-  }
-  .badge.global{background:var(--global);}
-  .badge.national{background:var(--national);}
-  .badge.jam{background:var(--jam);}
   .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
   .question::first-letter{
     float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
@@ -122,7 +110,17 @@
     font-size:1.4rem;font-weight:bold;margin-bottom:8px;
   }
   .results .flavor{
-    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:22px;
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
   }
   .coffee{
     display:inline-block;text-decoration:none;margin-top:14px;
@@ -148,6 +146,7 @@
     border-top:3px double var(--ink);
     font-size:.8rem;color:#8a8272;font-style:italic;
   }
+  footer .byline{margin-top:4px;}
 </style>
 </head>
 <body>
@@ -158,9 +157,9 @@
     <h1>10Everyday<span class="dot">.</span>com</h1>
     <div class="tagline">Ten questions. Three minutes. No paywall.</div>
     <div class="dateline">
-      <span>Vol. I, No. 6</span>
-      <span class="dl-date">Friday, July 17, 2026</span>
-      <span>Morning edition</span>
+      <span>Vol. I, No. 7</span>
+      <span class="dl-date">Monday, July 20, 2026</span>
+      <span>Week That Was</span>
     </div>
   </header>
 
@@ -171,7 +170,6 @@
   </div>
 
   <div class="card" id="quizCard">
-    <span class="badge" id="badge"></span>
     <div class="question" id="qtext"></div>
     <div class="options" id="opts"></div>
     <div class="explain" id="explain"></div>
@@ -184,93 +182,91 @@
     <div class="outof">out of 10</div>
     <div class="rank" id="rank"></div>
     <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
     <button class="replay" onclick="location.reload()">Play Again</button>
     <button class="share" id="shareBtn">Share My Score</button>
+    <div class="stats" id="statsEl"></div>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
 
-  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a></footer>
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California</div></footer>
  </div>
 </div>
 
 <script>
+const EDITION_DATE = "2026-07-20";
+const PREV_EDITION = "2026-07-17";
+const EDITION_LABEL = "July 20, 2026";
+
 const QUESTIONS = [
   {
-    cat:"global",
-    q:"This year's Tour de France opened in Barcelona with a team time trial — the first opening TTT since 1971. But the format came with a twist never before used in Tour history. What was it?",
-    options:["Every rider was timed individually, instead of the team taking one collective time","Teams rode tandem bicycles","The stage was held entirely at night","Riders were not allowed to draft off teammates"],
-    answer:"Every rider was timed individually, instead of the team taking one collective time",
-    explain:"In a traditional team time trial, the whole squad gets the time of its fourth or fifth rider across the line. In Barcelona, the team still won the stage together — but each rider's individual time counted toward the general classification, meaning a star who got dropped on the Montjuïc climbs lost real seconds. It made for a tense finale, with Visma-Lease a Bike sweeping to the stage win."
+    q:"Flash floods tore through Texas Hill Country this week, almost exactly a year after the 2025 disaster that killed at least 130 people. The Guadalupe River near Comfort rose more than 30 feet in about three hours Thursday morning. What safety measure, installed after last year's tragedy, got its first real test?",
+    options:["New flood warning sirens along the river","An automated dam release system","A statewide camp evacuation app","Permanent National Guard river patrols"],
+    answer:"New flood warning sirens along the river",
+    explain:"Flood sirens blared in Comfort before dawn Thursday as the river gauge there topped last year's record level. Governor Abbott confirmed two deaths, and crews conducted water rescues across Kerr County. Officials will spend the coming weeks assessing whether the new sirens and warning systems, funded after the 2025 flood, made the difference on the same stretch of river."
   },
   {
-    cat:"global",
-    q:"In Colombia's razor-tight presidential runoff, a Trump-backed candidate celebrated winning the preliminary count. Which direction would he take the country?",
-    options:["Far-right populism","Communist revolution","A return to military junta rule","Absolute monarchy"],
-    answer:"Far-right populism",
-    explain:"Far-right populist Abelardo de la Espriella, backed by President Trump, celebrated winning the preliminary count in the razor-tight runoff — a dramatic swing for a country that elected leftist Gustavo Petro just four years earlier."
+    q:"Sunday's World Cup final between Argentina and Spain was the first ever between the two countries, and a generational showdown: 39-year-old Lionel Messi against 19-year-old Lamine Yamal. What viral connection do the two stars share?",
+    options:["As a baby, Yamal appeared in a charity photo shoot with a young Messi, in a photo that went viral after his father shared it","Messi is Yamal's godfather","They were teammates for one season at Barcelona","Yamal's father played against Messi in a Champions League final"],
+    answer:"As a baby, Yamal appeared in a charity photo shoot with a young Messi, in a photo that went viral after his father shared it",
+    explain:"Yamal's family won a charity raffle organized by a Barcelona newspaper and UNICEF, landing baby Lamine in a promotional photo shoot with a then 20-year-old Messi. The photo resurfaced and went viral after Euro 2024. Argentina reached the final by coming from behind to beat England 2-1, while Spain shut out France 2-0 to set up the heavyweight matchup in New Jersey."
   },
   {
-    cat:"global",
-    q:"A succession debate is intensifying in Japan, where the monarchy is quite literally running out of heirs. What rule is at the center of the controversy?",
-    options:["Women cannot become emperor","The emperor must be over 60","Heirs must be born in Tokyo","The emperor cannot marry a commoner"],
-    answer:"Women cannot become emperor",
-    explain:"Japan's imperial family is running short of eligible male heirs, reviving debate over the law that bars women from taking the Chrysanthemum Throne — a rule polls show most Japanese would happily scrap."
+    q:"Netflix stock fell to a 52-week low after Thursday's second-quarter earnings report. Beyond soft guidance, what disclosure decision did analysts say investors were punishing?",
+    options:["Cutting its viewership report from twice a year to once a year, after already scrapping subscriber counts","Ending its ad-supported tier","No longer breaking out advertising revenue","Canceling quarterly earnings calls"],
+    answer:"Cutting its viewership report from twice a year to once a year, after already scrapping subscriber counts",
+    explain:"Netflix said it will publish its viewing-hours report once a year instead of twice, two years after it stopped reporting subscriber numbers. One analyst put it plainly: take away a data point when results are soft and the market will punish you. The stock has lost roughly 45 percent from its all-time high, a wipeout of about $257 billion in market value."
   },
   {
-    cat:"global",
-    q:"China reported new economic data this week showing growth well below the 5% pace it clocked earlier in the year — despite a surge in exports driven partly by a boom in what?",
-    options:["Artificial intelligence","Cruise ship tourism","Olive oil","Luxury watches"],
-    answer:"Artificial intelligence",
-    explain:"Official data showed the economy cooling sharply from its strong 5% January-March pace, even as an AI-driven boom powered a surge in exports."
+    q:"'Hacked' is a well known term today describing using computer technology to perform a task that it was not initially built for, but where does the term 'hack' come from?",
+    options:["A cooking term popularized by Julia Child in the early 1980's","Harvard chess club term used to insult MIT students","MIT railroad club term initially used to describe model railroad building","A term created in the parking lot of Giants Stadium during the Grateful Dead's June 5, 1993 appearance involving questionable methods for brewing mushroom tea"],
+    answer:"MIT railroad club term initially used to describe model railroad building",
+    explain:"The term traces to MIT's Tech Model Railroad Club in the 1950s, where a 'hack' meant a clever modification to the club's elaborate train and signal systems. The word migrated with club members into early computing and never left. And yes, the Grateful Dead really did play Giants Stadium on June 5, 1993, but no new vocabulary was recorded leaving that parking lot."
   },
   {
-    cat:"global",
-    q:"SETI scientists finished scanning 3I/ATLAS — only the third interstellar object ever detected passing through our solar system — for radio signals. What did they find?",
-    options:["Nothing beyond human-made interference","A repeating mathematical pattern","Faint signals matching an old NASA probe","A magnetic field like Earth's"],
-    answer:"Nothing beyond human-made interference",
-    explain:"The rapid-response search found no radio signals suggesting alien technology — just human-made interference — helping confirm the object's natural origin and rehearsing the playbook for the next interstellar visitor."
+    q:"The United States resumed strikes on Iran this week after President Trump declared last month's ceasefire over. According to the White House, what Iranian action broke the deal?",
+    options:["Iran attacked several commercial ships in the Strait of Hormuz","Iran restarted uranium enrichment at Natanz","Iran expelled international nuclear inspectors","Iran seized an American surveillance drone"],
+    answer:"Iran attacked several commercial ships in the Strait of Hormuz",
+    explain:"The June 17 memorandum of understanding required Iran to allow safe passage of commercial ships through the Strait of Hormuz. After Iran attacked several vessels, the ceasefire crumbled in under three weeks. The U.S. has since restored its naval blockade of Iranian ports and carried out multiple consecutive nights of strikes, even as both sides signal they want to keep negotiating."
   },
   {
-    cat:"national",
-    q:"NASA just awarded nearly $600 million in contracts for four commercial missions planned for late 2028. Where are they headed?",
-    options:["The Moon","Mars","Venus","The International Space Station"],
-    answer:"The Moon",
-    explain:"The four commercial Moon landings will each carry the same trio of science instruments to improve lunar navigation, study the dangerous dust kicked up during landings, and map the Moon's radiation environment."
+    q:"SpaceX's Starship, the world's biggest rocket, made history Thursday in a way the company didn't want. What happened?",
+    options:["Four of its 33 engines failed to ignite three seconds before liftoff, the first last-second pad abort of a full-scale Starship","It exploded on the launch pad","It was struck by lightning during fueling","The FAA grounded it mid-countdown"],
+    answer:"Four of its 33 engines failed to ignite three seconds before liftoff, the first last-second pad abort of a full-scale Starship",
+    explain:"Onscreen launch data showed four of the booster's 33 engines failing to fire, and the automatic abort system shut everything down with the rocket still anchored to the pad. Elon Musk said two Raptor engines will be replaced, with the next attempt likely early this week. It was the first launch attempt since SpaceX went public in June, and the newly listed stock briefly dipped below its IPO price on the news."
   },
   {
-    cat:"national",
-    q:"President Trump's nominee for Director of National Intelligence, Jay Clayton, frustrated Democratic senators at his confirmation hearing this week by refusing to answer what question?",
-    options:["Who won the 2020 election","Whether the Earth is round","How many states are in the U.S.","Whether he's ever been to Russia"],
-    answer:"Who won the 2020 election",
-    explain:"Clayton declined to say whether Joe Biden won the 2020 election, prompting Sen. Mark Kelly to complain that nominees 'just fundamentally refuse to disagree with things that the president says.'"
+    q:"America's most famous highway, Route 66, turns 100 this year. The historic route ran from Chicago to which city?",
+    options:["Santa Monica, California","San Francisco, California","Las Vegas, Nevada","Phoenix, Arizona"],
+    answer:"Santa Monica, California",
+    explain:"Commissioned in 1926, Route 66 stretched roughly 2,400 miles from Chicago to Santa Monica, picking up nicknames like the Mother Road and the Main Street of America along the way. Centennial celebrations are underway in all eight states along the old alignment."
   },
   {
-    cat:"national",
-    q:"A new sleep study found that cutting nightly sleep by just 80 minutes for six weeks caused participants to do what?",
-    options:["Gain weight and spend more time inactive","Develop perfect pitch","Sleepwalk twice as often","Dream exclusively in black and white"],
-    answer:"Gain weight and spend more time inactive",
-    explain:"Even mild, realistic sleep loss — similar to what many adults live with — produced measurable weight gain and more inactivity in six weeks. Researchers warn the health toll could compound over months or years."
+    q:"Bioethicists and researchers raised alarms this week after prediction market Kalshi began letting people bet real money on the outcomes of late-stage pharmaceutical trials and FDA drug approvals. Beyond insider trading, what patient-safety concern did researchers flag?",
+    options:["Patients might join or quit clinical trials based on betting odds instead of medical advice","Betting revenue would let drug companies skip safety testing","The FDA would be required to publish approval decisions early","Placebo groups would be eliminated to make outcomes easier to price"],
+    answer:"Patients might join or quit clinical trials based on betting odds instead of medical advice",
+    explain:"Kalshi launched the markets Thursday with AppliedXL and took in more than $128,000 in bets the first day, on questions like whether Eli Lilly's weight loss drug retatrutide wins approval or whether a Type 1 diabetes cure arrives before 2033. Researchers told Stat News the money could tempt insiders to alter or delay trial decisions, and that public odds could sway patients to withdraw from or stay in a study for the wrong reasons. Kalshi requires employment verification and bans trading on inside information, though that same policy just failed spectacularly elsewhere: Trump's teleprompter operator was suspended this week for allegedly winning six figures betting on the president's speeches."
   },
   {
-    cat:"national",
-    q:"Baseball returns from the All-Star break tonight with a marquee series at Yankee Stadium. Who's in town to face the Yankees?",
-    options:["The Los Angeles Dodgers","The Boston Red Sox","The Philadelphia Phillies","The Houston Astros"],
-    answer:"The Los Angeles Dodgers",
-    explain:"The Dodgers open a weekend set in the Bronx tonight — a rematch of the 2024 World Series, and the biggest series of the season's unofficial second-half opener."
+    q:"After three years of appeals, President Trump's payment of more than $5.6 million to writer E. Jean Carroll was disbursed this week. How did Carroll celebrate on social media?",
+    options:["She posted 'The Eagle has landed'","She posted 'Better late than never'","She posted a photo of herself holding an oversized check","She announced she was donating the full amount to a journalism school"],
+    answer:"She posted 'The Eagle has landed'",
+    explain:"A jury found Trump liable in 2023 for sexually abusing and defaming Carroll and awarded her $5 million. Three years of appeals and post-judgment interest brought the final payout to $5,625,005.48, and Carroll marked the transfer with a three word post: 'The Eagle has landed.' A separate $83.3 million defamation award in a second case is still under appeal."
   },
   {
-    cat:"jam",
-    q:"In 1993, Phish played at Wolf Trap in Vienna, Virginia, starting a long tradition of great shows in the Old Dominion State. Besides being able to bring in picnic style food and beverage to the venue, what else is special about Wolf Trap?",
-    options:["It's built on the remains of an 18th century steel mill","It was part of the underground railroad","It's the only national park dedicated to the performing arts","It is only open when the humidity and temperature create a spa-like steam room atmosphere"],
-    answer:"It's the only national park dedicated to the performing arts",
-    explain:"Phish's one and only Wolf Trap show happened 33 years ago today — July 17, 1993 — at the Filene Center, an intimate wooden amphitheater where fans could carry in picnic baskets and wine. Wolf Trap holds the distinction of being the first (and still only) national park for the performing arts."
+    q:"Meta plans to begin manufacturing its own custom AI data-center chip, codenamed Iris, in September. What is the main strategic goal?",
+    options:["Reducing its dependence on Nvidia and AMD hardware","Selling chips to rival social networks","Powering a new Meta smartphone","Meeting a government requirement for domestically made chips"],
+    answer:"Reducing its dependence on Nvidia and AMD hardware",
+    explain:"Iris was developed with Broadcom and will be manufactured by TSMC as part of a four-generation chip roadmap. Internal documents show Meta aims to scale its computing infrastructure to 14 gigawatts by 2027, roughly double this year's target, while cutting its reliance on the GPU makers that currently power the AI boom."
   }
 ];
 
 let current = 0;
 let score = 0;
+const dots = [];
+const startTime = Date.now();
 
-const badge = document.getElementById("badge");
 const qtext = document.getElementById("qtext");
 const opts = document.getElementById("opts");
 const explain = document.getElementById("explain");
@@ -278,12 +274,6 @@ const nextBtn = document.getElementById("nextBtn");
 const bar = document.getElementById("bar");
 const qcount = document.getElementById("qcount");
 const scoreEl = document.getElementById("score");
-
-const BADGES = {
-  global:{label:"Global", cls:"global"},
-  national:{label:"National", cls:"national"},
-  jam:{label:"Bonus", cls:"jam"}
-};
 
 function shuffle(arr){
   const a = arr.slice();
@@ -296,9 +286,6 @@ function shuffle(arr){
 
 function render(){
   const q = QUESTIONS[current];
-  const b = BADGES[q.cat];
-  badge.textContent = b.label;
-  badge.className = "badge " + b.cls;
   qtext.textContent = q.q;
   explain.textContent = "";
   explain.classList.remove("show");
@@ -324,8 +311,10 @@ function select(btn, chosen, q){
   });
   if(chosen === q.answer){
     score++;
+    dots.push("\u{1F7E2}");
   } else {
     btn.classList.add("wrong");
+    dots.push("\u{1F534}");
   }
   scoreEl.textContent = "Score: " + score;
   explain.textContent = q.explain;
@@ -343,23 +332,51 @@ nextBtn.onclick = ()=>{
   }
 };
 
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
 function showResults(){
   document.getElementById("quizCard").style.display = "none";
   bar.style.width = "100%";
   qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
   const r = document.getElementById("results");
   r.classList.add("show");
   document.getElementById("finalScore").textContent = score;
   let rank, flavor;
   if(score === 10){
     rank = "Front Page Legend";
-    flavor = "A perfect ten. You read the news, you know your national parks, and frankly you should be writing this quiz.";
+    flavor = "A perfect ten on a week's worth of news. Frankly, you should be writing this quiz.";
   } else if(score >= 8){
     rank = "Editor-in-Chief";
     flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
   } else if(score >= 6){
     rank = "Beat Reporter";
-    flavor = "Solid work. You've got the big stories down — now dig into the details.";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
   } else if(score >= 4){
     rank = "Weekend Skimmer";
     flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
@@ -369,9 +386,24 @@ function showResults(){
   }
   document.getElementById("rank").textContent = rank;
   document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
 
   const shareBtn = document.getElementById("shareBtn");
-  const shareText = "I scored " + score + "/10 on today's 10Everyday.com news quiz \u2014 rank: " + rank + ". Think you can beat me? https://10everyday.com";
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com";
   shareBtn.onclick = async () => {
     if (navigator.share) {
       try { await navigator.share({ text: shareText }); } catch(e) {}
