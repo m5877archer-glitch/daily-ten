@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · Work With Me</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .wrap{width:100%;max-width:640px;}
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  header{text-align:center;margin-bottom:16px;}
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;margin-top:4px;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;margin-bottom:18px;
+  }
+  .card h2{
+    font-size:1.05rem;letter-spacing:.04em;text-transform:uppercase;
+    border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:12px;
+  }
+  .card p{line-height:1.6;margin-bottom:12px;font-size:.95rem;}
+  .card p:last-child{margin-bottom:0;}
+  .included{list-style:none;}
+  .included li{
+    padding:9px 2px;border-bottom:1px solid var(--line);
+    font-size:.95rem;line-height:1.5;
+  }
+  .included li:last-child{border-bottom:none;}
+  .included li::before{content:"✔ ";color:var(--ptmid);font-weight:bold;}
+  .shareDemo{
+    background:var(--ink);color:var(--paper);
+    font-family:'Courier New',Courier,monospace;
+    font-size:.9rem;line-height:1.7;
+    padding:16px 18px;margin:6px 0 12px;
+    white-space:pre;overflow-x:auto;
+  }
+  .demoBtn{
+    display:block;text-align:center;text-decoration:none;
+    background:var(--ptmid);color:#fff;font-weight:bold;
+    border:1px solid var(--ptdark);padding:13px 12px;
+    font-size:1rem;font-family:inherit;
+    transition:background .15s;
+  }
+  .demoBtn:hover{background:var(--ptdark);}
+  .contact{
+    text-align:center;background:var(--ptrow);
+    border:1px solid var(--line);padding:18px 14px;
+  }
+  .contact .email{
+    font-size:1.15rem;font-weight:bold;display:block;margin-top:6px;
+    color:var(--ink);text-decoration:none;
+  }
+  .back{
+    display:block;text-align:center;margin-top:22px;
+    color:#524b3e;font-size:.9rem;font-weight:bold;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Work With Me</div>
+  </header>
+
+  <div class="card">
+    <h2>A Daily Quiz for Your Business</h2>
+    <p>I build branded daily quizzes for businesses, newsletters, and communities. Your topics, your branding, your audience. Think of it as Wordle for the people you already reach.</p>
+    <p>A daily quiz gives your audience a reason to come back every single day, and the share mechanic gives them a reason to bring their friends. Every player who posts a score is free promotion for you.</p>
+  </div>
+
+  <div class="card">
+    <h2>Play the Live Demo</h2>
+    <p>10Everyday is my own daily news quiz. It publishes automatically every weekday morning and tracks scores, streaks, and finish times. Play it, then imagine it with your branding and your questions.</p>
+    <a class="demoBtn" href="index.html">Play Today's Edition</a>
+  </div>
+
+  <div class="card">
+    <h2>The Share Mechanic</h2>
+    <p>When a player finishes, they get a spoiler-free result block they can paste anywhere. It looks like this:</p>
+    <div class="shareDemo">10Everyday · July 21, 2026
+🟢🟢🔴🟢🟢🟢🟢🔴🟢🟢
+8/10 · Editor-in-Chief · 2:41
+https://10everyday.com</div>
+    <p>Your version carries your name and your link. Every share puts your brand in front of a new audience.</p>
+  </div>
+
+  <div class="card">
+    <h2>What's Included</h2>
+    <ul class="included">
+      <li>Custom branding, colors, and voice to match your business</li>
+      <li>Questions on your topics, written for your audience</li>
+      <li>Wordle-style share block with your name and link</li>
+      <li>Streak tracking and lifetime stats to build a daily habit</li>
+      <li>Fully automated publishing, no daily work on your end</li>
+      <li>Built-in analytics so you can see exactly who is playing</li>
+      <li>Your own domain, or a page on your existing site</li>
+    </ul>
+  </div>
+
+  <div class="card contact">
+    <div style="font-size:1rem;font-weight:bold;">Interested?</div>
+    <p style="margin:8px 0 0;font-size:.92rem;">Tell me about your business and I'll show you what your quiz could look like.</p>
+    <a class="email" href="mailto:hello@10everyday.com">hello@10everyday.com</a>
+  </div>
+
+  <a class="back" href="index.html">← Back to today's quiz</a>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California</div></footer>
+ </div>
+</div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
