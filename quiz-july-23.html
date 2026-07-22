@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 23, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 10</span>
+      <span class="dl-date">Thursday, July 23, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <div class="stats" id="statsEl"></div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-23";
+const PREV_EDITION = "2026-07-22";
+const EDITION_LABEL = "July 23, 2026";
+
+const QUESTIONS = [
+  {
+    q:"France became the first country in the European Union to pass a blanket social media ban for children under what age?",
+    options:["13","15","16","18"],
+    answer:"15",
+    explain:"Both chambers of Parliament approved the measure Tuesday, a flagship initiative of President Macron's second term that also bans mobile phones in high schools. Under-15s will be blocked from creating new accounts starting September 1, with existing accounts covered in January 2027. Australia went first globally with its under-16 ban in 2024, and Spain, Denmark, and Greece are weighing similar moves."
+  },
+  {
+    q:"Influencer brothers Andrew and Tristan Tate were arrested in Miami over the weekend and appeared shackled in federal court. Which country is seeking their extradition on rape and sex trafficking charges?",
+    options:["The United Kingdom","Romania","France","Germany"],
+    answer:"The United Kingdom",
+    explain:"British prosecutors brought 38 new charges after four more alleged victims came forward, adding to charges the brothers already faced in the UK over conduct alleged between 2010 and 2017. US Marshals picked them up on their way to a bare knuckle boxing event. The pair, who deny all allegations, separately face human trafficking charges in Romania and an active criminal investigation in Florida."
+  },
+  {
+    q:"Searchers announced they found the wreck of Pan Am's Clipper Endeavor, which crashed off Puerto Rico in 1952 and killed 52 people. The disaster prompted what now universal airline practice?",
+    options:["The preflight safety briefing","The black box flight recorder","Reinforced cockpit doors","Life vests under every seat"],
+    answer:"The preflight safety briefing",
+    explain:"The DC-4 ditched in rough seas after losing two engines minutes into a flight bound for New York. Nearly everyone survived the impact, but in the chaos passengers could not find life vests and rafts, and 52 people drowned. Regulators responded by requiring preflight briefings on exits and flotation gear. The wreck was located in June, nearly 2,000 feet down, by the Air/Sea Heritage Foundation working with Discovery's Expedition Unknown."
+  },
+  {
+    q:"The Wall Street Journal recently had a story about individuals with enormous retirement accounts. According to the story, about how many Americans have IRAs that are worth more than $25 million?",
+    options:["100","200","500","1000"],
+    answer:"1000",
+    explain:"Roughly 1,000 Americans hold IRAs worth more than $25 million, a club made famous by Peter Thiel, whose Roth IRA swelled into the billions on early PayPal shares. Accounts that size are far beyond anything annual contribution limits could build. They typically grow from founders' shares or other assets that exploded in value inside the tax shelter."
+  },
+  {
+    q:"Defense Secretary Pete Hegseth testified before Congress this week that the US war with Iran has cost how much so far?",
+    options:["$5 billion","$12.5 billion","$37.5 billion","$92 billion"],
+    answer:"$37.5 billion",
+    explain:"Hegseth also asked lawmakers for another $67 billion to keep funding operations, drawing fire from Democrats who accused the administration of wanting unlimited money for bombs. The US has now struck Iranian targets for 11 straight nights, while Iran has answered with drone attacks on US bases in Jordan, Kuwait, and Bahrain. Three American service members were killed over the weekend."
+  },
+  {
+    q:"Jasper Philipsen ended a frustrating Tour de France on Wednesday, winning Stage 17 out of a 40 rider breakaway after a lead-out from teammate Mathieu van der Poel. Philipsen sprints for which country?",
+    options:["Belgium","Netherlands","France","Denmark"],
+    answer:"Belgium",
+    explain:"The Alpecin-Premier Tech star called his first two weeks horrible after a string of near misses, then beat Mauro Schmid and Olav Kooij to the line in Voiron. The win tightens the green jersey race heading into three decisive Alpine stages, where Tadej Pogacar will defend a yellow jersey lead of roughly five minutes over Remco Evenepoel."
+  },
+  {
+    q:"Oil is stoking fresh inflation worries. Brent crude climbed above which price per barrel this week, driven by supply threats from the widening Middle East conflict?",
+    options:["$70","$80","$90","$110"],
+    answer:"$90",
+    explain:"Brent touched $91 and change Tuesday as Houthi escalation and the US war with Iran threatened supply routes. Expensive oil complicates the Fed's rate path and squeezes big importers, even as Wall Street snapped a three day slide behind a semiconductor rebound fueled by surging Korean and Taiwanese chip exports."
+  },
+  {
+    q:"A brand new stock exchange nicknamed 'Y'all Street' is rolling out this month, hoping to challenge the NYSE and Nasdaq. Which city is it based in?",
+    options:["Dallas","Houston","Austin","Nashville"],
+    answer:"Dallas",
+    explain:"The Texas Stock Exchange, backed by heavyweights including BlackRock and Citadel Securities, began a phased launch in early July with test stocks and plans to open thousands of symbols to public trading by month's end, with corporate listings targeted for the fourth quarter. It is the best funded challenge in decades to the New York duopoly, which has already answered with NYSE Texas and an expanded Nasdaq presence in Dallas."
+  },
+  {
+    q:"Yemen's Houthi rebels opened a new front in the widening Middle East conflict by declaring a naval blockade against which country?",
+    options:["Saudi Arabia","Qatar","Egypt","United Arab Emirates"],
+    answer:"Saudi Arabia",
+    explain:"The Houthis warned shipping companies against using Saudi ports, an escalation tied to the US and Israeli war with Iran, the group's chief backer. The threat helped push oil above $90 a barrel and revived memories of the group's Red Sea campaign that snarled global shipping in 2024."
+  },
+  {
+    q:"The UN human rights office says civilian deaths and injuries in Ukraine jumped in the first half of 2026, driven by rising drone attacks. By roughly what percentage did casualties increase over the same period last year?",
+    options:["12 percent","37 percent","60 percent","85 percent"],
+    answer:"37 percent",
+    explain:"The office recorded 1,396 deaths and 7,978 injuries from January through June. Ukrainian drones, meanwhile, have kept hitting targets inside Russia, including warehouses belonging to Wildberries, the country's biggest online retailer, and logistics hubs Kyiv says supply the Russian army with drone components and navigation gear."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. From Paris to Y'all Street, nothing got past you. Frankly, you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com";
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
+}
+
+render();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

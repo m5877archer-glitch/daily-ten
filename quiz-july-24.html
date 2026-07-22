@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 24, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .replay{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:12px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptdark);}
+  .share{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;margin-left:10px;
+  }
+  .share:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 11</span>
+      <span class="dl-date">Friday, July 24, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <div class="stats" id="statsEl"></div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-24";
+const PREV_EDITION = "2026-07-23";
+const EDITION_LABEL = "July 24, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Hamas selected a new top political leader this week, a figure who has survived multiple Israeli assassination attempts. Who got the job?",
+    options:["Khalil al-Hayya","Khaled Meshaal","Mousa Abu Marzouk","Mahmoud al-Zahar"],
+    answer:"Khalil al-Hayya",
+    explain:"Al-Hayya, who survived Israeli strikes including an attack in Doha, takes over as the war in Gaza grinds on and the Israeli military builds a barrier separating the portion of the strip it controls. His selection comes with ceasefire diplomacy stalled and the region's attention split by the US and Israeli war with Iran."
+  },
+  {
+    q:"In a rare bit of de-escalation this week, Israeli forces began a phased withdrawal from villages in the south of which country?",
+    options:["Lebanon","Syria","Jordan","Egypt"],
+    answer:"Lebanon",
+    explain:"Three villages in southern Lebanon began implementing the pullback, a small step down in a region otherwise on edge. The wider war grinds on: the US has bombed Iran for 11 straight nights, and Yemen's Houthis declared a naval blockade of Saudi Arabia, warning shippers away from Saudi ports."
+  },
+  {
+    q:"Ukrainian drones have repeatedly struck warehouses belonging to Wildberries, injuring at least 15 people this week. What is Wildberries?",
+    options:["Russia's biggest online retailer","A Russian oil refiner","A drone factory near Moscow","Russia's largest grocery chain"],
+    answer:"Russia's biggest online retailer",
+    explain:"Wildberries is roughly Russia's answer to Amazon, and its founder confirmed the strikes along with regional governors. President Zelensky said Ukraine also hit logistics hubs in the Krasnodar and Stavropol regions that supply the Russian army with drone components and navigation equipment, part of a deepening long range drone campaign by both sides."
+  },
+  {
+    q:"A new West Health-Gallup report finds nearly a quarter of American workers are stuck in 'job lock,' staying in jobs they want to leave for one specific reason. What is it?",
+    options:["To keep their health insurance","To preserve remote work privileges","To hang on to stock options","To protect their pensions"],
+    answer:"To keep their health insurance",
+    explain:"About 24 percent of US employees say they stay put just for the coverage, a share that has climbed significantly since 2021. It is worse for workers with chronic conditions, 41 percent of whom report staying in a job to keep insurance. Economists see rising job lock as a drag on the economy, since workers who cannot move cannot chase better jobs or start businesses."
+  },
+  {
+    q:"Forecasters say a familiar climate pattern could limit how many Atlantic storms form this hurricane season, even as unusually warm water keeps the risk of destructive storms high. Which pattern?",
+    options:["El Nino","La Nina","The polar vortex","The Gulf Stream"],
+    answer:"El Nino",
+    explain:"El Nino years tend to produce wind shear that tears apart developing Atlantic storms before they strengthen. But forecasters caution that it only takes one, and warm ocean water is fuel. Texas and Louisiana are already baking through a searing heat wave this week, and peak hurricane season runs from mid August through October."
+  },
+  {
+    q:"The Equal Employment Opportunity Commission ended a longtime requirement this week. Employers no longer have to do what?",
+    options:["Collect demographic data about their workers","Post minimum wage notices in break rooms","Report workplace injuries to OSHA","Offer unpaid family leave"],
+    answer:"Collect demographic data about their workers",
+    explain:"The workforce reports, filed by larger employers for decades, tracked the makeup of workplaces by race, sex, and job category and were used to spot patterns of discrimination. Ending the collection fits the administration's broader rollback of DEI era requirements. Civil rights groups argue it will make pay and hiring gaps much harder to prove."
+  },
+  {
+    q:"Floydfest in Floyd, Virginia is a small, rustic music festival that recently had to book Greensky Bluegrass to fill in for the Tedeschi Trucks Band. Why?",
+    options:["Derek Trucks was seduced by the Sirens and lifted away on angels' wings","Susan had emergency appendix surgery","The regional Radford and Blacksburg police departments passed a 'Footloose'-ian No Dancing law","Virginia Tech declared Derek Trucks academically ineligible to perform in Southwest Virginia"],
+    answer:"Susan had emergency appendix surgery",
+    explain:"Susan Tedeschi announced an appendix scare requiring surgery, forcing TTB to cancel both FloydFest, which would have been the band's first ever appearance there, and Newport Folk Festival. Greensky postponed their own Stroudsburg, PA show to step into tonight's headlining slot and wished Susan a speedy recovery. TTB's next scheduled stop is their annual Red Rocks run starting July 31."
+  },
+  {
+    q:"Which American automaker raised its full year guidance this week after quarterly earnings and revenue topped Wall Street expectations?",
+    options:["General Motors","Ford","Stellantis","Rivian"],
+    answer:"General Motors",
+    explain:"GM shares climbed after the beat, one bright spot in a stacked earnings week that also featured Alphabet, Tesla, and IBM. Wall Street rallied behind a semiconductor rebound, though oil above $90 a barrel and fresh tariffs, including this week's 50 percent duties on Canadian goods, loom as headwinds."
+  },
+  {
+    q:"Google shipped three new lightweight AI models this week while its delayed flagship keeps slipping. The new models belong to which product family?",
+    options:["Gemini","Bard","Copilot","Llama"],
+    answer:"Gemini",
+    explain:"Google released Gemini 3.6 Flash, 3.5 Flash-Lite, and a security tuned Flash Cyber variant restricted to governments and trusted partners, while confirming its long delayed Gemini Pro flagship still is not shipping. The lightweight Flash tier is where most production AI traffic actually runs, since the bulk of everyday tasks do not need flagship level reasoning."
+  },
+  {
+    q:"The Tour de France wraps up Sunday in Paris after a brutal Alpine finish. Defending champion Tadej Pogacar, who carried the yellow jersey into the final week, rides for which country?",
+    options:["Slovenia","Spain","Italy","Colombia"],
+    answer:"Slovenia",
+    explain:"Pogacar took a lead of roughly five minutes over Belgium's Remco Evenepoel into the Alps after Evenepoel won the race's only time trial. This year's Tour rolled out from Barcelona, and Belgian sprinter Jasper Philipsen salvaged his race Wednesday with a breakaway win in Voiron."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. From Floyd, Virginia to the Alps, nothing got past you. Frankly, you should be writing this quiz.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com";
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try { await navigator.share({ text: shareText }); } catch(e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        shareBtn.textContent = "Copied! Paste it anywhere";
+        setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      } catch(e) {
+        prompt("Copy your score:", shareText);
+      }
+    }
+  };
+}
+
+render();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
