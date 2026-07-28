@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 28, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 13</span>
+      <span class="dl-date">Tuesday, July 28, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every weekday</h3>
+      <div class="ssub">Ten questions on the day's news, in your inbox each morning.</div>
+      <form id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-28";
+const PREV_EDITION = "2026-07-27";
+const EDITION_LABEL = "July 28, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Wildfires forced more than 360,000 people from their homes in France and Spain over the weekend, triggering France's largest peacetime evacuation since World War II. The French fires burned through which famous wine region?",
+    options:["Bordeaux","Burgundy","Champagne","Alsace"],
+    answer:"Bordeaux",
+    explain:"The blazes tore through the Gironde department around the Arcachon Basin, with evacuees sheltering in a converted convention hall in Bordeaux. Roughly 250,000 people were moved in France and about 75,000 in Spain, where a fire west of Madrid burned tens of thousands of hectares. Vineyards themselves were largely spared, but a fresh heat wave was forecast to push temperatures past 40 Celsius."
+  },
+  {
+    q:"President Trump halted US airstrikes on Iran on Friday, the first break since the campaign began. How many consecutive nights of strikes had preceded the pause?",
+    options:["3","7","13","21"],
+    answer:"13",
+    explain:"The strikes began July 11 after the Revolutionary Guard attacked tankers trying to transit the Strait of Hormuz. Vice President JD Vance and Joint Chiefs Chairman Dan Caine reportedly raised concerns about dwindling stocks of Tomahawk, THAAD and Patriot interceptors, which analysts say could take years to replace. Trump said the US remains ready to resume but wanted to give diplomacy room."
+  },
+  {
+    q:"Yemen's Houthi rebels hit Saudi Aramco facilities on the Red Sea coast, their first strikes on Saudi oil sites since 2022. Why was the port of Yanbu such a critical target?",
+    options:["It is the outlet for Saudi crude now that Hormuz is closed","It holds the kingdom's strategic grain reserve","It is Saudi Arabia's main naval base","It is the largest desalination plant in the region"],
+    answer:"It is the outlet for Saudi crude now that Hormuz is closed",
+    explain:"Yanbu sits at the western end of the East-West Petroline, a pipeline built during the Iran-Iraq War as insurance against exactly this scenario. Shipping data cited by AFP showed Yanbu handled about 92 percent of Saudi seaborne crude exports in June. A refinery at Jizan was also set ablaze, and Brent crude pushed back above $100."
+  },
+  {
+    q:"Which country's president, Mohammed Shahabuddin, resigned Friday after doctors diagnosed a nerve condition that causes brief blackouts?",
+    options:["Bangladesh","Pakistan","Sri Lanka","Nepal"],
+    answer:"Bangladesh",
+    explain:"Shahabuddin, 76, had held the largely ceremonial post since April 2023 and was the last senior ally of ousted Prime Minister Sheikh Hasina still in high office. He cited autonomic neuropathy in his resignation letter. The parliament speaker takes over until a new president is elected within 90 days, and Hasina has said she intends to return to the country in December."
+  },
+  {
+    q:"Temporary Protected Status ended Monday for more than 300,000 Haitians, and ICE prepared a rapid arrest push. Which Ohio city with a large Haitian community is a focus of the plan?",
+    options:["Springfield","Toledo","Akron","Youngstown"],
+    answer:"Springfield",
+    explain:"Internal documents obtained by CBS News described plans to arrest Haitians in Ohio and move them onto deportation flights quickly. Springfield drew national attention in 2024 when Trump amplified baseless claims that Haitians there were eating neighborhood pets. A Supreme Court ruling last month cleared the way for the administration to end the program, which also lapsed for Syrians."
+  },
+  {
+    q:"To celebrate the band's historic run at MSG for their 92nd, 93rd, 94th, 95th and 96th, the band has been playing sets filled with songs from those years. What else did Trey do to celebrate the band's 92nd appearance at the NYC venue?",
+    options:["Wore a t shirt without sleeves, as he was wont to do in '92","Wore a shirt made up of 92 of Fish's mumus","Wore a wig that Mike used to wear in '92","Ate a sandwich onstage"],
+    answer:"Wore a t shirt without sleeves, as he was wont to do in '92",
+    explain:"Phish opened the five night stand on July 22 with a setlist drawn entirely from the 1992 repertoire, and Trey Anastasio turned up in a sleeveless black shirt. The throwbacks ran deeper than wardrobe: trampolines in Mike's Song, bicycle kicks during I Am Hydrogen, Fish on the vacuum, and a Cold as Ice bustout last played in May 1992. Two nights later, for the 93rd show, he switched to a Marvin the Martian tee."
+  },
+  {
+    q:"Nvidia is in talks to provide a roughly $250 billion financial backstop so OpenAI can lease an enormous data center campus in southern Ohio. What previously operated on that site?",
+    options:["A uranium enrichment plant","A coal fired power station","A steel mill","An auto assembly plant"],
+    answer:"A uranium enrichment plant",
+    explain:"The 10 gigawatt campus in Piketon sits on a decommissioned uranium enrichment facility about 50 miles south of Columbus, being developed by SoftBank's energy arm SB Energy. The full buildout could top $500 billion, which would make it the largest data center project announced anywhere. The guarantee is needed because OpenAI is not yet profitable and cannot get an investment grade credit rating on its own."
+  },
+  {
+    q:"A 17 year old swept the US indoor and outdoor 800 meter titles this year and already holds a world indoor crown. Who is he?",
+    options:["Cooper Lutkenhaus","Quincy Wilson","Bryce Hoppel","Donavan Brazier"],
+    answer:"Cooper Lutkenhaus",
+    explain:"Lutkenhaus cruised to 1:43.48 at the USATF Outdoor Championships on Sunday. In March he became the youngest individual world track and field champion by winning the World Indoor 800, and in June he beat the reigning Olympic gold and silver medalists in Diamond League races. At the same meet, Noah Lyles pulled up with a cramp in the 200 final."
+  },
+  {
+    q:"Mayo won the All-Ireland Senior Football Championship on Sunday, beating Kerry and ending a drought stretching back to which year?",
+    options:["1951","1968","1989","2001"],
+    answer:"1951",
+    explain:"The 1-20 to 1-17 win closed out 75 years of near misses, including a long string of lost finals that became one of the most retold hard luck stories in Irish sport. Gaelic football is an amateur game run by the Gaelic Athletic Association, and the All-Ireland final packs more than 80,000 people into Croke Park in Dublin."
+  },
+  {
+    q:"Jackie, a bald eagle followed by millions on a live nest cam, is in critical condition after being rescued this month. Which California lake is her home?",
+    options:["Big Bear Lake","Lake Tahoe","Clear Lake","Lake Arrowhead"],
+    answer:"Big Bear Lake",
+    explain:"Jackie was found grounded on July 17 near the north shore after fending off two younger eagles with her talons. Vets at the Ojai Raptor Center found severe anemia and kidney inflammation, gave her a blood transfusion, and believe she was already sick before the scuffle. Her mate Shadow is holding the nest and looking after their two eaglets."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. Wildfires, oil ports, and a sleeveless guitarist. Nothing got past you.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com/?utm_source=share";
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+(function(){
+  const f = document.getElementById("kitForm");
+  if(!f) return;
+  f.addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const btn = f.querySelector("button");
+    const input = f.querySelector("input[name=email_address]");
+    const email = (input.value || "").trim();
+    if(!email) return;
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    try {
+      const res = await fetch(f.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email_address: email })
+      });
+      if(!res.ok) throw new Error("bad response");
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      f.parentNode.replaceChild(ok, f);
+    } catch(e) {
+      f.submit();
+    }
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
