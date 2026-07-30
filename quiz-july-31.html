@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · July 31, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 16</span>
+      <span class="dl-date">Friday, July 31, 2026</span>
+      <span>Week That Was</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every weekday</h3>
+      <div class="ssub">Ten questions on the day's news, in your inbox each morning.</div>
+      <form id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="archive.html" style="color:#8a8272;">Archive</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-07-31";
+const PREV_EDITION = "2026-07-30";
+const EDITION_LABEL = "July 31, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Wildfires burning through southwestern France and into Spain forced what France called its largest peacetime evacuation since World War II. Roughly how many people were moved out across the two countries this week?",
+    options:["More than 360,000","About 45,000","About 120,000","More than 1.2 million"],
+    answer:"More than 360,000",
+    explain:"The Gironde fire near Bordeaux burned an area several times the size of Paris and at times generated its own wind, which interior minister Laurent Nunez called virulent and unpredictable. A fourth heat wave of the summer arrived midweek, pushing southwestern France toward 42 degrees Celsius, about 108 Fahrenheit, with several Spanish regions on alert. France has recorded more than three times its average number of fires this year."
+  },
+  {
+    q:"A magnitude 7.1 earthquake struck southwestern Japan on Tuesday, collapsing part of a shopping mall and a paper mill chimney. Which prefecture took the brunt of it?",
+    options:["Kumamoto","Fukushima","Ishikawa","Hokkaido"],
+    answer:"Kumamoto",
+    explain:"The quake hit Kyushu, Japan's southernmost main island, late Tuesday afternoon. The death toll climbed through the week to more than 30, with dozens injured. Rescuers worked through sweltering heat at the Aeon Mall in Kashima, where a likely gas explosion brought down the second floor, and at a Nippon Paper Industries factory in Yatsushiro where a chimney collapse killed five. The same region was hit by a larger quake in 2016."
+  },
+  {
+    q:"Sen. Lindsey Graham's funeral in Washington drew an unusual pair of foreign leaders to the same pew. Which two?",
+    options:["Benjamin Netanyahu and Volodymyr Zelensky","Emmanuel Macron and Olaf Scholz","Narendra Modi and Shigeru Ishiba","Keir Starmer and Justin Trudeau"],
+    answer:"Benjamin Netanyahu and Volodymyr Zelensky",
+    explain:"Graham had been among the loudest backers of both Israel and Ukraine in the Senate, which is how two leaders with very different wars ended up at the same service. Zelensky met with Trump before attending. Hours after the funeral, the Senate advanced the Russia sanctions bill Graham had pushed for years."
+  },
+  {
+    q:"India's government launched a crackdown this week on the youth protest movement that had just forced the education minister to resign over exam paper leaks. What does the movement call itself?",
+    options:["The Cockroach Janta Party","The Lantern Coalition","The Chalk Circle","The Open Book Front"],
+    answer:"The Cockroach Janta Party",
+    explain:"The name is satirical, a reclaiming of an insult, and the movement has been one of the most persistent challenges to Narendra Modi's government in years. Education Minister Dharmendra Pradhan resigned after weeks of sit-ins and hunger strikes over leaked entrance exams, a rare government retreat. Protesters called off the demonstrations saying their demands had been met, then the crackdown began."
+  },
+  {
+    q:"The Federal Reserve held its benchmark rate steady at 3.5 to 3.75 percent on Wednesday, but three officials dissented. What did the dissenters want instead?",
+    options:["To raise rates","To cut rates","To pause the balance sheet runoff","To delay the decision to September"],
+    answer:"To raise rates",
+    explain:"Beth Hammack of Cleveland, Neel Kashkari of Minneapolis and Lorie Logan of Dallas all wanted a quarter point increase to fight inflation that has run above the Fed's 2 percent target for more than five years. It was the first time since 2016 that three policymakers dissented in the same direction. New chair Kevin Warsh, asked about the split, said he had asked for a good family fight and got one. It was the fifth straight meeting with no change."
+  },
+  {
+    q:"Uganda had good news this week on a public health front. What did the government announce?",
+    options:["The end of its latest Ebola outbreak","The eradication of polio","A malaria vaccine rollout","The end of a cholera epidemic"],
+    answer:"The end of its latest Ebola outbreak",
+    explain:"An outbreak is declared over after 42 days pass with no new cases, twice the maximum incubation period. The announcement was one of the few bright spots in a hard week for the country, which was also distributing emergency food relief after a drought killed at least 19 people. Elsewhere on the continent, the U.N. warned of a worsening hunger crisis in eastern Congo alongside its own Ebola outbreak."
+  },
+  {
+    q:"Nearly everyone learns at some point that August has 31 days because Emperor Augustus stole one from February, refusing to have a shorter month than Julius Caesar's July. Historians say that story is false. So why does August actually have 31 days?",
+    options:["It already had 31 days under Julius Caesar's calendar, decades before it was renamed for Augustus","Augustus did add the day, but took it from September","The Senate added a day to mark his naval victory at Actium","A medieval pope added it to fix the date of Easter"],
+    answer:"It already had 31 days under Julius Caesar's calendar, decades before it was renamed for Augustus",
+    explain:"Caesar's calendar reform in 46 BC gave the month, then called Sextilis, its 31 days. The Senate did not rename it August until 8 BC, roughly 38 years later, and no day changed hands. February was already the short month well before any of this. The February-stealing story traces to Johannes de Sacrobosco, a scholar in Paris writing around 1235, and it has been repeated in classrooms ever since. One footnote on the calendar itself: July and August are the only back-to-back 31 day months within a single year, but December and January are also consecutive 31 day months if you count the roll into the new year."
+  },
+  {
+    q:"The Senate passed a bill this week opposing a pardon for Ghislaine Maxwell. What was the vote?",
+    options:["Unanimous","51 to 49","68 to 32","Voice vote with no tally recorded"],
+    answer:"Unanimous",
+    explain:"Unanimous votes are rare in a chamber that struggles to agree on the calendar, and it signaled how little appetite there was in either party for clemency. Maxwell was convicted in 2021 of sex trafficking charges connected to Jeffrey Epstein. The measure is symbolic, since Congress cannot block a presidential pardon outright."
+  },
+  {
+    q:"The Pentagon said it struck dozens of Islamic Revolutionary Guard targets inside Iran on Thursday, including command centers and drone facilities. Three people were killed on which island?",
+    options:["Qeshm","Kish","Abu Musa","Hormuz"],
+    answer:"Qeshm",
+    explain:"The strikes were framed as retaliation for Iranian attacks on U.S. forces, including a surprise ballistic missile launch at a base in Jordan earlier in the week that broke Iran's pattern of striking only after American attacks. Qeshm sits in the Strait of Hormuz and is Iran's largest island. The escalation came days after the U.S. had briefly paused its bombing campaign, reportedly over concerns about dwindling munitions stockpiles."
+  },
+  {
+    q:"North America had its own fire problem this week. How much land had major fires burned in Oregon?",
+    options:["More than 1 million acres","About 90,000 acres","About 300,000 acres","More than 5 million acres"],
+    answer:"More than 1 million acres",
+    explain:"That is an area larger than Rhode Island. Fires in Minnesota burned tens of thousands of acres in the same stretch. Taken together with the blazes across France and Spain, it made for a week in which two continents were burning at once, a pattern climate researchers have been describing as the arrival of routine megafires."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. Two continents on fire, a quake, a cockroach party, and a Roman emperor who never touched February. Nothing got past you.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com/?utm_source=share";
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+(function(){
+  const f = document.getElementById("kitForm");
+  if(!f) return;
+  f.addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const btn = f.querySelector("button");
+    const input = f.querySelector("input[name=email_address]");
+    const email = (input.value || "").trim();
+    if(!email) return;
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    try {
+      const res = await fetch(f.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email_address: email })
+      });
+      if(!res.ok) throw new Error("bad response");
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      f.parentNode.replaceChild(ok, f);
+    } catch(e) {
+      f.submit();
+    }
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
