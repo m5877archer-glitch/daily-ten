@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghost Town Ten · A Cerro Gordo Quiz</title>
+<meta name="description" content="Five questions on Cerro Gordo, the silver camp that helped build Los Angeles. A demo quiz built for Cerro Gordo by 10Everyday.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600;700&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --shaft:#14161a;
+  --rock:#1d2127;
+  --seam:#2b313a;
+  --galena:#b3bac3;
+  --bone:#eef0f2;
+  --ore:#79838f;
+  --grade:#d9a521;
+  --moss:#5f9e75;
+  --rust:#b3543a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--shaft);
+  color:var(--galena);
+  font-family:"Barlow",system-ui,-apple-system,sans-serif;
+  font-size:17px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  padding:0 18px 60px;
+}
+.wrap{max-width:640px;margin:0 auto}
+
+/* header */
+header{padding:38px 0 22px;border-bottom:1px solid var(--seam)}
+.kicker{
+  font-family:"Barlow Condensed",sans-serif;
+  font-weight:600;
+  font-size:.78rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--grade);
+  margin:0 0 10px;
+}
+h1{
+  font-family:"Zilla Slab",Georgia,serif;
+  font-weight:700;
+  font-size:2.6rem;
+  line-height:1.02;
+  letter-spacing:-.01em;
+  color:var(--bone);
+  margin:0 0 12px;
+}
+.standfirst{margin:0;color:var(--ore);font-size:1rem;max-width:34em}
+.standfirst b{color:var(--galena);font-weight:500}
+
+/* meta + assay strip */
+.meta{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:"Barlow Condensed",sans-serif;
+  font-weight:600;font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ore);
+  padding:20px 0 9px;
+}
+.meta .sc{color:var(--grade)}
+.strip{height:6px;background:var(--seam);position:relative;overflow:hidden}
+.strip i{
+  display:block;height:100%;width:0;background:var(--grade);
+  transition:width .45s cubic-bezier(.4,0,.2,1);
+}
+
+/* cards */
+.card{
+  background:var(--rock);
+  border:1px solid var(--seam);
+  border-top:3px solid var(--grade);
+  padding:28px 24px;
+  margin-top:26px;
+}
+.qtext{
+  font-family:"Zilla Slab",Georgia,serif;
+  font-weight:600;font-size:1.42rem;line-height:1.3;
+  color:var(--bone);margin:0 0 22px;
+}
+.opt{
+  display:block;width:100%;text-align:left;
+  background:transparent;color:var(--galena);
+  border:1px solid var(--seam);
+  font-family:inherit;font-size:1rem;font-weight:500;
+  padding:14px 16px;margin-bottom:10px;
+  cursor:pointer;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.opt:hover:not(:disabled){border-color:var(--grade);color:var(--bone)}
+.opt:focus-visible{outline:2px solid var(--grade);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--moss);color:#dff0e4;background:rgba(95,158,117,.12)}
+.opt.wrong{border-color:var(--rust);color:#f4ded7;background:rgba(179,84,58,.12)}
+.explain{
+  display:none;border-left:2px solid var(--grade);
+  padding:2px 0 2px 16px;margin:20px 0 0;
+  font-size:.96rem;color:var(--ore);
+}
+.explain.show{display:block}
+.next{
+  display:none;margin-top:22px;
+  background:var(--grade);color:#14161a;
+  border:0;font-family:inherit;font-weight:600;font-size:1rem;
+  padding:14px 26px;cursor:pointer;
+}
+.next.show{display:inline-block}
+.next:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+
+/* results */
+#results{display:none}
+#results.show{display:block}
+.assay{
+  font-family:"Barlow Condensed",sans-serif;font-weight:600;
+  font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ore);margin:0 0 14px;
+}
+.grade{
+  font-family:"Zilla Slab",Georgia,serif;font-weight:700;
+  font-size:4.2rem;line-height:1;color:var(--grade);margin:0;
+}
+.grade span{font-size:1.6rem;color:var(--ore)}
+.rank{
+  font-family:"Zilla Slab",Georgia,serif;font-weight:600;
+  font-size:1.5rem;color:var(--bone);margin:10px 0 6px;
+}
+.flavor{margin:0 0 20px;color:var(--ore);font-size:.98rem}
+.dots{font-size:1.5rem;letter-spacing:.14em;margin:0 0 6px}
+.time{font-family:"Barlow Condensed",sans-serif;letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;color:var(--ore);margin:0 0 22px}
+.share{
+  display:block;width:100%;max-width:340px;
+  background:var(--grade);color:#14161a;border:0;
+  font-family:inherit;font-weight:600;font-size:1.15rem;
+  padding:16px 30px;cursor:pointer;
+}
+.share:focus-visible{outline:2px solid var(--bone);outline-offset:2px}
+.again{
+  display:block;width:100%;max-width:340px;margin-top:12px;
+  background:transparent;color:var(--galena);
+  border:2px solid var(--grade);
+  font-family:inherit;font-weight:500;font-size:.95rem;
+  padding:12px 20px;cursor:pointer;
+}
+.stats{
+  font-family:"Barlow Condensed",sans-serif;letter-spacing:.1em;text-transform:uppercase;
+  font-size:.78rem;color:var(--ore);margin:22px 0 0;
+  padding-top:18px;border-top:1px solid var(--seam);
+}
+
+/* signup */
+.signup{margin-top:22px;padding-top:22px;border-top:1px solid var(--seam)}
+.signup .kicker{margin-bottom:8px}
+.signup h3{font-family:"Zilla Slab",Georgia,serif;font-size:1.25rem;color:var(--bone);margin:0 0 6px;font-weight:600}
+.signup p{margin:0 0 14px;color:var(--ore);font-size:.95rem}
+.srow{display:flex;gap:8px;flex-wrap:wrap}
+.srow input{
+  flex:1;min-width:190px;background:var(--shaft);border:1px solid var(--seam);
+  color:var(--galena);font-family:inherit;font-size:1rem;padding:12px 14px;
+}
+.srow button{
+  background:var(--galena);color:var(--shaft);border:0;
+  font-family:inherit;font-weight:600;font-size:1rem;padding:12px 22px;cursor:pointer;
+}
+.snote{font-size:.82rem;color:var(--ore);margin:10px 0 0}
+.sdemo{color:var(--grade)}
+
+footer{
+  margin-top:34px;padding-top:20px;border-top:1px solid var(--seam);
+  font-size:.85rem;color:var(--ore);
+}
+footer a{color:var(--grade);text-decoration:none;border-bottom:1px solid rgba(217,165,33,.35)}
+
+@media (max-width:520px){
+  h1{font-size:2.05rem}
+  .qtext{font-size:1.24rem}
+  .grade{font-size:3.4rem}
+  .card{padding:24px 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="kicker">Cerro Gordo · Inyo Mountains, California</p>
+  <h1>Ghost Town Ten</h1>
+  <p class="standfirst">Five questions on the silver camp at 8,500 feet that helped bankroll the city of Los Angeles, then emptied out and waited a hundred years. <b>Takes about thirty seconds.</b></p>
+</header>
+
+<div class="meta">
+  <span id="qcount">Specimen 01 of 05</span>
+  <span class="sc" id="score">Grade: 0</span>
+</div>
+<div class="strip"><i id="bar"></i></div>
+
+<div class="card" id="quizCard">
+  <p class="qtext" id="qtext"></p>
+  <div id="opts"></div>
+  <p class="explain" id="explain"></p>
+  <button class="next" id="nextBtn">Next Question</button>
+</div>
+
+<div class="card" id="results">
+  <p class="assay">Assay Report</p>
+  <p class="grade"><span id="finalScore">0</span><span>/5</span></p>
+  <p class="rank" id="rank"></p>
+  <p class="flavor" id="flavor"></p>
+  <p class="dots" id="dotsEl"></p>
+  <p class="time" id="timeEl"></p>
+  <button class="share" id="shareBtn">Share My Score</button>
+  <button class="again" id="againBtn">Play Again</button>
+  <p class="stats" id="statsEl"></p>
+
+  <div class="signup">
+    <p class="kicker">Delivered by email</p>
+    <h3>Get it every Friday</h3>
+    <p>Ten questions on the town, the mines, and the West, in your inbox each week.</p>
+    <form class="srow" id="sform">
+      <input type="email" name="email_address" placeholder="you@example.com" aria-label="Email address">
+      <button type="submit">Sign up</button>
+    </form>
+    <p class="snote"><span class="sdemo">Demo only.</span> In a live build this feeds the Cerro Gordo list directly. Nothing is collected here.</p>
+  </div>
+</div>
+
+<footer>
+  An unofficial demo built for Cerro Gordo by <a href="https://10everyday.com/?utm_source=cerrogordo">10Everyday</a>, a daily quiz out of San Marcos, California. Facts drawn from Western Mining History, the USGS mineral records, and the town's own history. Not affiliated with Cerro Gordo or Ghost Town Living.
+</footer>
+
+</div>
+
+<script>
+const EDITION_LABEL = "Demo Edition";
+
+const QUESTIONS = [
+  {
+    q: "Cerro Gordo was named by Mexican prospectors. In Spanish, it means what?",
+    options: ["Fat hill", "Silver hill", "Lost mountain", "High camp"],
+    answer: "Fat hill",
+    explain: "Fat hill, a nod to how rich the deposits were near Buena Vista Peak. The ore was so high grade at the surface that early miners pulled silver out with hand tools and crude adobe roasting ovens."
+  },
+  {
+    q: "Four men shaped early Cerro Gordo. Which one is credited with the 1865 silver discovery that started it all?",
+    options: ["Pablo Flores", "Mortimer Belshaw", "Victor Beaudry", "Remi Nadeau"],
+    answer: "Pablo Flores",
+    explain: "Flores, a Mexican prospector, found the rich veins near the summit in 1865. The other three all show up right behind him: Beaudry opened the store and quietly collected mining claims from anyone who owed him, Belshaw built the smelter and the road, and Nadeau ran the mule teams that hauled the bullion out."
+  },
+  {
+    q: "Cerro Gordo bullion went out by mule team, more than 200 miles south. Whose early growth did it help bankroll?",
+    options: ["Los Angeles", "San Francisco", "Sacramento", "Las Vegas"],
+    answer: "Los Angeles",
+    explain: "Los Angeles, and the city knew it at the time. In February 1872 the Los Angeles News told readers the town's entire existence traced back to Cerro Gordo trade, and warned that if the silver cord were cut, the place would collapse. LA was still a dusty pueblo. The Fat Hill paid for the first version of it."
+  },
+  {
+    q: "By 1868 the problem was not finding silver, it was getting it down off an 8,500 foot mountain. Mortimer Belshaw solved it by building what, then charging everyone else to use it?",
+    options: ["A steep eight mile toll road", "A narrow gauge railroad", "An aerial tramway", "A tunnel through the mountain"],
+    answer: "A steep eight mile toll road",
+    explain: "The Yellow Grade Road, an eight mile wagon route dropping thousands of feet to the valley floor. Belshaw ran it as a toll road, which meant he controlled both the smelting and the only way out. Disputes over that road ran for the next decade. It is still the road up today, and it still washes out."
+  },
+  {
+    q: "The American Hotel burned in an electrical fire in 2020 and has since been rebuilt. When was the original put up?",
+    options: ["1871", "1849", "1888", "1912"],
+    answer: "1871",
+    explain: "1871, at the height of the boom, when more than 1,500 people were crowded onto the mountain and buildings went up as fast as lumber could be hauled in. It stood for almost 150 years before the fire."
+  }
+];
+
+let current = 0;
+let score = 0;
+let dots = [];
+let startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function pad(n){ return (n < 10 ? "0" : "") + n; }
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Specimen " + pad(current+1) + " of " + pad(QUESTIONS.length);
+  scoreEl.textContent = "Grade: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Grade: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results" : "Next Question";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("cerroGordo.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.best = Math.max(stats.best || 0, score);
+    localStorage.setItem("cerroGordo.stats", JSON.stringify(stats));
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Assay complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+
+  let rank, flavor;
+  if(score === 5){
+    rank = "High Grade";
+    flavor = "Five for five. Belshaw would have put you on the payroll, then charged you a toll to leave.";
+  } else if(score === 4){
+    rank = "Pay Dirt";
+    flavor = "Strong sample. One bad seam in an otherwise rich claim.";
+  } else if(score === 3){
+    rank = "Prospect";
+    flavor = "There is silver in here. It is going to take a little more digging.";
+  } else if(score === 2){
+    rank = "Low Grade";
+    flavor = "Worth working, barely. The good ore is deeper down.";
+  } else {
+    rank = "Tailings";
+    flavor = "Rough haul. Good news: the mountain took everyone a few tries.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Played: " + stats.played + " · Best: " + stats.best + "/5 · Weekly streaks in the live version";
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "Ghost Town Ten · Cerro Gordo\n" +
+    dotRow + "\n" +
+    score + "/5 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com/cerrogordo.html?utm_source=share";
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+document.getElementById("againBtn").onclick = ()=>{
+  current = 0;
+  score = 0;
+  dots = [];
+  startTime = Date.now();
+  document.getElementById("results").classList.remove("show");
+  document.getElementById("quizCard").style.display = "block";
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+};
+
+document.getElementById("sform").addEventListener("submit", function(ev){
+  ev.preventDefault();
+  const note = document.querySelector(".snote");
+  note.innerHTML = '<span class="sdemo">Demo only.</span> Nothing was sent. In a live build this would drop straight into the Cerro Gordo mailing list.';
+});
+
+render();
+</script>
+</body>
+</html>
