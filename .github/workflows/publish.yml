@@ -1,13 +1,7 @@
 name: Publish nightly edition
 
 on:
-  schedule:
-    # Times are UTC. 07:18 UTC = 12:18 AM Pacific (PDT).
-    # Off-the-hour minutes get scheduled sooner than :00 slots.
-    # Second run is a safety net in case the first one is dropped.
-    # In November, when clocks fall back, change 7 to 8 and 9 to 10.
-    - cron: '18 7 * * *'
-    - cron: '18 9 * * *'
+ 
   workflow_dispatch:
 
 permissions:
