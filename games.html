@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · Games We Like</title>
+<meta name="description" content="Other daily games worth two minutes of your morning, recommended by 10Everyday.com.">
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .wrap{width:100%;max-width:640px;}
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  header{text-align:center;margin-bottom:16px;}
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;margin-top:4px;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  .intro{
+    font-size:.92rem;color:#524b3e;line-height:1.55;
+    margin-bottom:16px;
+  }
+  .banner{
+    display:flex;justify-content:space-between;font-size:.85rem;font-weight:bold;
+    color:#fff;background:var(--ptmid);border:1px solid var(--ptdark);padding:7px 12px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);border-top:none;
+    padding:22px;
+  }
+  .game{
+    display:block;text-decoration:none;color:var(--ink);
+    padding:14px 12px;border-bottom:1px solid var(--line);
+    background:#fffdf7;transition:background .15s;
+  }
+  .game:nth-of-type(even){background:var(--ptrow);}
+  .game:last-child{border-bottom:none;}
+  .game:hover{outline:1px solid var(--ptmid);}
+  .game .name{font-size:1.1rem;font-weight:bold;}
+  .game .name .kind{
+    font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+    color:#6b6455;font-weight:normal;margin-left:8px;
+  }
+  .game .blurb{
+    font-style:italic;color:#6b6455;font-size:.9rem;margin-top:4px;line-height:1.45;
+  }
+  .note{
+    font-size:.85rem;color:#6b6455;line-height:1.55;
+    margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
+  }
+  .note a{color:var(--ptdark);}
+  .back{
+    display:block;text-align:center;margin-top:22px;
+    color:#524b3e;font-size:.9rem;font-weight:bold;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer a{color:#8a8272;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Games We Like</div>
+  </header>
+
+  <div class="intro">
+    Ten questions takes about two minutes, which leaves most of your coffee unfinished.
+    Here is where the rest of it goes. These are daily games made by small independent
+    outfits, most of them one or two people, all of them free to play in a browser.
+  </div>
+
+  <div class="banner"><span>Game</span><span>What it is</span></div>
+  <div class="card">
+    <!--
+      HOW TO ADD A GAME:
+      Copy one block below and paste it anywhere in this list.
+      Update three things:
+        1. href="..."       (the game's URL)
+        2. The name, and the KIND label after it
+        3. The blurb line
+      Keep rel="noopener" on every link.
+    -->
+
+    <a class="game" href="https://semantle.novalis.org/" target="_blank" rel="noopener">
+      <div class="name">Semantle <span class="kind">Word</span></div>
+      <div class="blurb">Guess the secret word by meaning instead of spelling. Brutally hard, and the guesses that get you there are half the fun.</div>
+    </a>
+
+    <a class="game" href="https://crosswordle.com/" target="_blank" rel="noopener">
+      <div class="name">Crosswordle <span class="kind">Word</span></div>
+      <div class="blurb">Two answers that cross, so every letter has to satisfy both. A tiny crossword wearing a Wordle coat.</div>
+    </a>
+
+    <a class="game" href="https://contexto.me/" target="_blank" rel="noopener">
+      <div class="name">Contexto <span class="kind">Word</span></div>
+      <div class="blurb">Unlimited guesses, ranked by how close you are. You will be at position 4,182 and absolutely certain you are onto something.</div>
+    </a>
+
+    <a class="game" href="https://mathler.com/" target="_blank" rel="noopener">
+      <div class="name">Mathler <span class="kind">Numbers</span></div>
+      <div class="blurb">Find the hidden equation that hits the target number. Wordle rules, arithmetic answers.</div>
+    </a>
+
+    <a class="game" href="https://sumplete.com/" target="_blank" rel="noopener">
+      <div class="name">Sumplete <span class="kind">Numbers</span></div>
+      <div class="blurb">Delete numbers from a grid until every row and column adds up. Quieter than it looks.</div>
+    </a>
+
+    <a class="game" href="https://putt.day/" target="_blank" rel="noopener">
+      <div class="name">putt.day <span class="kind">Aim</span></div>
+      <div class="blurb">One new hole of mini golf every day. Drag, release, groan. No words involved at all, which is sometimes the point.</div>
+    </a>
+
+    <a class="game" href="https://www.hey.gg/" target="_blank" rel="noopener">
+      <div class="name">Hey, Good Game <span class="kind">Collection</span></div>
+      <div class="blurb">A small studio that takes in daily games and keeps them running. Worth a browse when you want something you have not tried.</div>
+    </a>
+
+  </div>
+
+  <div class="note">
+    Make a daily game yourself? We are happy to add it. Write to
+    <a href="mailto:hello@10everyday.com">hello@10everyday.com</a> and tell us what it is
+    and who made it. We link to people, not to clone farms, so the game should be yours.
+  </div>
+
+  <a class="back" href="index.html">&larr; Back to today's ten</a>
+
+  <footer>10Everyday.com &middot; Fresh questions every weekday &middot; <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">&#9749; Buy me a coffee</a><div style="margin-top:4px;">10Everyday is edited in San Marcos, California &middot; <a href="work.html">Want one for your business?</a></div></footer>
+ </div>
+</div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
