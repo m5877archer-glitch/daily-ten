@@ -1,0 +1,75 @@
+name: Daily email
+
+on:
+  schedule:
+    # 09:00 UTC = 2:00 AM Pacific in summer, 1:00 AM Pacific in winter.
+    # Runs Monday through Friday. This only queues the email.
+    # Kit itself sends it at exactly 6:00 AM Pacific.
+    - cron: '0 9 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Schedule today's broadcast in Kit
+        env:
+          KIT_API_KEY: ${{ secrets.KIT_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys, urllib.request, urllib.error
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          key = os.environ.get("KIT_API_KEY", "").strip()
+          if not key:
+              sys.exit("No KIT_API_KEY secret found. Add it in repo Settings, Secrets and variables, Actions.")
+
+          now = datetime.now(ZoneInfo("America/Los_Angeles"))
+
+          # Today's quiz file, same naming pattern the site uses.
+          filename = "quiz-" + now.strftime("%B").lower() + "-" + str(now.day) + ".html"
+          if not os.path.exists(filename):
+              print("No " + filename + " in the repo. Skipping today's email so nobody gets sent a stale quiz.")
+              sys.exit(0)
+          print("Found " + filename + ". Proceeding.")
+
+          subject = "10Everyday, " + now.strftime("%A %B ") + str(now.day)
+          send_at = now.replace(hour=6, minute=0, second=0, microsecond=0).isoformat()
+
+          content = (
+              '<p><a href="https://10everyday.com/e">https://10everyday.com/e</a></p>'
+              '<p>Ten questions. About three minutes.</p>'
+              '<p>Matt</p>'
+          )
+
+          payload = {
+              "subject": subject,
+              "content": content,
+              "description": "Daily automated send",
+              "public": True,
+              "send_at": send_at,
+          }
+
+          req = urllib.request.Request(
+              "https://api.kit.com/v4/broadcasts",
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json", "X-Kit-Api-Key": key},
+              method="POST",
+          )
+
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  body = json.loads(r.read().decode("utf-8"))
+                  bid = body.get("broadcast", {}).get("id")
+                  print("Scheduled. Subject: " + subject)
+                  print("Sends at: " + send_at)
+                  print("Kit broadcast id: " + str(bid))
+          except urllib.error.HTTPError as e:
+              print("Kit returned an error: " + str(e.code))
+              print(e.read().decode("utf-8"))
+              sys.exit(1)
+          PY
