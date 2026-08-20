@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · August 21, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 31</span>
+      <span class="dl-date">Friday, August 21, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every weekday</h3>
+      <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
+      <form id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-08-21";
+const PREV_EDITION = "2026-08-20";
+const EDITION_LABEL = "August 21, 2026";
+
+const QUESTIONS = [
+  {
+    q:"The federal debt passed $40 trillion for the first time on Wednesday, according to Treasury data. Interest on that debt now costs more than $1 trillion a year, making it the government's second largest expense. What is the largest?",
+    options:["Social Security", "Medicare", "National defense", "Veterans benefits"],
+    answer:"Social Security",
+    explain:"The debt crossed $40 trillion just five months after passing $39 trillion, with spending running more than $2 trillion above revenue this year. Forecasters had expected the milestone months later, but refunds on tariffs struck down in court turned customs receipts negative for a third straight month, and July produced the fourth largest monthly deficit on record. Investors are demanding more to keep lending: the yield on 30 year Treasurys hit a 19 year high this week, which pushes up mortgage rates and other borrowing costs. The debt stood just under $20 trillion in January 2017."
+  },
+  {
+    q:"A court in Shenzhen sentenced Hui Ka Yan, founder of the property developer Evergrande and once Asia's richest man, to life in prison on Thursday. Evergrande's 2021 default helped set off China's property crisis. How much did the company owe?",
+    options:["About $30 billion", "About $100 billion", "More than $300 billion", "More than $2 trillion"],
+    answer:"More than $300 billion",
+    explain:"Hui, 67, also known as Xu Jiayin, pleaded guilty in April to charges including fraud, bribery and illegally taking public deposits. The court confiscated all of his personal property and stripped him of political rights for life. Evergrande was fined 8.82 billion yuan, about $1.31 billion, and its onshore unit Hengda Real Estate another 7 billion yuan. More than 50 other people got terms of 22 months to 18 years, including two of Hui's sons. He was worth $45.3 billion at his peak and had been out of public view since his detention."
+  },
+  {
+    q:"Congo's Ebola outbreak passed 5,000 cases this week, and the World Health Organization says it is still far from under control. Roughly what share of the people infected have died?",
+    options:["About 5 percent", "About 15 percent", "About 30 percent", "Nearly half"],
+    answer:"Nearly half",
+    explain:"Health ministry data showed 5,021 cases and 2,378 deaths, a fatality rate of about 47 percent across six affected provinces and around 70 percent in North Kivu, where the response is hardest to run. This outbreak comes from the Bundibugyo virus, a rarer form of Ebola with no approved vaccine or treatment, which is much of why it has killed a higher share of patients than the 2014 to 2016 West Africa outbreak did. Some health workers in Ituri have gone on strike over unpaid wages."
+  },
+  {
+    q:"North Korea fired a barrage of ballistic missiles toward the sea on Thursday, hours after President Trump said he expects to meet Kim Jong Un later this year. About how many missiles were launched?",
+    options:["About three", "About ten", "About twenty five", "About fifty"],
+    answer:"About ten",
+    explain:"South Korea's Joint Chiefs of Staff said roughly ten short range missiles went up from the area around Pyongyang about 5 p.m. local time. Japan's defense ministry said they splashed down outside its exclusive economic zone. Seoul's presidential national security council urged the North to stop launching. The salvo landed in the middle of a diplomatic opening: a day earlier Pyongyang had shrugged off an American decision to trim joint drills with the South, and Trump has said he wants another meeting with Kim."
+  },
+  {
+    q:"David Morens, a former senior adviser at the National Institute of Allergy and Infectious Diseases, pleaded guilty Tuesday to conspiring to hide federal records about COVID-19. How did prosecutors say he kept the messages out of reach of public records requests?",
+    options:["He routed them through his personal Gmail account", "He deleted them each night", "He used a burner phone", "He wrote them out by hand"],
+    answer:"He routed them through his personal Gmail account",
+    explain:"Morens, 78, admitted one count of conspiracy to defraud the United States and faces up to five years in prison when he is sentenced on November 12. He was indicted in April over a scheme prosecutors said began in April 2020, after the NIH terminated a grant studying bat coronavirus emergence. He also admitted conspiring to accept illegal gratuities, including two bottles of wine delivered to his Maryland home in June 2020 for what a co-conspirator called his behind the scenes shenanigans. Anthony Fauci has not been charged in connection with the case."
+  },
+  {
+    q:"Gallup reported Wednesday that 54 percent of American adults say they drink alcohol, tying the record low set a year ago. In what year did Gallup first ask the question?",
+    options:["1919", "1939", "1965", "1984"],
+    answer:"1939",
+    explain:"The share of Americans who drink was 67 percent as recently as 2022 and has dropped sharply since 2023 across most demographic groups. Among those who still drink, a record low 13 percent said they sometimes drink too much, so even drinkers are drinking less. Gallup found the fall was much steeper among Republicans and independents than among Democrats, whose reported drinking barely moved. The July survey reached 1,200 adults, with a margin of error of about four percentage points."
+  },
+  {
+    q:"Minnesota's attorney general sued Texas Governor Greg Abbott on Tuesday, asking a federal judge to order him to sign an extradition warrant. Who is Minnesota trying to bring back for trial?",
+    options:["An ICE agent charged with shooting a man in Minneapolis", "A former state contractor charged with fraud", "A truck driver charged in a fatal crash", "A doctor charged with insurance fraud"],
+    answer:"An ICE agent charged with shooting a man in Minneapolis",
+    explain:"Christian Castro faces four counts of second degree assault and one count of falsely reporting a crime over a January 14 shooting in north Minneapolis, where prosecutors say he fired through the front door of an occupied home and hit Julio Sosa-Celis in the leg. Texas Rangers arrested Castro on May 29 and he has sat in the Cameron County jail since. Attorney General Keith Ellison cited a 1987 Supreme Court ruling that compliance with the Constitution's extradition clause is mandatory and leaves a governor no discretion. Hennepin County said Texas has completed three other Minnesota extraditions in the same stretch. A hearing is set for August 25."
+  },
+  {
+    q:"A London jury was discharged Wednesday after more than 37 hours of deliberation in the trial of eight people accused of planning a 2024 raid on an arms factory in England. How many of the 15 charges did it reach a verdict on?",
+    options:["One", "Five", "Nine", "All fifteen"],
+    answer:"One",
+    explain:"The two month trial at the Old Bailey concerned a break in at an Elbit Systems site in Filton, near Bristol, in August 2024. None of the eight were at the scene; prosecutors said they helped plan it by scouting the site and buying equipment. One defendant, who cannot be named for legal reasons, was convicted of criminal damage by a majority of nine jurors to one. The other seven may face a retrial, with a hearing expected in September. Earlier trials of others arrested in the same case produced a mix of acquittals and convictions."
+  },
+  {
+    q:"A study published this week found that the top predators in northern South America 10 to 16 million years ago were not the saber toothed mammals or the flightless terror birds sharing the landscape with them. What were they?",
+    options:["Giant crocodylians", "Giant snakes", "Giant eagles", "Giant bears"],
+    answer:"Giant crocodylians",
+    explain:"Researchers led by Oscar Wilson at the University of Helsinki examined bite and tooth marks on herbivore fossils from Colombia, the only direct physical evidence of who was eating whom. The marks pointed most often to Purussaurus neivensis, a caiman relative about 23 feet long and 4,000 pounds. One puncture in a skull measured 29 millimeters across, matching its thick conical front teeth. Three of four marked specimens were bitten around the face, the same way saltwater and Nile crocodiles seize large prey today. There was simply more meat on the shore than the mammal hunters could eat. The work appeared in the Journal of Vertebrate Paleontology."
+  },
+  {
+    q:"Trey Anastasio of Phish turned up unannounced on Saturday night at a show by the New York band Hank Heaven, who played the entire set inside the ring at a basement boxing gym in lower Manhattan. The venue was picked to match the title of their new EP. What is it called?",
+    options:["Welterweight", "Lightning Rod", "Small Hours", "Paper Cranes"],
+    answer:"Welterweight",
+    explain:"Hank Heaven put out Welterweight, six tracks with boxing cover art, on Friday and threw the release party the next night at Church Street Boxing Gym on Park Place, a no frills room in the Financial District cooled by big fans during a heat wave. The crowd packed in around the ropes while the band played in the round. Anastasio came out near the end for a song called Hank Heaven's 113th Wet Dream. Annie DiRusso had joined earlier for The Pope Is From Chicago, and cellist book NOT brooke, Renny Conti and James Eichman all took turns between the ropes. Anastasio met Hank Heaven and DiRusso backstage at Jack Antonoff's Ally Coalition benefit last December and brought them onstage during his own set that night."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. Not even the space warrior in the bin helmet slowed you down.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  // Streak-aware signup copy: loss aversion once there is something to lose.
+  // Falls back to the generic subhead for first-timers and broken streaks.
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com/s";
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+(function(){
+  const f = document.getElementById("kitForm");
+  if(!f) return;
+  f.addEventListener("submit", async function(ev){
+    ev.preventDefault();
+    const btn = f.querySelector("button");
+    const input = f.querySelector("input[name=email_address]");
+    const email = (input.value || "").trim();
+    if(!email) return;
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+    try {
+      const res = await fetch(f.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email_address: email })
+      });
+      if(!res.ok) throw new Error("bad response");
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      f.parentNode.replaceChild(ok, f);
+    } catch(e) {
+      f.submit();
+    }
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
