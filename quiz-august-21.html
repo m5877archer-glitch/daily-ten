@@ -170,6 +170,28 @@
   .signup .sok{
     font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
   }
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--ptrow);border:1px solid var(--ptmid);text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:9px 18px;cursor:pointer;
+  }
+  .midsignup button:hover{background:var(--ptdark);}
+  .midsignup .mnote{font-size:.72rem;color:#6b6455;margin-top:6px;}
+  .midsignup .sok{
+    font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;
+  }
   footer{
     text-align:center;margin-top:18px;padding-top:8px;
     border-top:3px double var(--ink);
@@ -205,6 +227,15 @@
     <button class="next" id="nextBtn">Next Question →</button>
   </div>
 
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Halfway. Want the next one in your inbox?</div>
+    <form class="kitform" id="kitFormMid" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="mnote">Free. Weekday mornings. Unsubscribe anytime.</div>
+  </div>
+
   <div class="card results" id="results">
     <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
     <div class="score" id="finalScore"></div>
@@ -220,7 +251,7 @@
       <div class="skicker">Delivered by email</div>
       <h3>Get it every weekday</h3>
       <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
-      <form id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
         <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
         <button type="submit">Subscribe</button>
       </form>
@@ -346,6 +377,12 @@ function render(){
   });
   bar.style.width = ((current)/QUESTIONS.length*100) + "%";
   qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  // Mid-quiz signup: surfaces at Q6 so people who quit before the
+  // results card still see the ask at least once.
+  if(current >= 5 && !window.tenSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
   scoreEl.textContent = "Score: " + score;
 }
 
@@ -406,6 +443,18 @@ function updateStats(){
 
 function showResults(){
   document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  // Already subscribed mid-quiz: do not ask a second time.
+  if(window.tenSubscribed){
+    const rf = document.getElementById("kitForm");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
   bar.style.width = "100%";
   qcount.textContent = "Complete";
   const elapsed = Date.now() - startTime;
@@ -461,11 +510,26 @@ function showResults(){
     score + "/10 · " + rank + " · " + timeStr + "\n" +
     "https://10everyday.com/s";
 
+  // After a share lands, the reader is at their warmest. Pull the
+  // signup into view rather than leaving it below the fold.
+  function postShareNudge(){
+    if(window.tenSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
   async function copyFallback(){
     try {
       await navigator.clipboard.writeText(shareText);
       shareBtn.textContent = "Copied! Paste it anywhere";
       setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
     } catch(e) {
       prompt("Copy your score:", shareText);
     }
@@ -476,6 +540,7 @@ function showResults(){
     if (navigator.share && isMobile) {
       try {
         await navigator.share({ text: shareText });
+        postShareNudge();
       } catch(e) {
         if (e && e.name === "AbortError") return;
         await copyFallback();
@@ -489,30 +554,32 @@ function showResults(){
 render();
 
 (function(){
-  const f = document.getElementById("kitForm");
-  if(!f) return;
-  f.addEventListener("submit", async function(ev){
-    ev.preventDefault();
-    const btn = f.querySelector("button");
-    const input = f.querySelector("input[name=email_address]");
-    const email = (input.value || "").trim();
-    if(!email) return;
-    btn.disabled = true;
-    btn.textContent = "Sending...";
-    try {
-      const res = await fetch(f.action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ email_address: email })
-      });
-      if(!res.ok) throw new Error("bad response");
-      const ok = document.createElement("div");
-      ok.className = "sok";
-      ok.textContent = "Check your inbox to confirm";
-      f.parentNode.replaceChild(ok, f);
-    } catch(e) {
-      f.submit();
-    }
+  const forms = document.querySelectorAll("form.kitform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", async function(ev){
+      ev.preventDefault();
+      const btn = f.querySelector("button");
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await fetch(f.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email_address: email })
+        });
+        if(!res.ok) throw new Error("bad response");
+        window.tenSubscribed = true;
+        const ok = document.createElement("div");
+        ok.className = "sok";
+        ok.textContent = "Check your inbox to confirm";
+        f.parentNode.replaceChild(ok, f);
+      } catch(e) {
+        f.submit();
+      }
+    });
   });
 })();
 </script>
