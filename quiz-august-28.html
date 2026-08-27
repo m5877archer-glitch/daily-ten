@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday.com · August 28, 2026</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--ptrow);border:1px solid var(--ptmid);text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:9px 18px;cursor:pointer;
+  }
+  .midsignup button:hover{background:var(--ptdark);}
+  .midsignup .mnote{font-size:.72rem;color:#6b6455;margin-top:6px;}
+  .midsignup .sok{
+    font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 36</span>
+      <span class="dl-date">Friday, August 28, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Halfway. Want the next one in your inbox?</div>
+    <form class="kitform" id="kitFormMid" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="mnote">Free. Weekday mornings. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every weekday</h3>
+      <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
+      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-08-28";
+const PREV_EDITION = "2026-08-27";
+const EDITION_LABEL = "August 28, 2026";
+
+const QUESTIONS = [
+  {
+    q:"More than 350 people were killed and over 1,300 were left missing this week when a wall of water and mud tore through a river valley on the Nepal and Tibet border. What set it off?",
+    options:["A huge chunk of ice broke off a glacier", "An offshore earthquake", "A dam failure", "A volcanic eruption"],
+    answer:"A huge chunk of ice broke off a glacier",
+    explain:"A piece of ice roughly 2,000 feet long broke away from a glacier high in the Himalayas and came down the Lhende Khola valley on Wednesday morning. The river rose as much as 27 feet in half an hour, burying whole villages and washing out at least 19 bridges, which is why rescue crews could not reach much of the area. Hundreds of foreign tourists are among the missing. Nepal has lost close to a third of its total ice volume in the last thirty years."
+  },
+  {
+    q:"Iran said this week that inspectors from one international organization will not be allowed to visit the nuclear sites that the U.S. and Israel bombed. Which organization?",
+    options:["The International Atomic Energy Agency", "The World Health Organization", "NATO", "The International Court of Justice"],
+    answer:"The International Atomic Energy Agency",
+    explain:"Mohammad Eslami, who runs Iran's atomic energy program, said the IAEA never condemned the strikes and is being used by Iran's enemies to gather intelligence. His argument is that the agency mainly wants to see how much damage the bombs actually did. President Trump, asked about restarting talks, said he has no schedule and is not in a hurry."
+  },
+  {
+    q:"Russia's foreign ministry warned this week that it could start targeting one country's military facilities, in Ukraine or anywhere else, after that country supplied Kyiv with long range missile technology. Which country?",
+    options:["The United Kingdom", "Poland", "France", "Turkey"],
+    answer:"The United Kingdom",
+    explain:"Spokesperson Maria Zakharova said any British military asset could be fair game, a notably broad threat because it is not limited to Ukrainian territory. It landed during a heavy exchange: Russia hit nine Ukrainian cities overnight, and Ukrainian strikes killed twelve people inside Russia and occupied Donbas."
+  },
+  {
+    q:"Volodymyr Zelenskyy awarded Elon Musk Ukraine's Order of Freedom this week. Kyiv is simultaneously asking Musk to loosen restrictions on which of his companies' products?",
+    options:["Starlink satellite internet", "Tesla vehicles", "The Boring Company's tunnels", "X, formerly Twitter"],
+    answer:"Starlink satellite internet",
+    explain:"Ukraine wants Starlink enabled on drones flying up to 200 kilometers inside Russia so its forces can hunt ballistic missile launchers. Musk has called that a major escalation and so far refused. Starlink has carried Ukraine's battlefield communications since 2022, so the medal is recognition and leverage at the same time. It is an unusual situation: how far a war can be fought is partly set by one company's permission."
+  },
+  {
+    q:"A candidate advanced this week to the general election in Alaska's Senate race with an unusual advantage. What is it?",
+    options:["He has the same name as the incumbent senator", "He is the incumbent's brother", "He is not old enough to serve", "He has never lived in Alaska"],
+    answer:"He has the same name as the incumbent senator",
+    explain:"Dan J. Sullivan, a retired teacher from Petersburg, will appear on the November ballot alongside Republican Senator Dan Sullivan. A state elections official tried to keep him off, saying he filed with intent to confuse voters, but a judge threw that out and the state Supreme Court ordered him on. Alaska uses ranked choice voting, so a third or fourth place finisher can decide the winner through where their supporters rank next. Democrat Mary Peltola also advanced."
+  },
+  {
+    q:"Senator Chris Murphy called this week for a halt to immigration raids in a city in his home state, after reports that ICE was arresting parents at school bus stops. Which state?",
+    options:["Connecticut", "New Jersey", "Illinois", "Oregon"],
+    answer:"Connecticut",
+    explain:"The city is Danbury. Murphy wrote that agents waited until children were on the bus, so the kids would come home in the afternoon to no parents. A local advocacy group counted 25 people detained on Wednesday, 16 on Monday and at least nine on Tuesday, at day laborer gathering spots and a Latino grocery store."
+  },
+  {
+    q:"The Pentagon said it struck another boat it claimed was carrying drugs, killing four people. Where have these strikes been taking place?",
+    options:["The Caribbean Sea", "The South China Sea", "The Gulf of Aden", "The Mediterranean"],
+    answer:"The Caribbean Sea",
+    explain:"By the Pentagon's own count the campaign has now killed 227 people across 68 strikes in about a year. No evidence has been released that this boat or most of the others were carrying drugs. Amnesty International calls the strikes extrajudicial killings that amount to crimes under international law."
+  },
+  {
+    q:"Nvidia reported a record quarter and, according to reports, agreed to spend nearly $13 billion buying a company often described as the GitHub of AI. Which company?",
+    options:["Hugging Face", "Databricks", "Stack Overflow", "GitLab"],
+    answer:"Hugging Face",
+    explain:"Hugging Face runs the main public repository where developers find and share open AI models and datasets. Nvidia helped fund it in 2023 at a $4.5 billion valuation, so the reported price is close to triple that in three years. The same week, Nvidia posted $96.2 billion in quarterly revenue and told investors sales could climb about 70 percent next year."
+  },
+  {
+    q:"Apple set its next hardware event for September 9. Besides new iPhone Pro models, what is the company widely expected to introduce?",
+    options:["Its first foldable iPhone", "A television set", "An electric car", "A home robot"],
+    answer:"Its first foldable iPhone",
+    explain:"Reports point to a folding phone possibly called the iPhone Ultra, alongside the iPhone 18 Pro and Pro Max. Samsung and several Chinese manufacturers have been building foldables for years, so Apple would be arriving late on purpose, which is its usual pattern. The standard iPhone 18 is expected to slip to spring 2027, splitting Apple's flagship launches into two windows a year."
+  },
+  {
+    q:"State Route 78 runs from Oceanside through Vista and San Marcos to Escondido, past a stretch of North San Diego County with more breweries per person than Bavaria. What do locals call it?",
+    options:["The Hops Highway", "The Barley Belt", "The IPA Expressway", "The Malt Mile"],
+    answer:"The Hops Highway",
+    explain:"Two dozen or so breweries sit along a roughly 60 mile run of the 78, including Port Brewing and The Lost Abbey and Rip Current in San Marcos, Pizza Port in Carlsbad, and Stone's big Escondido campus. The nickname stuck as the corridor grew from a handful of garage operations into a real industry. A National University study put North County brewing's economic impact at $272 million a year and 1,700 jobs as far back as 2013, about a third of the countywide total, and the count of breweries has roughly doubled since."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const scoreEl = document.getElementById("score");
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  // Mid-quiz signup: surfaces at Q6 so people who quit before the
+  // results card still see the ask at least once.
+  if(current >= 5 && !window.tenSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  scoreEl.textContent = "Score: " + score;
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  scoreEl.textContent = "Score: " + score;
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  // Already subscribed mid-quiz: do not ask a second time.
+  if(window.tenSubscribed){
+    const rf = document.getElementById("kitForm");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. The Emperor is a fan of your work.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  // Streak-aware signup copy: loss aversion once there is something to lose.
+  // Falls back to the generic subhead for first-timers and broken streaks.
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "https://10everyday.com/s";
+
+  // After a share lands, the reader is at their warmest. Pull the
+  // signup into view rather than leaving it below the fold.
+  function postShareNudge(){
+    if(window.tenSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+(function(){
+  const forms = document.querySelectorAll("form.kitform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", async function(ev){
+      ev.preventDefault();
+      const btn = f.querySelector("button");
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await fetch(f.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email_address: email })
+        });
+        if(!res.ok) throw new Error("bad response");
+        window.tenSubscribed = true;
+        const ok = document.createElement("div");
+        ok.className = "sok";
+        ok.textContent = "Check your inbox to confirm";
+        f.parentNode.replaceChild(ok, f);
+      } catch(e) {
+        f.submit();
+      }
+    });
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
