@@ -2,10 +2,11 @@ name: Daily email
 
 on:
   schedule:
-    # 09:00 UTC = 2:00 AM Pacific in summer, 1:00 AM Pacific in winter.
-    # Runs Monday through Friday. This only queues the email.
-    # Kit itself sends it at exactly 6:00 AM Pacific.
-    - cron: '0 9 * * 1-5'
+    # 07:23 UTC = 12:23 AM Pacific in summer, 11:23 PM Pacific in winter.
+    # Deliberately off the hour: GitHub queues scheduled runs, and the top
+    # of the hour is the most congested slot. Running this early gives
+    # about five and a half hours of slack before the 6:00 AM Pacific send.
+    - cron: '23 7 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -21,13 +22,18 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, os, sys, urllib.request, urllib.error
-          from datetime import datetime
+          from datetime import datetime, timedelta
           from zoneinfo import ZoneInfo
+
+          API = "https://api.kit.com/v4/broadcasts"
+          TARGET_HOUR = 6   # normal send time, Pacific
+          CUTOFF_HOUR = 8   # past this, skip the day rather than send at a weird hour
 
           key = os.environ.get("KIT_API_KEY", "").strip()
           if not key:
               sys.exit("No KIT_API_KEY secret found. Add it in repo Settings, Secrets and variables, Actions.")
 
+          headers = {"Content-Type": "application/json", "X-Kit-Api-Key": key}
           now = datetime.now(ZoneInfo("America/Los_Angeles"))
 
           # Today's quiz file, same naming pattern the site uses.
@@ -38,7 +44,36 @@ jobs:
           print("Found " + filename + ". Proceeding.")
 
           subject = "10Everyday, " + now.strftime("%A %B ") + str(now.day)
-          send_at = now.replace(hour=6, minute=0, second=0, microsecond=0).isoformat()
+
+          # Work out when this should go out.
+          target = now.replace(hour=TARGET_HOUR, minute=0, second=0, microsecond=0)
+          cutoff = now.replace(hour=CUTOFF_HOUR, minute=0, second=0, microsecond=0)
+
+          if now < target:
+              send_at = target.isoformat()
+              print("On time. Scheduling for " + send_at)
+          elif now < cutoff:
+              send_at = (now + timedelta(minutes=2)).isoformat()
+              print("WARNING: this run started after " + str(TARGET_HOUR) + ":00 Pacific.")
+              print("Still inside the grace window, so sending now instead: " + send_at)
+          else:
+              print("This run started after " + str(CUTOFF_HOUR) + ":00 Pacific, too late to be a morning email.")
+              print("Skipping today rather than dribbling it out midday. Check the Actions queue.")
+              sys.exit(0)
+
+          # Don't send twice. Guards against manual re-runs and duplicate triggers.
+          try:
+              req = urllib.request.Request(API, headers=headers, method="GET")
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  existing = json.loads(r.read().decode("utf-8")).get("broadcasts", [])
+              if any((b.get("subject") or "").strip() == subject for b in existing):
+                  print("A broadcast named '" + subject + "' already exists. Nothing to do.")
+                  sys.exit(0)
+              print("No existing broadcast for today. Creating one.")
+          except Exception as e:
+              # A failed lookup should not cost a day's email. Proceed, but say so loudly.
+              print("WARNING: could not check for an existing broadcast (" + str(e) + ").")
+              print("Proceeding anyway. If the list gets this twice, that is why.")
 
           content = (
               '<p><a href="https://10everyday.com/e">https://10everyday.com/e</a></p>'
@@ -55,9 +90,9 @@ jobs:
           }
 
           req = urllib.request.Request(
-              "https://api.kit.com/v4/broadcasts",
+              API,
               data=json.dumps(payload).encode("utf-8"),
-              headers={"Content-Type": "application/json", "X-Kit-Api-Key": key},
+              headers=headers,
               method="POST",
           )
 
@@ -73,3 +108,4 @@ jobs:
               print(e.read().decode("utf-8"))
               sys.exit(1)
           PY
+
