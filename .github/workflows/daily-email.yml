@@ -7,6 +7,8 @@ on:
     # of the hour is the most congested slot. Running this early gives
     # about five and a half hours of slack before the 6:00 AM Pacific send.
     - cron: '23 7 * * 1-5'
+    - cron: '23 8 * * 1-5'
+    - cron: '23 9 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -26,8 +28,8 @@ jobs:
           from zoneinfo import ZoneInfo
 
           API = "https://api.kit.com/v4/broadcasts"
-          TARGET_HOUR = 6   # normal send time, Pacific
-          CUTOFF_HOUR = 8   # past this, skip the day rather than send at a weird hour
+          TARGET_HOUR = 3   # normal send time, Pacific
+          CUTOFF_HOUR = 5   # past this, skip the day rather than send at a weird hour
 
           key = os.environ.get("KIT_API_KEY", "").strip()
           if not key:
