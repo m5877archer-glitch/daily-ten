@@ -1,0 +1,76 @@
+name: Edition check
+
+# The site silently falls back to the previous edition when today's file is
+# missing, which is good for readers and terrible for noticing. This job is
+# the noticing. It fails loudly when the next weekday's quiz is not in the
+# repo, and GitHub emails you about failed runs.
+#
+# It only complains when the next send is close, so a quiet weekend does not
+# generate false alarms about Monday.
+
+on:
+  schedule:
+    - cron: '17 4 * * *'    # ~9:17 PM Pacific, after your usual upload window
+    - cron: '47 6 * * *'    # ~11:47 PM Pacific
+    - cron: '7 12 * * *'    # ~5:07 AM Pacific, last warning before the send
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the repo
+        uses: actions/checkout@v4
+
+      - name: Is the next edition in the repo?
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+
+          SEND_HOUR = 6        # Pacific, must match daily-email.yml
+          WARN_WINDOW_HOURS = 14
+          PT = ZoneInfo("America/Los_Angeles")
+
+          now = datetime.now(PT)
+
+          target = now.replace(hour=SEND_HOUR, minute=0, second=0, microsecond=0)
+          if now >= target:
+              target += timedelta(days=1)
+          while target.weekday() > 4:
+              target += timedelta(days=1)
+
+          hours_out = (target - now).total_seconds() / 3600
+          filename = "quiz-" + target.strftime("%B").lower() + "-" + str(target.day) + ".html"
+
+          print("Now:       " + now.isoformat())
+          print("Next send: " + target.isoformat() + "  (" + str(round(hours_out, 1)) + " hours out)")
+          print("Needs:     " + filename)
+
+          if os.path.exists(filename):
+              print("")
+              print("Present. Nothing to do.")
+              sys.exit(0)
+
+          if hours_out > WARN_WINDOW_HOURS:
+              print("")
+              print("Missing, but the send is still " + str(round(hours_out, 1)) + " hours away.")
+              print("Too early to complain. Staying quiet.")
+              sys.exit(0)
+
+          print("")
+          print("=" * 60)
+          print("MISSING EDITION")
+          print("=" * 60)
+          print(filename + " is not in the repo.")
+          print("The send is " + str(round(hours_out, 1)) + " hours away, at " + target.strftime("%A %B %d, %-I:%M %p") + " Pacific.")
+          print("")
+          print("If this is not fixed, two things happen:")
+          print("  1. No email goes out that morning.")
+          print("  2. The site quietly serves the previous edition instead,")
+          print("     which looks fine and is why this is easy to miss.")
+          print("")
+          print("Build the file and push it to the repo root.")
+          sys.exit(1)
+          PY
