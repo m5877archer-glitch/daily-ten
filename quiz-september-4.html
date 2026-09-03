@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10Everyday · Sep 4: Hegseth under fire, Gloria Steinem dies, Chevron in Caracas</title>
+<meta name="description" content="Ten questions on the day's news, answered in about three minutes. A new edition every weekday morning. Free, no signup.">
+<meta property="og:title" content="10Everyday · Sep 4: Hegseth under fire, Gloria Steinem dies, Chevron in Caracas">
+<meta property="og:description" content="Ten questions on the day's news, answered in about three minutes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://10everyday.com/">
+<meta property="og:site_name" content="10Everyday">
+<meta name="twitter:card" content="summary">
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta .dotrow{display:flex;gap:4px;align-items:center;}
+  .meta .dotrow i{width:11px;height:11px;border-radius:2px;background:var(--line);display:block;}
+  .meta .dotrow i.ok{background:var(--ptdark);}
+  .meta .dotrow i.no{background:var(--wrong);}
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--ptrow);border:1px solid var(--ptmid);text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:9px 18px;cursor:pointer;
+  }
+  .midsignup button:hover{background:var(--ptdark);}
+  .midsignup .mnote{font-size:.72rem;color:#6b6455;margin-top:6px;}
+  .midsignup .sok{
+    font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 41</span>
+      <span class="dl-date">Friday, September 4, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Halfway. Want the next one in your inbox?</div>
+    <form class="kitform" id="kitFormMid" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="mnote">Free. Weekday mornings. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every weekday</h3>
+      <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
+      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-09-04";
+const PREV_EDITION = "2026-09-03";
+const EDITION_LABEL = "September 4, 2026";
+
+const QUESTIONS = [
+  {
+    q:"Republican Senator Thom Tillis said this week he had never witnessed more inept management of the people who serve the country, and called on President Trump to remove a cabinet member. The call came days after Army Secretary Dan Driscoll resigned over repeated clashes with that same official. Who is it?",
+    options:["Pete Hegseth","Marco Rubio","Hung Cao","John Phelan"],
+    answer:"Pete Hegseth",
+    explain:"Driscoll stepped down after reported fights with Hegseth over the Pentagon's removal of seasoned commanders and its refusal to promote women and people of color. Tillis, who is not seeking reelection, wrote that Hegseth is intimidated by competence. Nebraska Republican Don Bacon, a retired Air Force brigadier general, joined the call. Trump, meanwhile, nominated acting Navy Secretary Hung Cao to the job permanently."
+  },
+  {
+    q:"Gloria Steinem died Wednesday at 92. Alongside the organizing she is remembered for, she co-founded a magazine in the early 1970s whose title was itself the argument: a form of address that, unlike the two then in common use, revealed nothing about whether a woman was married. Which magazine?",
+    options:["Ms.","Bust","Bitch","Jane"],
+    answer:"Ms.",
+    explain:"Miss and Mrs. both announced a woman's marital status before anything else about her. Ms. did not, which is why the title was contested long before the magazine was. Steinem spent six decades as one of the most recognizable organizers in American feminism."
+  },
+  {
+    q:"The mayor of the country's largest school district announced Wednesday that generative AI will be barred for younger students, saying children need their teachers and human connection in order to learn, and that the tech industry wants people to believe otherwise. Who is the mayor?",
+    options:["Zohran Mamdani","Eric Adams","Brad Lander","Bill de Blasio"],
+    answer:"Zohran Mamdani",
+    explain:"The New York City moratorium covers students through eighth grade and arrives with new screen time guidance, affecting nearly 600,000 children. Because New York policy often sets the pattern other districts follow, education technology companies are watching it closely."
+  },
+  {
+    q:"The Justice Department filed a statement of interest in Manhattan federal court this week backing OpenAI and Microsoft against The New York Times and other newspapers suing over the use of their journalism. What was the government's central argument?",
+    options:[
+      "Training a model on copyrighted text is transformative fair use",
+      "Newspapers gave up their claims by publishing articles online",
+      "Copyright protection does not extend to news reporting",
+      "The dispute belongs in state court rather than federal court"
+    ],
+    answer:"Training a model on copyrighted text is transformative fair use",
+    explain:"The brief argued the systems learn statistical patterns rather than reproduce the original works, and framed American leadership in AI as a matter of national security. A Times spokesperson answered that the administration was siding with a handful of trillion dollar companies against the people who make the content those companies need."
+  },
+  {
+    q:"Workers hauled away a large sculpture known simply as Blue this week, less than seven years after it went up, from the grounds of a Washington institution whose renovation is now the subject of a federal court filing. Which institution?",
+    options:["The Kennedy Center","The Smithsonian Castle","The National Gallery","The Hirshhorn Museum"],
+    answer:"The Kennedy Center",
+    explain:"Justice Department lawyers had warned the court that the Kennedy Center could be demolished unless Trump is allowed to proceed with his renovation plans, which include inscribing his name into the building's marble."
+  },
+  {
+    q:"The death toll from catastrophic flooding passed 1,200 this week with thousands still missing, and the prime minister used the moment to argue that because the whole world caused the problem, the whole world owes a hand in managing it. Which country?",
+    options:["Nepal","Bangladesh","Pakistan","Myanmar"],
+    answer:"Nepal",
+    explain:"Prime Minister Balendra Shah tied the flooding directly to climate change and said the international community needs to be made forcefully aware of what countries like his are absorbing. Nepal contributes a negligible share of global emissions and sits downhill from a rapidly melting mountain range."
+  },
+  {
+    q:"US Energy Secretary Chris Wright appeared at a signing ceremony inside the Miraflores presidential palace in Caracas on Wednesday, where an American oil company pledged more than $7 billion to roughly double its output in the country. Which company?",
+    options:["Chevron","ExxonMobil","ConocoPhillips","Occidental Petroleum"],
+    answer:"Chevron",
+    explain:"Chevron's was the largest of several deals Wright announced, and he signed alongside Venezuela's interim President Delcy Rodriguez. The visit follows Trump's arrangement granting the US government an equity stake in a private Venezuelan oil firm holding concessions on enormous reserves."
+  },
+  {
+    q:"Nearly 5,000 American sailors and Marines went ashore this week for five days of leave after a record 286 days at sea, a deployment marked by reports of thin rations, broken plumbing, and sailors attempting to go overboard. Where did their aircraft carrier dock?",
+    options:["Thailand","Japan","Australia","Singapore"],
+    answer:"Thailand",
+    explain:"The USS Abraham Lincoln had been at sea supporting the US and Israeli war on Iran. Carrier deployments are normally capped well short of that length, and the conditions reported aboard became their own story before the ship ever reached port."
+  },
+  {
+    q:"Former Venezuelan President Nicolas Maduro and his wife Cilia Flores asked a Manhattan federal judge this week to throw out the drug trafficking indictment against them. What did they argue?",
+    options:[
+      "That they are immune as the former leader and first lady of a foreign country",
+      "That the evidence against them was gathered illegally",
+      "That the statute of limitations has run out",
+      "That they were never properly served with the charges"
+    ],
+    answer:"That they are immune as the former leader and first lady of a foreign country",
+    explain:"Flores previously led Venezuela's National Assembly. The motion landed eight months after Trump ordered the pair seized during a US assault on Venezuela, which is how they came to be facing a New York court in the first place."
+  },
+  {
+    q:"In his first interview as Health and Human Services Secretary, Robert F. Kennedy Jr. said Americans buy 70 percent of the pharmaceutical drugs on Earth, then repeated the point to HHS staff four days later. The real share is close to Americans' share of the world's population, off by more than a factor of ten. When FactCheck.org asked his department to back up the number, what happened?",
+    options:["HHS never responded","HHS issued a correction","HHS pointed to an IQVIA report","HHS said he had misspoken"],
+    answer:"HHS never responded",
+    explain:"The 70 percent figure looks like a garbled version of a real one, the American share of global pharmaceutical revenue, which runs high because the same prescription costs several times more here than abroad. Americans take a small slice of the world's pills and supply most of the industry's money. Asked to show the math, the department said nothing, and the claim was never withdrawn."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+
+// Ten slots visible from question one. Answered slots fill in, the rest
+// stay light. Gives the player a finish line to see and shows them the
+// share artifact before they are ever asked to share it.
+function renderDotRow(){
+  if(!dotRowEl) return;
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    const d = dots[i];
+    const cls = d === undefined ? "" : (d === "\u{1F7E2}" ? " class=\"ok\"" : " class=\"no\"");
+    out += "<i" + cls + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  // Mid-quiz signup: surfaces at Q6 so people who quit before the
+  // results card still see the ask at least once.
+  if(current >= 5 && !window.tenSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  renderDotRow();
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  renderDotRow();
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+// Cloudflare counts a path, not an event, so we briefly push a fake path,
+// let the beacon see it, and restore the real URL. Wrapped in try/catch
+// because a failure here must never take the quiz down with it.
+function trackPath(path){
+  try {
+    const back = location.pathname + location.search + location.hash;
+    history.pushState(null, "", path);
+    setTimeout(function(){
+      try { history.replaceState(null, "", back); } catch(e){}
+    }, 120);
+  } catch(e){}
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  // Already subscribed mid-quiz: do not ask a second time.
+  if(window.tenSubscribed){
+    const rf = document.getElementById("kitForm");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Check your inbox to confirm";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  trackPath("/score-" + score);
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. The Emperor is a fan of your work.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  // Streak-aware signup copy: loss aversion once there is something to lose.
+  // Falls back to the generic subhead for first-timers and broken streaks.
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "10Everyday · " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/10 · " + rank + " · " + timeStr + "\n" +
+    "Ten questions on today's news." + "\n" +
+    "https://10everyday.com/s";
+
+  // After a share lands, the reader is at their warmest. Pull the
+  // signup into view rather than leaving it below the fold.
+  function postShareNudge(){
+    if(window.tenSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    trackPath("/share-pressed");
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+(function(){
+  const forms = document.querySelectorAll("form.kitform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", async function(ev){
+      ev.preventDefault();
+      const btn = f.querySelector("button");
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await fetch(f.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email_address: email })
+        });
+        if(!res.ok) throw new Error("bad response");
+        window.tenSubscribed = true;
+        const ok = document.createElement("div");
+        ok.className = "sok";
+        ok.textContent = "Check your inbox to confirm";
+        f.parentNode.replaceChild(ok, f);
+      } catch(e) {
+        f.submit();
+      }
+    });
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
