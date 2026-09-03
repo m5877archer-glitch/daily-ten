@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Does my roof need replacing? · Urbach Roofing</title>
+<meta name="description" content="Six questions about your roof and a straight answer. From Urbach Roofing, serving San Diego County since 1979.">
+<meta property="og:title" content="Does my roof need replacing? · Urbach Roofing">
+<meta property="og:description" content="Six questions about your roof and a straight answer.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Urbach Roofing">
+<style>
+  :root{
+    --ink:#1a1f24;
+    --paper:#f2f4f6;
+    --card:#ffffff;
+    --slate:#2f3e4d;
+    --slate2:#1e2a35;
+    --steel:#446074;
+    --rust:#a8471f;
+    --row:#f7f9fa;
+    --good:#1c7a45;
+    --warn:#b7791f;
+    --alert:#a8471f;
+    --line:#d3dae0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Helvetica Neue',Helvetica,Arial,system-ui,sans-serif;
+    background:var(--slate);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 0 48px;
+  }
+  .wrap{width:100%;max-width:660px;padding:0 16px;}
+  .demobar{
+    background:#ffe9a8;border-bottom:2px solid #d9b957;color:#4a3a10;
+    font-size:.78rem;line-height:1.5;padding:9px 16px;text-align:center;
+    margin:0 -16px 20px;
+  }
+  .demobar b{display:block;letter-spacing:.12em;text-transform:uppercase;font-size:.68rem;margin-bottom:2px;}
+  .page{
+    background:var(--paper);border-radius:8px;
+    padding:24px 20px 18px;box-shadow:0 6px 26px rgba(0,0,0,.4);
+  }
+  header{text-align:center;margin-bottom:16px;}
+  header .kicker{
+    font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--steel);font-weight:700;
+  }
+  header h1{
+    font-size:clamp(1.4rem,6.5vw,2rem);margin:6px 0 6px;color:var(--slate2);font-weight:700;line-height:1.25;
+  }
+  header .tagline{
+    color:#556575;font-size:.9rem;padding-bottom:13px;
+    border-bottom:3px solid var(--rust);
+  }
+  header .trust{
+    display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
+    padding:8px 2px 0;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+    color:#556575;font-weight:600;
+  }
+  .progress{background:#dde3e8;height:7px;overflow:hidden;margin:18px 0 6px;border-radius:4px;}
+  .progress .bar{height:100%;width:0;background:var(--rust);transition:width .35s ease;}
+  .meta{
+    display:flex;justify-content:space-between;align-items:center;font-size:.8rem;
+    font-weight:700;color:#fff;background:var(--steel);
+    padding:8px 12px;margin-bottom:14px;letter-spacing:.04em;border-radius:4px;
+  }
+  .meta .dotrow{display:flex;gap:5px;align-items:center;}
+  .meta .dotrow i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.3);display:block;}
+  .meta .dotrow i.done{background:#fff;}
+  .card{background:var(--card);border:1px solid var(--line);padding:24px 22px;border-radius:6px;}
+  .question{font-size:1.15rem;line-height:1.5;margin-bottom:6px;font-weight:700;color:var(--slate2);}
+  .qhelp{font-size:.88rem;color:#6b7885;line-height:1.5;margin-bottom:18px;}
+  .options{display:flex;flex-direction:column;gap:9px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fff;border:1px solid var(--line);border-radius:5px;
+    padding:14px 15px;cursor:pointer;line-height:1.4;
+    transition:border-color .15s, background .15s, box-shadow .15s;
+  }
+  .opt:nth-child(even){background:var(--row);}
+  .opt:hover{border-color:var(--steel);box-shadow:0 1px 5px rgba(47,62,77,.15);}
+  .back{
+    display:none;margin-top:18px;font-family:inherit;font-size:.85rem;
+    background:none;border:none;color:var(--steel);cursor:pointer;text-decoration:underline;padding:0;
+  }
+  .back.show{display:inline-block;}
+
+  .results{display:none;}
+  .results.show{display:block;}
+  .verdict{
+    padding:20px;border-radius:6px;text-align:center;margin-bottom:18px;
+  }
+  .verdict.low{background:#e7f5ed;border:2px solid var(--good);}
+  .verdict.mid{background:#fdf4e3;border:2px solid var(--warn);}
+  .verdict.high{background:#fbeee8;border:2px solid var(--alert);}
+  .verdict .vlabel{
+    font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:6px;color:#6b7885;
+  }
+  .verdict h2{font-size:1.5rem;line-height:1.3;margin-bottom:8px;}
+  .verdict.low h2{color:var(--good);}
+  .verdict.mid h2{color:var(--warn);}
+  .verdict.high h2{color:var(--alert);}
+  .verdict p{font-size:.98rem;line-height:1.6;color:#3c4a57;}
+  .range{
+    background:var(--slate2);color:#e6ecf1;padding:16px 18px;border-radius:6px;margin-bottom:18px;
+  }
+  .range .rlabel{
+    font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:#9db3c4;font-weight:700;margin-bottom:6px;
+  }
+  .range .rnum{font-size:1.8rem;font-weight:700;margin-bottom:6px;}
+  .range .rnote{font-size:.82rem;color:#9db3c4;line-height:1.5;}
+  .summary{
+    background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:18px;
+  }
+  .summary h3{
+    font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#6b7885;
+    margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);
+  }
+  .summary .row{
+    display:flex;justify-content:space-between;gap:14px;
+    padding:7px 0;font-size:.9rem;border-bottom:1px solid #eef2f4;
+  }
+  .summary .row:last-child{border-bottom:none;}
+  .summary .row .k{color:#6b7885;flex:0 0 auto;}
+  .summary .row .v{font-weight:600;text-align:right;}
+  .leadbox{
+    background:var(--row);border:1px solid var(--line);border-radius:6px;padding:20px;
+  }
+  .leadbox h3{font-size:1.15rem;margin-bottom:5px;color:var(--slate2);}
+  .leadbox .lsub{font-size:.88rem;color:#6b7885;line-height:1.5;margin-bottom:14px;}
+  .leadbox .field{margin-bottom:10px;}
+  .leadbox label{
+    display:block;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+    color:#6b7885;font-weight:700;margin-bottom:4px;
+  }
+  .leadbox input{
+    width:100%;font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink);
+  }
+  .leadbox input:focus{outline:2px solid var(--steel);outline-offset:-1px;}
+  .leadbox button{
+    width:100%;font-family:inherit;font-size:1.05rem;font-weight:700;margin-top:6px;
+    background:var(--rust);color:#fff;border:none;border-radius:5px;padding:15px;cursor:pointer;
+  }
+  .leadbox button:hover{background:#8a3818;}
+  .leadbox .lnote{font-size:.75rem;color:#8b98a4;margin-top:10px;line-height:1.5;text-align:center;}
+  .sent{
+    background:#e7f5ed;border:2px solid var(--good);border-radius:6px;padding:22px;text-align:center;
+  }
+  .sent h3{color:var(--good);font-size:1.25rem;margin-bottom:8px;}
+  .sent p{font-size:.94rem;line-height:1.6;color:#3c4a57;}
+  .devnote{
+    margin-top:18px;padding:14px 16px;border-radius:6px;
+    background:#fff8e1;border:1px dashed #d9b957;
+    font-size:.82rem;line-height:1.6;color:#5a4a1c;
+  }
+  .devnote b{display:block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px;}
+  .restart{
+    display:block;width:100%;max-width:280px;margin:16px auto 0;
+    font-family:inherit;font-size:.9rem;font-weight:600;
+    background:transparent;color:var(--steel);border:2px solid var(--steel);
+    border-radius:5px;padding:10px;cursor:pointer;
+  }
+  .restart:hover{background:#e8eef2;}
+  footer{
+    text-align:center;margin-top:20px;padding-top:12px;
+    border-top:3px solid var(--rust);
+    font-size:.78rem;color:#6b7885;line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="demobar">
+    <b>Demo build</b>
+    Made for Urbach Roofing by Matt Archer at 10Everyday.com. Questions, scoring, colors and copy are all yours to change. Nothing here is live and no data is being sent anywhere.
+  </div>
+
+ <div class="page">
+  <header>
+    <div class="kicker">Urbach Roofing &middot; San Marcos</div>
+    <h1>Does my roof need replacing?</h1>
+    <div class="tagline">Six questions. A straight answer. No phone call required.</div>
+    <div class="trust">
+      <span>Since 1979</span>
+      <span>10,000+ roofs</span>
+      <span>Licensed &amp; bonded</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 6</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="qhelp" id="qhelp"></div>
+    <div class="options" id="opts"></div>
+    <button class="back" id="backBtn">Back to previous question</button>
+  </div>
+
+  <div id="results" class="results">
+    <div class="verdict" id="verdict">
+      <div class="vlabel">Your result</div>
+      <h2 id="vhead"></h2>
+      <p id="vbody"></p>
+    </div>
+
+    <div class="range" id="rangeBox">
+      <div class="rlabel">Typical range for a job like this</div>
+      <div class="rnum" id="rnum"></div>
+      <div class="rnote" id="rnote"></div>
+    </div>
+
+    <div class="summary">
+      <h3>What Urbach receives when you submit</h3>
+      <div id="summaryRows"></div>
+    </div>
+
+    <div id="leadWrap">
+      <div class="leadbox">
+        <h3 id="leadHead">Get a free written bid</h3>
+        <div class="lsub" id="leadSub">We will look at what you told us, come out at a time you pick, and send a written bid you can actually read.</div>
+        <div class="field">
+          <label for="ln">Name</label>
+          <input type="text" id="ln" placeholder="Jane Doe">
+        </div>
+        <div class="field">
+          <label for="le">Email</label>
+          <input type="email" id="le" placeholder="jane@example.com">
+        </div>
+        <div class="field">
+          <label for="lp">Phone</label>
+          <input type="tel" id="lp" placeholder="(760) 555-0100">
+        </div>
+        <div class="field">
+          <label for="la">Property address</label>
+          <input type="text" id="la" placeholder="Street, city">
+        </div>
+        <button id="leadBtn">Send this to Urbach</button>
+        <div class="lnote">Office hours are Monday through Friday, 7:00 to 3:30. Most bids go out within a few days.</div>
+      </div>
+    </div>
+
+    <div class="devnote">
+      <b>Note for Roger and Amber</b>
+      Everything above is adjustable. The questions, the scoring thresholds, the dollar ranges and the wording of each verdict are all settings, not code. The ranges shown here are placeholders I made up so you could see where your real numbers would sit. On the live version this posts straight into your inbox or whatever CRM you use, so a completed quiz arrives as a lead with the roof details already attached.
+    </div>
+
+    <button class="restart" onclick="location.reload()">Start over</button>
+  </div>
+
+  <footer>
+    Urbach Roofing, Inc. &middot; 445 Production St, San Marcos, CA 92078 &middot; (760) 471-5065
+    <div style="margin-top:6px;">Demo built by 10Everyday.com</div>
+  </footer>
+ </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    key:"Roof age",
+    q:"How old is your roof?",
+    help:"A best guess is fine. If you bought the house already built, count from when you think it was last done.",
+    options:[
+      { label:"Less than 10 years", score:0 },
+      { label:"10 to 15 years", score:1 },
+      { label:"15 to 25 years", score:3 },
+      { label:"More than 25 years, or I don't know", score:4 }
+    ]
+  },
+  {
+    key:"Material",
+    q:"What is the roof made of?",
+    help:"Look at the surface from the driveway. Flat overlapping rectangles are shingles. Curved rows are tile. Split rough planks are wood shake.",
+    options:[
+      { label:"Asphalt shingle", score:1 },
+      { label:"Concrete or clay tile", score:0 },
+      { label:"Wood shake or shingle", score:3 },
+      { label:"Not sure", score:1 }
+    ]
+  },
+  {
+    key:"Granules in gutters",
+    q:"Are there granules collecting in your gutters or at the bottom of the downspout?",
+    help:"They look like coarse dark sand. Shingles shed them slowly for years, then faster near the end of their life.",
+    options:[
+      { label:"None that I've noticed", score:0 },
+      { label:"A little", score:2 },
+      { label:"A lot, it builds up", score:4 },
+      { label:"I have not looked", score:1 }
+    ]
+  },
+  {
+    key:"Interior staining",
+    q:"Any staining on ceilings, walls, or in the attic?",
+    help:"Brown rings, dark patches, or anything that looks like a water mark, even an old one that has dried.",
+    options:[
+      { label:"None anywhere", score:0 },
+      { label:"One spot", score:2 },
+      { label:"More than one spot", score:4 },
+      { label:"There is an active leak right now", score:6 }
+    ]
+  },
+  {
+    key:"Visible damage",
+    q:"From the ground, do you see anything missing, cracked, curling or slipped?",
+    help:"Walk the perimeter and look up. Curling edges, bald patches, cracked tiles, or a row that has slid out of line.",
+    options:[
+      { label:"Nothing looks wrong", score:0 },
+      { label:"A few spots", score:2 },
+      { label:"Several areas, or one large one", score:4 },
+      { label:"Can't tell from where I can see", score:1 }
+    ]
+  },
+  {
+    key:"Last inspection",
+    q:"Has a roofer been up there in the last five years?",
+    help:"An inspection counts. So does a repair, even a small one.",
+    options:[
+      { label:"Yes, a full inspection", score:0 },
+      { label:"Yes, but only for a repair", score:1 },
+      { label:"No", score:2 },
+      { label:"I don't know", score:2 }
+    ]
+  }
+];
+
+let current = 0;
+let total = 0;
+const answers = [];
+
+const qtext = document.getElementById("qtext");
+const qhelp = document.getElementById("qhelp");
+const opts = document.getElementById("opts");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+const backBtn = document.getElementById("backBtn");
+
+function renderDotRow(){
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    out += "<i" + (i < answers.length ? " class=\"done\"" : "") + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  qhelp.textContent = q.help;
+  opts.innerHTML = "";
+  q.options.forEach(function(o){
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = o.label;
+    btn.onclick = function(){ select(o); };
+    opts.appendChild(btn);
+  });
+  bar.style.width = (current / QUESTIONS.length * 100) + "%";
+  qcount.textContent = "Question " + (current + 1) + " of " + QUESTIONS.length;
+  if(current > 0){ backBtn.classList.add("show"); }
+  else { backBtn.classList.remove("show"); }
+  renderDotRow();
+}
+
+function select(o){
+  answers[current] = { key: QUESTIONS[current].key, label: o.label, score: o.score };
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+}
+
+backBtn.onclick = function(){
+  if(current > 0){
+    current--;
+    answers.length = current;
+    render();
+  }
+};
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  backBtn.style.display = "none";
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  renderDotRow();
+
+  total = answers.reduce(function(sum, a){ return sum + a.score; }, 0);
+
+  const r = document.getElementById("results");
+  r.classList.add("show");
+
+  const verdict = document.getElementById("verdict");
+  const vhead = document.getElementById("vhead");
+  const vbody = document.getElementById("vbody");
+  const rnum = document.getElementById("rnum");
+  const rnote = document.getElementById("rnote");
+  const leadHead = document.getElementById("leadHead");
+  const leadSub = document.getElementById("leadSub");
+
+  const activeLeak = answers[3] && answers[3].score === 6;
+
+  if(activeLeak || total >= 17){
+    verdict.className = "verdict high";
+    vhead.textContent = "Yes, this one needs attention now";
+    vbody.textContent = activeLeak
+      ? "An active leak changes the timeline regardless of everything else. Water that reaches the deck starts damaging framing and insulation, and that damage costs more than the roof does. This should be looked at in days, not months."
+      : "Between the age, the wear and what you can see from the ground, this reads like a roof at the end of its service life rather than one with a repairable problem. Patching it now usually means paying twice.";
+    rnum.textContent = "$14,000 to $30,000";
+    rnote.textContent = "Placeholder figures for a full residential reroof. Real numbers depend on square footage, pitch, material and how much decking has to be replaced once the old layer comes off.";
+    leadHead.textContent = "Get a free written bid";
+    leadSub.textContent = "Send this over and we will come look at it, then put a written bid in your hands with the options spelled out.";
+  } else if(total >= 11){
+    verdict.className = "verdict high";
+    vhead.textContent = "Probably, and sooner than later";
+    vbody.textContent = "There is enough here that replacement is the likely answer, but not so much that you have to move this week. Getting a bid now means you choose the timing instead of a winter storm choosing it for you.";
+    rnum.textContent = "$12,000 to $26,000";
+    rnote.textContent = "Placeholder figures for a full residential reroof. Real numbers depend on square footage, pitch, material and how much decking has to be replaced once the old layer comes off.";
+    leadHead.textContent = "Get a free written bid";
+    leadSub.textContent = "No pressure and no obligation. A bid in hand is useful even if you sit on it for a year.";
+  } else if(total >= 5){
+    verdict.className = "verdict mid";
+    vhead.textContent = "Not yet, but it is worth a look";
+    vbody.textContent = "Nothing here says replace it. A few of your answers are the kind that get worse quietly, though, and the difference between a repair and a reroof is often just how long it went unnoticed.";
+    rnum.textContent = "$400 to $2,500";
+    rnote.textContent = "Placeholder figures for an inspection and typical repair work. A full reroof is a different conversation and would be quoted separately.";
+    leadHead.textContent = "Book an inspection";
+    leadSub.textContent = "Someone comes out, goes up, and tells you what is actually happening. Only necessary repairs get recommended.";
+  } else {
+    verdict.className = "verdict low";
+    vhead.textContent = "No, your roof has time left";
+    vbody.textContent = "Based on what you told us, this roof is in the middle of its life rather than the end of it. The useful thing now is a baseline: knowing its condition today makes it obvious later when something has changed.";
+    rnum.textContent = "$0 to $600";
+    rnote.textContent = "Placeholder figures for an inspection and minor maintenance. Most roofs in this range need nothing beyond keeping the gutters clear.";
+    leadHead.textContent = "Book a maintenance check";
+    leadSub.textContent = "Worth doing every few years. Small things caught early are the reason some roofs last ten years longer than others.";
+  }
+
+  const rows = document.getElementById("summaryRows");
+  let html = "";
+  answers.forEach(function(a){
+    html += "<div class=\"row\"><span class=\"k\">" + a.key + "</span><span class=\"v\">" + a.label + "</span></div>";
+  });
+  html += "<div class=\"row\"><span class=\"k\">Assessment score</span><span class=\"v\">" + total + " of 23</span></div>";
+  rows.innerHTML = html;
+}
+
+document.getElementById("leadBtn").onclick = function(){
+  const name = document.getElementById("ln").value.trim();
+  const email = document.getElementById("le").value.trim();
+  const phone = document.getElementById("lp").value.trim();
+  if(!name || (!email && !phone)){
+    alert("Please add a name and either an email or a phone number so we can reach you.");
+    return;
+  }
+  const wrap = document.getElementById("leadWrap");
+  wrap.innerHTML =
+    "<div class=\"sent\">" +
+    "<h3>Sent. Thank you.</h3>" +
+    "<p>Your answers went over with your contact details attached, so nobody has to ask you the same six questions again. Expect to hear back within one business day.</p>" +
+    "</div>";
+};
+
+render();
+</script>
+</body>
+</html>

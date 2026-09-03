@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Five at the Vine · San Elijo Vine &amp; Tap</title>
+<meta name="description" content="Five questions every morning from San Elijo Vine &amp; Tap. Two minutes. Wine, food and the neighborhood.">
+<meta property="og:title" content="Five at the Vine · San Elijo Vine &amp; Tap">
+<meta property="og:description" content="Five questions every morning. Two minutes.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Five at the Vine">
+<style>
+  :root{
+    --ink:#241c1e;
+    --paper:#faf5ee;
+    --card:#fffcf7;
+    --wine:#5c1f2e;
+    --wine2:#3f1420;
+    --mid:#8a3548;
+    --gold:#b08d3f;
+    --olive:#6b7150;
+    --row:#f6efe6;
+    --correct:#3f6b46;
+    --wrong:#a8342c;
+    --line:#e0d5c6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    background:var(--wine);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 0 48px;
+  }
+  .wrap{width:100%;max-width:640px;padding:0 16px;}
+  .demobar{
+    background:#ffe9a8;border-bottom:2px solid #d9b957;color:#4a3a10;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.78rem;line-height:1.5;padding:9px 16px;text-align:center;
+    margin:0 -16px 20px;
+  }
+  .demobar b{display:block;letter-spacing:.12em;text-transform:uppercase;font-size:.68rem;margin-bottom:2px;}
+  .page{
+    background:var(--paper);border-radius:4px;
+    padding:26px 22px 20px;box-shadow:0 6px 26px rgba(30,8,14,.45);
+  }
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--mid);font-weight:600;
+  }
+  header h1{
+    font-size:clamp(1.7rem,8.5vw,2.5rem);letter-spacing:.02em;margin:6px 0 3px;
+    color:var(--wine);font-weight:400;font-style:italic;
+  }
+  header h1 .amp{color:var(--gold);font-style:normal;}
+  header .tagline{
+    color:#5d5148;font-size:.92rem;padding-bottom:13px;font-style:italic;
+    border-bottom:1px solid var(--gold);
+  }
+  header .dateline{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--wine);padding:7px 2px;
+    font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;color:#5d5148;
+  }
+  header .dateline .dl-date{font-weight:700;color:var(--wine);}
+  .progress{background:#e7ddd0;height:7px;overflow:hidden;margin:18px 0 6px;}
+  .progress .bar{height:100%;width:0;background:var(--gold);transition:width .35s ease;}
+  .meta{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    display:flex;justify-content:space-between;align-items:center;font-size:.78rem;
+    font-weight:700;color:#f6ece0;background:var(--wine);
+    padding:8px 12px;margin-bottom:14px;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .meta .dotrow{display:flex;gap:5px;align-items:center;}
+  .meta .dotrow i{width:10px;height:10px;border-radius:50%;background:rgba(246,236,224,.3);display:block;}
+  .meta .dotrow i.ok{background:var(--gold);}
+  .meta .dotrow i.no{background:#d98d84;}
+  .card{background:var(--card);border:1px solid var(--line);padding:24px 22px;}
+  .question{font-size:1.14rem;line-height:1.6;margin-bottom:18px;}
+  .options{display:flex;flex-direction:column;gap:9px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffcf7;border:1px solid var(--line);
+    padding:13px 15px;cursor:pointer;line-height:1.45;
+    transition:border-color .15s, background .15s;
+  }
+  .opt:nth-child(even){background:var(--row);}
+  .opt:hover:not(:disabled){border-color:var(--mid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:#eef4ee;border-color:var(--correct);color:var(--correct);font-weight:700;}
+  .opt.wrong{background:#faecea;border-color:var(--wrong);color:var(--wrong);}
+  .explain{
+    margin-top:16px;padding:15px;border-left:3px solid var(--gold);
+    background:var(--paper);font-size:.95rem;line-height:1.6;display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--wine);color:#f6ece0;border:none;padding:14px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--wine2);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{font-size:3.4rem;font-weight:400;margin:10px 0 2px;color:var(--wine);}
+  .results .outof{color:#7a6d62;margin-bottom:14px;font-style:italic;}
+  .results .rank{font-size:1.4rem;font-weight:400;font-style:italic;margin-bottom:8px;color:var(--mid);}
+  .results .flavor{color:#5d5148;line-height:1.6;margin-bottom:14px;}
+  .results .time{font-size:.88rem;color:#7a6d62;margin-bottom:10px;}
+  .results .dots{font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;}
+  .results .stats{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.78rem;color:#7a6d62;margin-top:16px;border-top:1px solid var(--line);padding-top:12px;
+  }
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:1.05rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--wine);color:#f6ece0;border:none;padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--wine2);}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.88rem;font-weight:700;letter-spacing:.04em;
+    background:transparent;color:var(--mid);border:1px solid var(--mid);
+    padding:11px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--row);}
+  .perk{
+    margin-top:16px;padding:14px 16px;text-align:left;
+    background:var(--row);border:1px solid var(--gold);
+    font-size:.92rem;line-height:1.6;color:#4a3f36;
+  }
+  .perk b{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    display:block;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
+    margin-bottom:5px;color:var(--mid);
+  }
+  .signup{margin-top:16px;border-top:1px solid var(--line);padding-top:16px;text-align:center;}
+  .signup .skicker{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:#7a6d62;font-weight:600;
+  }
+  .signup h3{font-size:1.25rem;margin:5px 0 4px;color:var(--wine);font-weight:400;font-style:italic;}
+  .signup .ssub{color:#5d5148;font-size:.9rem;margin-bottom:12px;}
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--mid);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.92rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--mid);color:#fff;border:none;padding:12px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--wine);}
+  .signup .snote{font-size:.75rem;color:#9a8d80;margin-top:8px;}
+  .signup .sok{font-weight:700;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;}
+  .midsignup{
+    display:none;margin-top:14px;padding:13px 15px;
+    background:var(--row);border:1px solid var(--gold);text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.95rem;margin-bottom:9px;font-style:italic;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--mid);background:var(--card);color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.85rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    background:var(--mid);color:#fff;border:none;padding:10px 18px;cursor:pointer;
+  }
+  .midsignup .mnote{font-size:.72rem;color:#7a6d62;margin-top:7px;}
+  .midsignup .sok{font-weight:700;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
+  footer{
+    text-align:center;margin-top:20px;padding-top:12px;
+    border-top:1px solid var(--gold);
+    font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size:.75rem;color:#9a8d80;line-height:1.7;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="demobar">
+    <b>Demo build</b>
+    Made for San Elijo Vine &amp; Tap by Matt Archer at 10Everyday.com. Questions, colors and copy are all yours to change. Nothing here is live yet.
+  </div>
+
+ <div class="page">
+  <header>
+    <div class="kicker">San Elijo Hills &middot; Free every morning</div>
+    <h1>Five at the Vine</h1>
+    <div class="tagline">Five questions. Two minutes. Wine, food and the neighborhood.</div>
+    <div class="dateline">
+      <span>No. 1</span>
+      <span class="dl-date">Thursday, September 3, 2026</span>
+      <span>Morning pour</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 5</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Want tomorrow's five in your inbox?</div>
+    <form class="listform" id="formMid">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Sign up</button>
+    </form>
+    <div class="mnote">Free. One short email each morning. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1rem;color:#7a6d62;font-style:italic;">Today's pour</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 5</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+
+    <div class="perk">
+      <b>This week at the Vine</b>
+      Highest score of the week gets a glass from the boutique list, on the house. Taco Tuesday runs all evening, and the birria comes back the first Tuesday of the month. Show this screen at the bar.
+    </div>
+
+    <div class="stats" id="statsEl"></div>
+
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every morning</h3>
+      <div class="ssub" id="ssub">Five questions with your coffee, from the place you walk to for dinner.</div>
+      <form class="listform" id="formMain">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Sign up</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+  </div>
+
+  <footer>
+    San Elijo Vine &amp; Tap &middot; 1231 Elfin Forest Rd W, Ste 110, San Marcos &middot; (760) 798-9804
+    <div style="margin-top:6px;">Boutique wines, craft beer, great food &middot; Demo built by 10Everyday.com</div>
+  </footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-09-03";
+const PREV_EDITION = "2026-09-02";
+const EDITION_LABEL = "September 3";
+const STORE_KEY = "vineFive";
+
+const QUESTIONS = [
+  {
+    q:"Roughly three quarters of the Vine & Tap wine list comes from small producers in four places. Three of them are California, Oregon and New Zealand. What is the fourth, and closer to San Elijo Hills than any of the others?",
+    options:["Mexico","Argentina","Italy","South Africa"],
+    answer:"Mexico",
+    explain:"Baja's Valle de Guadalupe is about two hours south of here, and it has been making serious wine for decades while most of San Diego drove past it on the way to somewhere else. Putting it on a neighborhood list next to Oregon and New Zealand is a small act of advocacy."
+  },
+  {
+    q:"San Elijo Hills has something the rest of San Marcos does not: a proper town center, with a park, a stage, a fountain, and one more landmark people use when they give directions. What is it?",
+    options:["A clock tower","A lighthouse","A carousel","A windmill"],
+    answer:"A clock tower",
+    explain:"The clock tower anchors the square where the HOA runs Concert in the Square, Oktoberfest and the tree lighting. Vine & Tap sits right in it, which is why the place functions less like a restaurant you drive to and more like the neighborhood's front room."
+  },
+  {
+    q:"New Zealand earns its spot on plenty of wine lists thanks to one grape that made the country's reputation almost overnight, starting in Marlborough in the 1980s. Which grape?",
+    options:["Sauvignon Blanc","Chardonnay","Pinot Noir","Riesling"],
+    answer:"Sauvignon Blanc",
+    explain:"Marlborough Sauvignon Blanc arrived tasting like nothing else on the shelf, all grapefruit and cut grass, and it rewrote what people expected from the grape. New Zealand does excellent Pinot Noir too, but Sauvignon Blanc is what put it on the map."
+  },
+  {
+    q:"Vine & Tap's owner, Chris Wood, calls himself an unlikely restaurant owner. He got his start in the back of a restaurant and his break when someone moved him out front. What job did he start in?",
+    options:["Washing dishes","Prep cook","Valet","Bookkeeping"],
+    answer:"Washing dishes",
+    explain:"Wood started in the dish pit and got a chance opportunity to work the front of house as a server, which is the moment the whole path turned. Worth remembering the next time someone tells you there is no ladder in this business."
+  },
+  {
+    q:"Taco Tuesday runs every week at Vine & Tap, but one Tuesday a month brings a particular taco that regulars turn up early for, before 7:30, because it goes. Which one?",
+    options:["Birria","Al pastor","Lengua","Baja fish"],
+    answer:"Birria",
+    explain:"Birria lands the first Tuesday of the month and the people who know show up ahead of 7:30. It is a slow braise, so when it is gone it is genuinely gone, and no amount of asking nicely produces more."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+
+function renderDotRow(){
+  if(!dotRowEl) return;
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    const d = dots[i];
+    const cls = d === undefined ? "" : (d === "\u{1F7E2}" ? " class=\"ok\"" : " class=\"no\"");
+    out += "<i" + cls + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  if(current >= 2 && !window.vineSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  renderDotRow();
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  renderDotRow();
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results" : "Next Question";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = STORE_KEY + ".done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem(STORE_KEY + ".stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem(STORE_KEY + ".stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem(STORE_KEY + ".stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  if(window.vineSubscribed){
+    const rf = document.getElementById("formMain");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're on the list. Check your inbox.";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+
+  let rank, flavor;
+  if(score === 5){
+    rank = "Knows the List";
+    flavor = "Clean sweep. You have either read the back of a lot of bottles or you are here more than you admit.";
+  } else if(score === 4){
+    rank = "Regular Table";
+    flavor = "One short. Come in and let somebody talk you through the one you missed.";
+  } else if(score === 3){
+    rank = "Second Glass";
+    flavor = "Right down the middle, which is a perfectly civilized place to land.";
+  } else if(score === 2){
+    rank = "Still Reading the Menu";
+    flavor = "Not your morning. The list resets tomorrow and so does everyone else's score.";
+  } else {
+    rank = "New to the Square";
+    flavor = "Welcome to the neighborhood. Walk down, sit on the side patio, and this gets easier.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Days played: " + stats.played +
+      " \u00b7 Correct all-time: " + stats.correct +
+      " \u00b7 Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "Five at the Vine \u00b7 " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/5 \u00b7 " + rank + " \u00b7 " + timeStr + "\n" +
+    "Daily five from San Elijo Vine & Tap." + "\n" +
+    "https://sevineandtap.com/five";
+
+  function postShareNudge(){
+    if(window.vineSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+// Demo only: no list is connected yet. On the live build this posts to
+// whatever email service Vine & Tap already uses.
+(function(){
+  const forms = document.querySelectorAll("form.listform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      window.vineSubscribed = true;
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're on the list. Check your inbox.";
+      f.parentNode.replaceChild(ok, f);
+    });
+  });
+})();
+</script>
+</body>
+</html>

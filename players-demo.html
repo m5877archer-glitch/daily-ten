@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Players Five · Daily sports quiz from Players Sports Bar</title>
+<meta name="description" content="Five sports questions every morning from Players Sports Bar in San Marcos. Two minutes. Settle it at the bar.">
+<meta property="og:title" content="The Players Five · Daily sports quiz">
+<meta property="og:description" content="Five sports questions every morning. Two minutes.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Players Five">
+<style>
+  :root{
+    --ink:#12181f;
+    --paper:#eef1f5;
+    --card:#ffffff;
+    --navy:#0d1b2a;
+    --navy2:#16304a;
+    --steel:#1f4e79;
+    --gold:#f0a202;
+    --red:#b3202c;
+    --row:#f4f7fa;
+    --correct:#1c7a45;
+    --wrong:#b3202c;
+    --line:#ccd6e0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Helvetica Neue',Helvetica,Arial,system-ui,sans-serif;
+    background:var(--navy);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 0 48px;
+  }
+  .wrap{width:100%;max-width:640px;padding:0 16px;}
+  .demobar{
+    background:#ffe9a8;border-bottom:2px solid #d9b957;color:#4a3a10;
+    font-size:.78rem;line-height:1.5;padding:9px 16px;text-align:center;
+    margin:0 -16px 20px;
+  }
+  .demobar b{display:block;letter-spacing:.12em;text-transform:uppercase;font-size:.68rem;margin-bottom:2px;}
+  .page{
+    background:var(--paper);border-radius:10px;
+    padding:24px 20px 18px;box-shadow:0 6px 26px rgba(0,0,0,.45);
+  }
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--steel);font-weight:700;
+  }
+  header h1{
+    font-size:clamp(1.6rem,8.5vw,2.5rem);letter-spacing:.03em;margin:4px 0 3px;
+    text-transform:uppercase;color:var(--navy);font-weight:800;font-style:italic;
+  }
+  header h1 .five{color:var(--red);}
+  header .tagline{
+    color:#4a5663;font-size:.92rem;padding-bottom:12px;font-weight:500;
+    border-bottom:4px solid var(--gold);
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--navy);padding:6px 2px;
+    font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#4a5663;font-weight:600;
+  }
+  header .dateline .dl-date{font-weight:800;color:var(--navy);}
+  .progress{background:#d5dde5;height:8px;overflow:hidden;margin:16px 0 6px;}
+  .progress .bar{height:100%;width:0;background:var(--gold);transition:width .35s ease;}
+  .meta{
+    display:flex;justify-content:space-between;align-items:center;font-size:.85rem;
+    font-weight:700;color:#fff;background:var(--navy2);
+    padding:8px 12px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em;
+  }
+  .meta .dotrow{display:flex;gap:5px;align-items:center;}
+  .meta .dotrow i{width:11px;height:11px;border-radius:2px;background:rgba(255,255,255,.3);display:block;}
+  .meta .dotrow i.ok{background:#5fd18f;}
+  .meta .dotrow i.no{background:#ff8b84;}
+  .card{background:var(--card);border:1px solid var(--line);padding:22px;}
+  .question{font-size:1.12rem;line-height:1.55;margin-bottom:18px;font-weight:600;}
+  .options{display:flex;flex-direction:column;gap:9px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fff;border:1px solid var(--line);border-left:4px solid var(--line);
+    padding:13px 14px;cursor:pointer;line-height:1.4;
+    transition:border-color .15s, background .15s;
+  }
+  .opt:nth-child(even){background:var(--row);}
+  .opt:hover:not(:disabled){border-left-color:var(--gold);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:#e7f5ed;border-color:var(--correct);border-left-color:var(--correct);color:var(--correct);font-weight:700;}
+  .opt.wrong{background:#fbedee;border-color:var(--wrong);border-left-color:var(--wrong);color:var(--wrong);}
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--steel);
+    background:var(--row);font-size:.94rem;line-height:1.55;display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    background:var(--red);color:#fff;border:none;padding:14px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:#8e1922;}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{font-size:3.4rem;font-weight:800;margin:10px 0 2px;color:var(--navy);}
+  .results .outof{color:#6b7683;margin-bottom:14px;}
+  .results .rank{font-size:1.35rem;font-weight:800;margin-bottom:8px;color:var(--red);text-transform:uppercase;letter-spacing:.03em;}
+  .results .flavor{color:#4a5663;line-height:1.55;margin-bottom:14px;}
+  .results .time{font-size:.9rem;color:#6b7683;margin-bottom:10px;}
+  .results .dots{font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;}
+  .results .stats{font-size:.82rem;color:#6b7683;margin-top:16px;border-top:1px solid var(--line);padding-top:12px;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;
+    background:var(--red);color:#fff;border:none;padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:#8e1922;}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:700;
+    background:transparent;color:var(--steel);border:2px solid var(--steel);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--row);}
+  .perk{
+    margin-top:16px;padding:13px 14px;
+    background:var(--navy);color:#e8eef4;font-size:.9rem;line-height:1.5;text-align:left;
+  }
+  .perk b{display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:5px;color:var(--gold);}
+  .signup{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;text-align:center;}
+  .signup .skicker{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:#6b7683;font-weight:700;}
+  .signup h3{font-size:1.2rem;margin:4px 0 4px;color:var(--navy);text-transform:uppercase;font-style:italic;}
+  .signup .ssub{color:#4a5663;font-size:.9rem;margin-bottom:10px;}
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--steel);background:#fff;color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+    background:var(--steel);color:#fff;border:none;padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--navy);}
+  .signup .snote{font-size:.75rem;color:#8a949f;margin-top:8px;}
+  .signup .sok{font-weight:700;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;}
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--navy);color:#e8eef4;text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.95rem;font-weight:700;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--steel);background:#fff;color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.95rem;font-weight:800;text-transform:uppercase;
+    background:var(--gold);color:var(--navy);border:none;padding:9px 18px;cursor:pointer;
+  }
+  .midsignup .mnote{font-size:.72rem;color:#9fb0c0;margin-top:6px;}
+  .midsignup .sok{font-weight:700;color:#7fe0a5;font-size:1rem;margin:6px 0 2px;}
+  footer{
+    text-align:center;margin-top:18px;padding-top:10px;
+    border-top:4px solid var(--gold);
+    font-size:.78rem;color:#6b7683;line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="demobar">
+    <b>Demo build</b>
+    Made for Players Sports Bar by Matt Archer at 10Everyday.com. Questions, colors and copy are all yours to change. Nothing here is live yet.
+  </div>
+
+ <div class="page">
+  <header>
+    <div class="kicker">San Marcos &middot; Free every morning</div>
+    <h1>The Players <span class="five">Five</span></h1>
+    <div class="tagline">Five sports questions. Two minutes. Settle it at the bar.</div>
+    <div class="dateline">
+      <span>No. 1</span>
+      <span class="dl-date">Thursday, September 3, 2026</span>
+      <span>Morning line</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 5</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Want tomorrow's five in your inbox?</div>
+    <form class="listform" id="formMid">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Sign up</button>
+    </form>
+    <div class="mnote">Free. One short email each morning. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.05rem;color:#6b7683;">Final</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 5</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+
+    <div class="perk">
+      <b>This week at Players</b>
+      High score for the week gets a pitcher on the house. Sunday tickets open at 9. Thirty on tap, every screen live.
+    </div>
+
+    <div class="stats" id="statsEl"></div>
+
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every morning</h3>
+      <div class="ssub" id="ssub">Five questions with your coffee, before anyone at work beats you to them.</div>
+      <form class="listform" id="formMain">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Sign up</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+  </div>
+
+  <footer>
+    Players Sports Bar &middot; 328 S Twin Oaks Valley Rd, San Marcos &middot; (760) 736-4272
+    <div style="margin-top:6px;">Demo built by 10Everyday.com</div>
+  </footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-09-03";
+const PREV_EDITION = "2026-09-02";
+const EDITION_LABEL = "September 3";
+const STORE_KEY = "playersFive";
+
+const QUESTIONS = [
+  {
+    q:"The Padres spent their first 35 seasons sharing a stadium with the Chargers before moving downtown to a ballpark of their own. In what year did Petco Park open?",
+    options:["2001","2004","2007","2010"],
+    answer:"2004",
+    explain:"Petco opened for the 2004 season, ending the Padres' run at the multipurpose stadium in Mission Valley that went by Jack Murphy and then Qualcomm. The move downtown is most of the reason the East Village looks the way it does now."
+  },
+  {
+    q:"Players has a reputation as a New England bar three thousand miles from New England. The Patriots have not actually played in Boston since 1970. What town do they call home?",
+    options:["Foxborough","Cambridge","Providence","Worcester"],
+    answer:"Foxborough",
+    explain:"Gillette Stadium sits in Foxborough, Massachusetts, roughly halfway between Boston and Providence. The team kept the regional name rather than a city name, which is part of why the fan base spreads so far."
+  },
+  {
+    q:"Before it was Players, this business operated in San Diego under a different name entirely, then moved and rebranded in 2001. What was it originally called?",
+    options:["Poppy's","Legends","The Dugout","Grappa"],
+    answer:"Poppy's",
+    explain:"Poppy's became Players after the move to Clairemont Mesa. The San Marcos location came later, in 2011, in a building that had been Grappa and then Legends, which is why some longtime locals still call it by the old name."
+  },
+  {
+    q:"Torrey Pines has hosted the U.S. Open twice. Tiger Woods won the first one in 2008 while playing on a broken leg. Who won when it returned in 2021?",
+    options:["Jon Rahm","Brooks Koepka","Rory McIlroy","Phil Mickelson"],
+    answer:"Jon Rahm",
+    explain:"Rahm birdied the last two holes to win his first major, a month after being pulled from a tournament he led by six while testing positive for COVID. Mickelson, who grew up in San Diego, has never won a U.S. Open anywhere."
+  },
+  {
+    q:"Players sits on South Twin Oaks Valley Road, close enough that the crowd swells noticeably when school is in session. Which campus is next door?",
+    options:[
+      "Cal State San Marcos",
+      "Palomar College",
+      "MiraCosta College",
+      "UC San Diego"
+    ],
+    answer:"Cal State San Marcos",
+    explain:"CSUSM is a short drive up the road and opened to students in 1990, making it one of the youngest campuses in the Cal State system. Palomar is also nearby, in San Marcos proper, but it is the four year school that fills the patio."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+
+function renderDotRow(){
+  if(!dotRowEl) return;
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    const d = dots[i];
+    const cls = d === undefined ? "" : (d === "\u{1F7E2}" ? " class=\"ok\"" : " class=\"no\"");
+    out += "<i" + cls + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  if(current >= 2 && !window.playersSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  renderDotRow();
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  renderDotRow();
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results" : "Next Question";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = STORE_KEY + ".done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem(STORE_KEY + ".stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem(STORE_KEY + ".stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem(STORE_KEY + ".stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  if(window.playersSubscribed){
+    const rf = document.getElementById("formMain");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're on the list. Check your inbox.";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+
+  let rank, flavor;
+  if(score === 5){
+    rank = "Perfect Card";
+    flavor = "Five for five. Go ahead and tell the group chat, nobody else is going to do it for you.";
+  } else if(score === 4){
+    rank = "Starter";
+    flavor = "One off a clean sheet. Somebody at the bar will tell you which one you blew.";
+  } else if(score === 3){
+    rank = "Role Player";
+    flavor = "Right at the average. Perfectly respectable before nine in the morning.";
+  } else if(score === 2){
+    rank = "Practice Squad";
+    flavor = "Not your day. The good news is there is a fresh five tomorrow.";
+  } else {
+    rank = "Bench";
+    flavor = "Rough one. Come in and watch a game, it will come back to you.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Days played: " + stats.played +
+      " \u00b7 Correct all-time: " + stats.correct +
+      " \u00b7 Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "The Players Five \u00b7 " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/5 \u00b7 " + rank + " \u00b7 " + timeStr + "\n" +
+    "Daily sports quiz from Players Sports Bar, San Marcos." + "\n" +
+    "https://sanmarcos.playerssportsbar.com/five";
+
+  function postShareNudge(){
+    if(window.playersSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+// Demo only: no list is connected yet. On the live build this posts to
+// whatever email service Players already uses.
+(function(){
+  const forms = document.querySelectorAll("form.listform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      window.playersSubscribed = true;
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're on the list. Check your inbox.";
+      f.parentNode.replaceChild(ok, f);
+    });
+  });
+})();
+</script>
+</body>
+</html>
