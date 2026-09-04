@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing · A daily quiz for your business · 10Everyday.com</title>
+<meta name="description" content="Three ways to run a branded daily quiz for your business. Build it once, refresh it weekly, or run a new one every morning.">
+<meta property="og:title" content="A daily quiz for your business">
+<meta property="og:description" content="Three ways to run one. Build it once, refresh it weekly, or run a new one every morning.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://10everyday.com/pricing">
+<meta property="og:site_name" content="10Everyday">
+<meta name="twitter:card" content="summary">
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --line:#d8d2c0;
+    --muted:#6b6455;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+    line-height:1.6;
+  }
+  .wrap{width:100%;max-width:660px;}
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:30px 26px 22px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  header{text-align:center;margin-bottom:22px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);
+  }
+  header h1{font-size:clamp(1.5rem,7vw,2.3rem);letter-spacing:.02em;margin:4px 0 2px;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.95rem;
+    border-bottom:3px double var(--ink);padding-bottom:14px;
+  }
+  .lead{font-size:1.02rem;margin-bottom:8px;}
+  .lead p{margin-bottom:12px;}
+  .lead .last{
+    border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:26px;
+  }
+  .plan{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;margin-bottom:20px;
+  }
+  .plan.pick{border:2px solid var(--ptmid);}
+  .plan .step{
+    font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    margin-bottom:3px;
+  }
+  .plan.pick .step{color:var(--ptmid);font-weight:bold;}
+  .plan h2{font-size:1.5rem;letter-spacing:.01em;margin-bottom:2px;}
+  .plan .price{
+    font-size:1.15rem;font-weight:bold;color:var(--ptdark);
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px;
+  }
+  .plan .price small{font-weight:normal;color:var(--muted);font-size:.88rem;}
+  .plan .pitch{margin-bottom:14px;}
+  .plan ul{list-style:none;margin-bottom:14px;}
+  .plan li{
+    padding:5px 0 5px 20px;position:relative;font-size:.97rem;
+    border-bottom:1px dotted var(--line);
+  }
+  .plan li:last-child{border-bottom:none;}
+  .plan li::before{
+    content:"·";position:absolute;left:6px;top:5px;
+    font-weight:bold;color:var(--ptmid);font-size:1.2rem;line-height:1.3;
+  }
+  .plan .who{
+    background:var(--ptrow);border-left:4px solid var(--ptmid);
+    padding:11px 14px;font-size:.94rem;font-style:italic;
+  }
+  .rule{
+    text-align:center;color:var(--muted);font-size:.85rem;font-style:italic;
+    margin:0 0 20px;
+  }
+  .section{
+    border-top:3px double var(--ink);padding-top:20px;margin-top:8px;
+  }
+  .section h3{font-size:1.2rem;margin-bottom:10px;}
+  .section p{margin-bottom:12px;}
+  .section ul{list-style:none;margin-bottom:14px;}
+  .section li{
+    padding:6px 0 6px 20px;position:relative;font-size:.97rem;
+  }
+  .section li::before{
+    content:"·";position:absolute;left:6px;top:6px;
+    font-weight:bold;color:var(--ptmid);font-size:1.2rem;line-height:1.3;
+  }
+  .cta{
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:22px;text-align:center;margin-top:22px;
+  }
+  .cta h3{font-size:1.3rem;margin-bottom:8px;color:#fff;}
+  .cta p{font-size:.97rem;margin-bottom:14px;}
+  .cta a.btn{
+    display:inline-block;text-decoration:none;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--paper);color:var(--ptdark);border:1px solid var(--ptdark);
+    padding:13px 30px;
+  }
+  .cta a.btn:hover{background:var(--ptrow);}
+  footer{
+    text-align:center;margin-top:22px;padding-top:10px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;line-height:1.7;
+  }
+  footer a{color:#8a8272;}
+  @media (max-width:520px){
+    .page{padding:22px 17px 18px;}
+    .plan{padding:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">A daily quiz for your business</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Three ways to run one. Start small, move up when it works.</div>
+  </header>
+
+  <div class="lead">
+    <p>A daily quiz is five questions on a page of your own site, written from your material. Somebody plays it with their coffee, builds a streak, and finishes on a score block they can paste into a group chat with your name and link attached.</p>
+    <p>It costs your customers two minutes and it puts you in front of them on the days they had no reason to think about you.</p>
+    <p class="last">Every version below is built the same way and to the same standard. What changes is how often the questions are new, and that is the only thing that changes.</p>
+  </div>
+
+  <div class="plan">
+    <div class="step">Step one</div>
+    <h2>Build</h2>
+    <div class="price">$750 <small>one time, includes the first year online</small></div>
+    <p class="pitch">A finished quiz, live on your site, that runs itself. You own it outright.</p>
+    <ul>
+      <li>Five questions written from your own history, menu and neighborhood</li>
+      <li>Designed to match your branding, not mine</li>
+      <li>Score sharing, streak tracking and a signup form, all working</li>
+      <li>Email signups go straight to your list, which is yours to keep</li>
+      <li>Hosted and maintained for twelve months, then $45 a month</li>
+    </ul>
+    <div class="who">Right if you want to see whether your customers take to it before committing to anything ongoing.</div>
+  </div>
+
+  <div class="rule">The quiz works harder the more often the questions change.</div>
+
+  <div class="plan pick">
+    <div class="step">Step two &middot; Most people start here</div>
+    <h2>Weekly</h2>
+    <div class="price">$300 <small>a month, no build fee</small></div>
+    <p class="pitch">A new set of five every Monday, plus a leaderboard that gives people a reason to come in.</p>
+    <ul>
+      <li>Everything in Build, with the one time fee waived</li>
+      <li>Fresh five questions each week, written and loaded by me</li>
+      <li>Weekly leaderboard, so top scores can be comped a drink or a plate</li>
+      <li>Your email list grows on its own in the background</li>
+      <li>A short monthly note on plays, shares and signups</li>
+      <li>Month to month. Stop whenever you want.</li>
+    </ul>
+    <div class="who">Right for most places. Enough turnover that regulars keep playing, light enough that it stays in the background of your week.</div>
+  </div>
+
+  <div class="rule">Or make it part of the morning.</div>
+
+  <div class="plan">
+    <div class="step">Step three</div>
+    <h2>Daily</h2>
+    <div class="price">$600 <small>a month, no build fee</small></div>
+    <p class="pitch">Five new questions every morning, seven days a week, with an email that lands before you open.</p>
+    <ul>
+      <li>Everything in Weekly</li>
+      <li>A new quiz every day, holidays included</li>
+      <li>Morning email to your list, sent automatically at a fixed time</li>
+      <li>Full streak mechanics, which is what actually brings people back</li>
+      <li>Questions timed to your releases, events and seasons</li>
+      <li>Month to month. Stop whenever you want.</li>
+    </ul>
+    <div class="who">Right once the quiz has an audience and you want it to be a habit rather than a page.</div>
+  </div>
+
+  <div class="section">
+    <h3>What you get regardless</h3>
+    <ul>
+      <li>Questions a stranger can reason through and a regular already knows. Both matter. One makes your people feel like insiders, the other gives everyone else a reason to keep reading.</li>
+      <li>No app to download and nothing to install. It is a web page.</li>
+      <li>The email list is yours. It sits in your account, under your name, and it stays with you if you stop.</li>
+      <li>Nothing to run on your end. No staff time, no equipment, no host.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>How this compares to a trivia night</h3>
+    <p>A weeknight trivia host runs $150 to $250 for one evening, fills a few tables, and leaves. Weekly here is $300 for a whole month of it, reaches people who were never going to drive out on a Tuesday, and hands you an email list at the end of it.</p>
+    <p>They do different jobs. A trivia night fills a slow Tuesday. A daily quiz keeps you in someone's morning on the other six days.</p>
+  </div>
+
+  <div class="section">
+    <h3>Moving between them</h3>
+    <p>Start at Build and step up later and the $750 comes off your first month, so nobody pays for the same work twice. Step down or stop at any point on the monthly plans, and the quiz stays live on your site either way.</p>
+  </div>
+
+  <div class="cta">
+    <h3>See yours before you decide</h3>
+    <p>I will build a working demo with your questions and your branding, at no charge and with nothing attached. If it is not right, you have lost nothing.</p>
+    <a class="btn" href="mailto:hello@10everyday.com?subject=Daily%20quiz">Email me</a>
+  </div>
+
+  <footer>
+    Built and run by the person behind <a href="https://10everyday.com">10Everyday.com</a>, a daily news quiz that has published every weekday without missing one.
+    <div style="margin-top:6px;">10Everyday is edited in San Marcos, California &middot; <a href="work.html">More about the work</a></div>
+  </footer>
+ </div>
+</div>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
