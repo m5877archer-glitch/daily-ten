@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beaver Daily · Five questions from Belching Beaver</title>
+<meta name="description" content="Five questions every morning from Belching Beaver. Two minutes. Build a streak.">
+<meta property="og:title" content="Beaver Daily · Five questions from Belching Beaver">
+<meta property="og:description" content="Five questions every morning. Two minutes. Build a streak.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://10everyday.com/bb">
+<meta property="og:site_name" content="Beaver Daily">
+<meta name="twitter:card" content="summary">
+<style>
+  :root{
+    --ink:#241a14;
+    --paper:#f7efe2;
+    --card:#fffdf8;
+    --deep:#3b2314;
+    --deeper:#26150b;
+    --mid:#7a4526;
+    --coral:#c1272d;
+    --row:#f6e7d2;
+    --correct:#1f7a4d;
+    --wrong:#c0392b;
+    --line:#ddc9ab;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;
+    background:var(--deep);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:0 0 48px;
+  }
+  .wrap{width:100%;max-width:640px;padding:0 16px;}
+  .demobar{
+    background:#ffe9a8;border-bottom:2px solid #d9b957;color:#4a3a10;
+    font-size:.78rem;line-height:1.5;padding:10px 16px;text-align:center;
+    margin:0 -16px 20px;
+  }
+  .demobar b{display:block;letter-spacing:.12em;text-transform:uppercase;font-size:.68rem;margin-bottom:2px;}
+  .page{
+    background:var(--paper);border-radius:14px;
+    padding:26px 22px 20px;box-shadow:0 6px 26px rgba(0,20,26,.4);
+  }
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--mid);font-weight:600;
+  }
+  header h1{
+    font-size:clamp(1.7rem,9vw,2.6rem);letter-spacing:.04em;margin:4px 0 2px;
+    text-transform:uppercase;color:var(--deep);
+  }
+  header h1 .co{color:var(--coral);}
+  header .tagline{
+    color:#5d564c;font-size:.92rem;padding-bottom:13px;
+    border-bottom:3px double var(--deep);
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--deep);padding:6px 2px;
+    font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:#5d564c;
+  }
+  header .dateline .dl-date{font-weight:700;}
+  .progress{
+    background:#eaddc8;height:8px;overflow:hidden;
+    margin:16px 0 6px;border-radius:4px;
+  }
+  .progress .bar{height:100%;width:0;background:var(--coral);transition:width .35s ease;}
+  .meta{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:.85rem;font-weight:700;color:#fff;background:var(--mid);
+    border-radius:8px;padding:8px 13px;margin-bottom:14px;
+  }
+  .meta .dotrow{display:flex;gap:4px;align-items:center;}
+  .meta .dotrow i{width:11px;height:11px;border-radius:3px;background:rgba(255,255,255,.32);display:block;}
+  .meta .dotrow i.ok{background:#8fe0b0;}
+  .meta .dotrow i.no{background:#ffb3a7;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;}
+  .question{font-size:1.13rem;line-height:1.55;margin-bottom:18px;font-weight:600;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffaf2;border:1px solid var(--line);border-radius:9px;
+    padding:13px 15px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.45;
+  }
+  .opt:nth-child(even){background:var(--row);}
+  .opt:hover:not(:disabled){border-color:var(--coral);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:#e8f6ee;border-color:var(--correct);color:var(--correct);font-weight:700;}
+  .opt.wrong{background:#fbeeec;border-color:var(--wrong);color:var(--wrong);}
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--coral);
+    background:var(--paper);border-radius:0 8px 8px 0;
+    font-size:.94rem;line-height:1.55;display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:700;
+    background:var(--mid);color:#fff;border:none;border-radius:9px;
+    padding:14px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--deeper);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{font-size:3.4rem;font-weight:800;margin:10px 0 2px;color:var(--deep);}
+  .results .outof{color:#8a8272;margin-bottom:14px;}
+  .results .rank{font-size:1.35rem;font-weight:800;margin-bottom:8px;color:var(--coral);}
+  .results .flavor{color:#5d564c;line-height:1.55;margin-bottom:14px;}
+  .results .time{font-size:.9rem;color:#8a8272;margin-bottom:10px;}
+  .results .dots{font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;}
+  .results .stats{
+    font-size:.82rem;color:#8a8272;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:700;
+    background:var(--coral);color:#fff;border:none;border-radius:9px;
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:#9c1f24;}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:700;
+    background:transparent;color:var(--mid);border:2px solid var(--mid);border-radius:9px;
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--row);}
+  .perk{
+    background:#e8f6ee;border:1px solid #a9d9be;border-radius:9px;
+    padding:13px 15px;margin:16px 0 0;font-size:.93rem;line-height:1.5;color:#1c4f38;
+  }
+  .perk b{display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:4px;color:var(--correct);}
+  .signup{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;text-align:center;}
+  .signup .skicker{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:#8a8272;font-weight:600;}
+  .signup h3{font-size:1.22rem;margin:3px 0 4px;color:var(--deep);}
+  .signup .ssub{color:#5d564c;font-size:.9rem;margin-bottom:10px;}
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;border-radius:8px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:700;
+    background:var(--mid);color:#fff;border:none;border-radius:8px;
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--deeper);}
+  .signup .snote{font-size:.74rem;color:#a09880;margin-top:8px;}
+  .signup .sok{font-weight:700;color:var(--correct);font-size:1.03rem;margin:10px 0 4px;}
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--row);border:1px solid var(--coral);border-radius:9px;text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .midsignup .mtext{font-size:.94rem;font-weight:700;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.94rem;padding:9px 10px;border-radius:7px;
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.94rem;font-weight:700;
+    background:var(--coral);color:#fff;border:none;border-radius:7px;
+    padding:9px 18px;cursor:pointer;
+  }
+  .midsignup .mnote{font-size:.72rem;color:#8a8272;margin-top:6px;}
+  .midsignup .sok{font-weight:700;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
+  footer{
+    text-align:center;margin-top:18px;padding-top:10px;
+    border-top:3px double var(--deep);
+    font-size:.78rem;color:#8a8272;line-height:1.6;
+  }
+  .notematt{
+    background:#0a3642;color:#cfe6ec;border-radius:12px;
+    padding:18px 20px;margin-top:22px;font-size:.86rem;line-height:1.65;
+  }
+  .notematt b{color:#ffd9a8;display:block;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;}
+  .notematt p{margin-bottom:9px;}
+  .notematt a{color:#ffd9a8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="demobar">
+   <b>Demo build for Belching Beaver</b>
+   Not live anywhere. Play it through to the end, the last screen is the part that matters.
+ </div>
+ <div class="page">
+  <header>
+    <div class="kicker">Five questions &middot; Every morning</div>
+    <h1>Beaver <span class="co">Daily</span></h1>
+    <div class="tagline">Two minutes with your coffee. Build a streak.</div>
+    <div class="dateline">
+      <span>Belching Beaver</span>
+      <span class="dl-date" id="dlDate"></span>
+      <span>Dam good times</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 5</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="card" id="quizCard">
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Want tomorrow's five in your inbox?</div>
+    <form class="demoform" id="formMid">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Sign up</button>
+    </form>
+    <div class="mnote">Free. No spam. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.05rem;color:#8a8272;">Today's Round</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 5</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <button class="share" id="shareBtn">Share My Score</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+
+    <div class="perk">
+      <b>Perfect round</b>
+      Show this screen at any Belching Beaver taproom today for a dollar off your first pour.
+    </div>
+
+    <div class="stats" id="statsEl"></div>
+
+    <div class="signup">
+      <div class="skicker">Delivered by email</div>
+      <h3>Get it every morning</h3>
+      <div class="ssub" id="ssub">Five questions with your coffee. The rest of the day is yours.</div>
+      <form class="demoform" id="formMain">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Sign up</button>
+      </form>
+      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+    </div>
+  </div>
+
+  <footer>
+    Belching Beaver &middot; Oceanside, Vista, PUB980 and beyond &middot; Dam good beer since 2012
+    <div style="margin-top:6px;">Demo built by 10Everyday.com</div>
+  </footer>
+ </div>
+
+ <div class="notematt">
+   <b>Note for the Belching Beaver team</b>
+   <p>This is a working demo, not a mockup. The streak counter, the share block and the signup all run. Five questions instead of ten because it should take two minutes, not five.</p>
+   <p>The signup form is deliberately inert here. On a live build it feeds your list, not mine.</p>
+   <p>One thing that separates you from a single taproom: your beer is already in a dozen states. A quiz that only works inside the tasting rooms wastes that. This one travels. A QR on a shelf talker or a case card puts it in front of someone standing in a grocery aisle in Phoenix, and the score block they paste into a group chat carries your name with it.</p>
+   <p>The Deftones question is the one I would build around. That collaboration gives you an audience that has nothing to do with craft beer and every reason to play a daily game with your logo on it.</p>
+   <p>The dollar off a pour is a placeholder. Any perk works, or none.</p>
+   <p>Matt &middot; <a href="mailto:hello@10everyday.com">hello@10everyday.com</a> &middot; <a href="https://10everyday.com">10everyday.com</a></p>
+ </div>
+</div>
+
+<script>
+const STORE_KEY = "beaverDaily";
+
+const QUESTIONS = [
+  {
+    q:"Phantom Bride IPA, the beer that started Belching Beaver's long-running collaboration series, is named after a song. Which band wrote it?",
+    options:["Deftones","Tool","Queens of the Stone Age","Sublime"],
+    answer:"Deftones",
+    explain:"Chino Moreno picked the hops himself, and the partnership has since run to eleven collaborations, including a Japanese rice lager and a horchata blonde. Not many breweries have a band on retainer."
+  },
+  {
+    q:"Peanut Butter Milk Stout is the beer that put the brewery on the map. In any milk stout, what is the milk part actually referring to?",
+    options:[
+      "Lactose, a milk sugar that yeast cannot ferment, so it stays sweet and adds body",
+      "Whole milk added to the kettle during the boil",
+      "The pale, milky head the beer pours with",
+      "A yeast strain originally cultured from dairy"
+    ],
+    answer:"Lactose, a milk sugar that yeast cannot ferment, so it stays sweet and adds body",
+    explain:"Brewer's yeast can eat almost any sugar you give it except lactose. Add lactose and it just sits there being sweet and creamy, which is why milk stouts drink like dessert. No cow is involved past that point."
+  },
+  {
+    q:"One recent Deftones collaboration is a horchata blonde ale. Traditional Mexican horchata is made by soaking and blending what?",
+    options:[
+      "Rice, with cinnamon and sugar",
+      "Almonds and orange peel",
+      "Barley and honey",
+      "Coconut and lime"
+    ],
+    answer:"Rice, with cinnamon and sugar",
+    explain:"Rice and cinnamon are the whole recipe, which is why the beer reads as creamy and spiced without any dairy in it. Spain makes a different horchata from tiger nuts, but the Mexican version is the one in the can."
+  },
+  {
+    q:"Belching Beaver's founding brewmaster came over from another well known San Diego brewery, one named for the island city across the bay from downtown. Which one?",
+    options:["Coronado Brewing","Ballast Point","Green Flash","Pizza Port"],
+    answer:"Coronado Brewing",
+    explain:"Troy Smith was brewing at Coronado before he and his partners started Belching Beaver in 2012. The milk stout came first, and the peanut butter version was his idea."
+  },
+  {
+    q:"Belching Beaver runs taprooms scattered around San Diego County, but the company itself is headquartered in one coastal North County city. Which?",
+    options:["Oceanside","Carlsbad","Encinitas","Del Mar"],
+    answer:"Oceanside",
+    explain:"Oceanside is home base, with the tavern and grill up in Vista and PUB980 as separate rooms. For a brewery whose cans ship to a dozen states, the operation stayed unusually close to where it started."
+  }
+];
+
+// Demo runs on a rolling date so it never looks stale sitting at a URL.
+const today = new Date();
+const EDITION_DATE = today.toISOString().slice(0,10);
+const yest = new Date(today.getTime() - 86400000);
+const PREV_EDITION = yest.toISOString().slice(0,10);
+const EDITION_LABEL = today.toLocaleDateString("en-US",{month:"long",day:"numeric"});
+document.getElementById("dlDate").textContent =
+  today.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+
+let current = 0;
+let score = 0;
+const dots = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+
+function renderDotRow(){
+  if(!dotRowEl) return;
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    const d = dots[i];
+    const cls = d === undefined ? "" : (d === "\u{1F7E2}" ? " class=\"ok\"" : " class=\"no\"");
+    out += "<i" + cls + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  if(current >= 2 && !window.bbSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  renderDotRow();
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+  }
+  renderDotRow();
+  explain.textContent = q.explain;
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results" : "Next Question";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+};
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem(STORE_KEY + ".stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1
+                 : (stats.lastDate === EDITION_DATE) ? (stats.streak || 1) : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem(STORE_KEY + ".stats", JSON.stringify(stats));
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+function trackPath(path){
+  try {
+    const back = location.pathname + location.search + location.hash;
+    history.pushState(null, "", path);
+    setTimeout(function(){
+      try { history.replaceState(null, "", back); } catch(e){}
+    }, 120);
+  } catch(e){}
+}
+
+function showResults(){
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  if(window.bbSubscribed){
+    const rf = document.getElementById("formMain");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're on the list";
+      rf.parentNode.replaceChild(ok, rf);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = Date.now() - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  trackPath("/bb-finished-" + score);
+  let rank, flavor;
+  if(score === 5){
+    rank = "Dam Good";
+    flavor = "Perfect round. You have clearly read the side of the can more than once.";
+  } else if(score === 4){
+    rank = "Regular Pour";
+    flavor = "One off. You know the lineup better than most people at the bar.";
+  } else if(score === 3){
+    rank = "Six Pack Buyer";
+    flavor = "Respectable. Come back tomorrow and close the gap.";
+  } else if(score === 2){
+    rank = "First Can";
+    flavor = "You are getting the lay of it. Tomorrow's five go down easier.";
+  } else {
+    rank = "Grabbed It Off The Shelf";
+    flavor = "Everybody starts here. Five more tomorrow.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Rounds played: " + stats.played +
+      " \u00B7 Correct all-time: " + stats.correct +
+      " \u00B7 Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const shareText =
+    "Beaver Daily \u00B7 " + EDITION_LABEL + "\n" +
+    dotRow + "\n" +
+    score + "/5 \u00B7 " + rank + " \u00B7 " + timeStr + "\n" +
+    "Five questions every morning from Belching Beaver." + "\n" +
+    "https://10everyday.com/bb";
+
+  function postShareNudge(){
+    if(window.bbSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    trackPath("/bb-shared");
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+// Demo signup is deliberately inert. On a live build this posts to the brewery's list.
+(function(){
+  const forms = document.querySelectorAll("form.demoform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      trackPath("/bb-signup");
+      window.bbSubscribed = true;
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "Demo only. On a live build, this address lands on Belching Beaver's list.";
+      f.parentNode.replaceChild(ok, f);
+    });
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
