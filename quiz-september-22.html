@@ -423,6 +423,9 @@ function select(btn, chosen, q){
   } else {
     btn.classList.add("wrong");
     dots.push("\u{1F534}");
+    // Per-question miss tracking: logs /miss-MMDD-qN so Cloudflare shows
+    // which questions trip players up, edition by edition.
+    trackPath("/miss-" + EDITION_DATE.slice(5).replace("-", "") + "-q" + (current + 1));
   }
   renderDotRow();
   explain.textContent = q.explain;
