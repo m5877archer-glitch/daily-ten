@@ -1,7 +1,13 @@
 name: Publish nightly edition
 
 on:
- 
+  schedule:
+    # Times are UTC. 06:05 UTC = 2:05 AM Eastern (EDT).
+    # Off-the-hour minutes get scheduled sooner than :00 slots.
+    # Second run (4:05 AM Eastern) is a safety net in case the first is dropped.
+    # In November, when clocks fall back, change 6 to 7 and 8 to 9.
+    - cron: '5 6 * * *'
+    - cron: '5 8 * * *'
   workflow_dispatch:
 
 permissions:
@@ -16,7 +22,7 @@ jobs:
 
       - name: Copy today's dated edition to index.html
         run: |
-          TODAY=$(TZ="America/Los_Angeles" date +'%B-%-d' | tr '[:upper:]' '[:lower:]')
+          TODAY=$(TZ="America/New_York" date +'%B-%-d' | tr '[:upper:]' '[:lower:]')
           FILE="quiz-${TODAY}.html"
           echo "Looking for $FILE"
           if [ -f "$FILE" ]; then
