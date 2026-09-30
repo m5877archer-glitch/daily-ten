@@ -548,13 +548,39 @@ function showResults(){
   }
 
   const shareBtn = document.getElementById("shareBtn");
-  const shareText =
-    "10Everyday · " + EDITION_LABEL + "\n" +
-    dotRow + "\n" +
-    score + "/10 · " + rank + " · " + timeStr + "\n" +
-    ((stats && stats.streak >= 2) ? "🔥 " + stats.streak + "-day streak" + "\n" : "") +
-    "Ten questions on today's news." + "\n" +
-    "https://10everyday.com/s";
+  const STATS_URL = "https://plain-block-5acctenevery-stats.m5877archer.workers.dev"; // your Worker URL
+  const MIN_PLAYERS = 5; // below this, skip the hook (too noisy)
+
+  function hardestLine(s){
+    if(!s || !s.misses || !(s.done >= MIN_PLAYERS)) return null;
+    const top = Object.entries(s.misses).sort((a, b) => b[1] - a[1])[0];
+    if(!top) return null;
+    const missed = Math.min(top[1], s.done);
+    const pctRight = Math.round((1 - missed / s.done) * 10) * 10;
+    if(pctRight > 50) return null; // not hard enough to be a hook
+    return "Only about " + Math.max(pctRight, 10) + "% of players got Q" + top[0] + " today.";
+  }
+
+  function buildShare(hook){
+    return "10Everyday · " + EDITION_LABEL + "\n" +
+      dotRow + "\n" +
+      score + "/10 · " + rank + " · " + timeStr + "\n" +
+      ((stats && stats.streak >= 2) ? "🔥 " + stats.streak + "-day streak" + "\n" : "") +
+      (hook ? hook + "\n" : "Ten questions on today's news.\n") +
+      "https://10everyday.com/s";
+  }
+
+  let shareText = buildShare(null);
+
+  try {
+    const ctrl = window.AbortController ? new AbortController() : null;
+    if(ctrl) setTimeout(() => ctrl.abort(), 3000);
+    fetch(STATS_URL + "?d=" + EDITION_DATE.slice(5).replace("-", ""),
+          ctrl ? { signal: ctrl.signal } : {})
+      .then(r => r.ok ? r.json() : null)
+      .then(s => { const h = hardestLine(s); if(h) shareText = buildShare(h); })
+      .catch(() => {});
+  } catch(e){}
 
   // After a share lands, the reader is at their warmest. Pull the
   // signup into view rather than leaving it below the fold.
