@@ -147,6 +147,7 @@
     padding:16px 30px;cursor:pointer;
   }
   .share:hover{background:var(--ptdark);}
+  .challenge{font-size:1.05rem;font-weight:bold;margin:0 0 8px;}
   .replay{
     display:block;width:100%;max-width:340px;margin:0 auto;
     font-family:inherit;font-size:.95rem;font-weight:bold;
@@ -186,6 +187,7 @@
     background:var(--ptrow);border:1px solid var(--ptmid);text-align:center;
   }
   .midsignup.show{display:block;}
+  .progressnote{margin-top:8px;font-weight:bold;font-style:normal;color:var(--ptdark);}
   .midsignup .mtext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
   .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
   .midsignup input[type=email]{
@@ -239,7 +241,7 @@
   </div>
 
   <div class="midsignup" id="midSignup">
-    <div class="mtext">Halfway. Want the next one in your inbox?</div>
+    <div class="mtext">Want the next one in your inbox?</div>
     <form class="kitform" id="kitFormMid" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
       <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
       <button type="submit">Subscribe</button>
@@ -255,7 +257,8 @@
     <div class="flavor" id="flavor"></div>
     <div class="time" id="timeEl"></div>
     <div class="dots" id="dotsEl"></div>
-    <button class="share" id="shareBtn">Share My Score</button>
+    <div class="challenge" id="challengeEl"></div>
+    <button class="share" id="shareBtn">Challenge a Friend</button>
     <button class="replay" onclick="location.reload()">Play Again</button>
     <div class="stats" id="statsEl"></div>
     <div class="signup">
@@ -402,9 +405,9 @@ function render(){
   });
   bar.style.width = ((current)/QUESTIONS.length*100) + "%";
   qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
-  // Mid-quiz signup: surfaces at Q6 so people who quit before the
-  // results card still see the ask at least once.
-  if(current >= 5 && !window.tenSubscribed){
+  // Mid-quiz signup: shown under every question so people who quit before
+  // the results card still see the ask.
+  if(!window.tenSubscribed){
     const mid = document.getElementById("midSignup");
     if(mid) mid.classList.add("show");
   }
@@ -429,6 +432,14 @@ function select(btn, chosen, q){
   }
   renderDotRow();
   explain.textContent = q.explain;
+  // Countdown note from the halfway mark on, keyed to answers given.
+  const PROGRESS = {4:"Halfway there.", 5:"4 more to go.", 6:"Only 3 left.", 7:"2 to go.", 8:"One more. Make it count."};
+  if(PROGRESS[current] && QUESTIONS.length === 10){
+    const pn = document.createElement("div");
+    pn.className = "progressnote";
+    pn.textContent = PROGRESS[current];
+    explain.appendChild(pn);
+  }
   explain.classList.add("show");
   nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
   nextBtn.classList.add("show");
@@ -548,6 +559,13 @@ function showResults(){
   }
 
   const shareBtn = document.getElementById("shareBtn");
+  // Frame sharing as a challenge, not a brag. Tracked via /share-pressed vs /done-MMDD.
+  const chEl = document.getElementById("challengeEl");
+  if(chEl){
+    chEl.textContent = score >= 6
+      ? "Think anyone you know can beat " + score + "?"
+      : "Rough one. See if your friends do any better.";
+  }
   const STATS_URL = "https://plain-block-5acctenevery-stats.m5877archer.workers.dev"; // your Worker URL
   const MIN_PLAYERS = 5; // below this, skip the hook (too noisy)
 
@@ -562,9 +580,9 @@ function showResults(){
   }
 
   function buildShare(hook){
-    return "10Everyday · " + EDITION_LABEL + "\n" +
+    return "I got " + score + "/10 on today's 10Everyday. Can you beat it?\n" +
       dotRow + "\n" +
-      score + "/10 · " + rank + " · " + timeStr + "\n" +
+      rank + " · " + timeStr + "\n" +
       ((stats && stats.streak >= 2) ? "🔥 " + stats.streak + "-day streak" + "\n" : "") +
       (hook ? hook + "\n" : "Ten questions on today's news.\n") +
       "https://10everyday.com/s";
@@ -600,7 +618,7 @@ function showResults(){
     try {
       await navigator.clipboard.writeText(shareText);
       shareBtn.textContent = "Copied! Paste it anywhere";
-      setTimeout(()=>{ shareBtn.textContent = "Share My Score"; }, 2500);
+      setTimeout(()=>{ shareBtn.textContent = "Challenge a Friend"; }, 2500);
       postShareNudge();
     } catch(e) {
       prompt("Copy your score:", shareText);
