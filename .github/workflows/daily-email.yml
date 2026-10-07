@@ -88,11 +88,47 @@ jobs:
               send_at = now + timedelta(minutes=5)
               print("Cutting it close. Scheduling for " + send_at.isoformat() + " instead.")
 
-          content = (
-              '<p><a href="https://10everyday.com/e">https://10everyday.com/e</a></p>'
+          content = build_content(filename)
+
+          # Email body: put the first question right in the email, with each
+          # answer as a button into the quiz. Falls back to the plain link if
+          # the question cannot be read for any reason.
+          import html, re
+          LINK = "https://10everyday.com/e"
+          PLAIN = (
+              '<p><a href="' + LINK + '">' + LINK + '</a></p>'
               '<p>Ten questions. About three minutes.</p>'
               '<p>Matt</p>'
           )
+
+          def first_question(path):
+              src = open(path, encoding="utf-8").read()
+              start = src.index("const QUESTIONS = [")
+              block = src[start:src.index("\n];", start)]
+              q = re.search(r'\bq:\s*"((?:[^"\\]|\\.)*)"', block)
+              opts = re.search(r'\boptions:\s*(\[.*?\])', block, re.S)
+              question = json.loads('"' + q.group(1) + '"')
+              options = json.loads(opts.group(1))
+              if not question or len(options) < 2:
+                  raise ValueError("question looks empty")
+              return question, options
+
+          def build_content(path):
+              try:
+                  question, options = first_question(path)
+              except Exception as e:
+                  print("WARNING: could not read first question (" + str(e) + "). Using plain email.")
+                  return PLAIN
+              print("Email question: " + question)
+              btn = ('display:block;margin:0 0 10px;padding:12px 16px;border:1px solid #1c2733;'
+                     'border-radius:6px;color:#1c2733;text-decoration:none;font-size:16px;')
+              parts = ['<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;">Question 1 of 10</p>',
+                       '<p style="font-size:20px;line-height:1.35;"><strong>' + html.escape(question) + '</strong></p>']
+              for o in options:
+                  parts.append('<a href="' + LINK + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
+              parts.append('<p>Tap your answer to play. Nine more after it, about three minutes.</p>')
+              parts.append('<p>Matt</p>')
+              return "".join(parts)
 
           payload = {
               "subject": subject,
