@@ -179,6 +179,7 @@
   }
   .signup button:hover{background:var(--ptdark);}
   .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .snote a{color:var(--ptmid);font-weight:bold;}
   .signup .sok{
     font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
   }
@@ -261,15 +262,15 @@
     <button class="share" id="shareBtn">Challenge a Friend</button>
     <button class="replay" onclick="location.reload()">Play Again</button>
     <div class="stats" id="statsEl"></div>
-    <div class="signup">
-      <div class="skicker">Delivered by email</div>
-      <h3>Get it every weekday</h3>
-      <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
-      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
-        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
-        <button type="submit">Subscribe</button>
+    <div class="signup" id="emailChal">
+      <div class="skicker">Challenge by email</div>
+      <h3>Send it to a friend</h3>
+      <div class="ssub" id="csub">Type their email and we'll start a message with your score.</div>
+      <form id="chalForm">
+        <input type="email" id="chalEmail" placeholder="friend@example.com" required aria-label="Friend's email address">
+        <button type="submit">Send Challenge</button>
       </form>
-      <div class="snote">Free. No spam. Unsubscribe anytime.</div>
+      <div class="snote" id="chalNote">Opens your own email app. We never save their address.</div>
     </div>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
@@ -551,10 +552,10 @@ function showResults(){
   // Streak-aware signup copy: loss aversion once there is something to lose.
   // Falls back to the generic subhead for first-timers and broken streaks.
   if(stats && stats.streak >= 2){
-    const subEl = document.getElementById("ssub");
+    const subEl = document.getElementById("csub");
     if(subEl){
       subEl.textContent =
-        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+        "You're on a " + stats.streak + " day streak. Dare a friend to start one.";
     }
   }
 
@@ -603,7 +604,7 @@ function showResults(){
   // After a share lands, the reader is at their warmest. Pull the
   // signup into view rather than leaving it below the fold.
   function postShareNudge(){
-    if(window.tenSubscribed) return;
+    return; // results-card signup replaced by the email challenge
     const su = document.querySelector(".results .signup");
     if(!su) return;
     const subEl = document.getElementById("ssub");
@@ -623,6 +624,34 @@ function showResults(){
     } catch(e) {
       prompt("Copy your score:", shareText);
     }
+  }
+
+  // Email challenge: opens the player's own mail app addressed to a friend.
+  // Deliberately NOT a Kit subscribe: that would sign the friend up without consent.
+  const chalForm = document.getElementById("chalForm");
+  if(chalForm){
+    chalForm.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      const to = (document.getElementById("chalEmail").value || "").trim();
+      if(!to) return;
+      trackPath("/challenge-email");
+      const subj = "Can you beat my " + score + "/10 on 10Everyday?";
+      const body = shareText;
+      const gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(to) +
+        "&su=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
+      window.location.href = "mailto:" + encodeURIComponent(to).replace(/%40/g, "@") +
+        "?subject=" + encodeURIComponent(subj) + "&body=" + encodeURIComponent(body);
+      const note = document.getElementById("chalNote");
+      if(note){
+        note.innerHTML = "";
+        note.append("Didn't open? ");
+        const g = document.createElement("a");
+        g.href = gmail; g.target = "_blank"; g.rel = "noopener";
+        g.textContent = "Send it with Gmail";
+        g.onclick = function(){ trackPath("/challenge-gmail"); };
+        note.append(g);
+      }
+    });
   }
 
   shareBtn.onclick = async () => {
