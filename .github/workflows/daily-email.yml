@@ -122,7 +122,13 @@ jobs:
                      'border-radius:6px;color:#1c2733;text-decoration:none;font-size:16px;')
               parts = ['<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;">Question 1 of 10</p>',
                        '<p style="font-size:20px;line-height:1.35;"><strong>' + html.escape(question) + '</strong></p>']
-              for o in options:
+              # Shuffle like the site does, so the answer is not always the
+              # first button. "All/None of the above" stays pinned last.
+              import random
+              pin = [o for o in options if re.match(r"^(all|none) of the above$", str(o).strip(), re.I)]
+              rest = [o for o in options if o not in pin]
+              random.shuffle(rest)
+              for o in rest + pin:
                   parts.append('<a href="' + LINK + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
               parts.append('<p>Tap your answer to play. Nine more after it, about three minutes.</p>')
               parts.append('<p>Matt</p>')
