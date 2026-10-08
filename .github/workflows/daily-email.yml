@@ -88,8 +88,6 @@ jobs:
               send_at = now + timedelta(minutes=5)
               print("Cutting it close. Scheduling for " + send_at.isoformat() + " instead.")
 
-          content = build_content(filename)
-
           # Email body: put the first question right in the email, with each
           # answer as a button into the quiz. Falls back to the plain link if
           # the question cannot be read for any reason.
@@ -129,6 +127,8 @@ jobs:
               parts.append('<p>Tap your answer to play. Nine more after it, about three minutes.</p>')
               parts.append('<p>Matt</p>')
               return "".join(parts)
+
+          content = build_content(filename)
 
           payload = {
               "subject": subject,
