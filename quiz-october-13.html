@@ -493,6 +493,42 @@ function trackPath(path){
   } catch(e){}
 }
 
+// Alldle SDK: only loads when the quiz is framed (i.e. played on alldle.net).
+// Reports the finished game so it counts toward Alldle's daily lineup,
+// cross-game streak and Daily Card. Failure here must never affect the quiz.
+var alldleReady = null, alldleReported = false;
+(function(){
+  try {
+    if (window.self === window.top) return;
+    var sc = document.createElement("script");
+    sc.src = "https://www.alldle.net/sdk/0.1.1/sdk.js";
+    sc.onload = function(){
+      try {
+        var al = new Alldle({ gameSlug: "10everyday" });
+        alldleReady = al.connect().then(function(){ return al; }).catch(function(){ return null; });
+      } catch(e){}
+    };
+    document.head.appendChild(sc);
+  } catch(e){}
+})();
+
+function reportToAlldle(grid){
+  try {
+    if (!alldleReady || alldleReported) return;
+    alldleReported = true;
+    alldleReady.then(function(al){
+      if (!al) return;
+      return al.completeMode("classic", {
+        won: score >= 6,
+        score: score,
+        puzzleId: EDITION_DATE,
+        durationMs: Date.now() - startTime,
+        resultGrid: grid
+      });
+    }).catch(function(){});
+  } catch(e){}
+}
+
 function showResults(){
   document.getElementById("quizCard").style.display = "none";
   const midEl = document.getElementById("midSignup");
@@ -539,6 +575,7 @@ function showResults(){
   document.getElementById("timeEl").textContent = "Finished in " + timeStr;
   const dotRow = dots.join("");
   document.getElementById("dotsEl").textContent = dotRow;
+  reportToAlldle(dotRow);
 
   const stats = updateStats();
   if(stats){
