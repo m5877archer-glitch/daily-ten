@@ -2,7 +2,7 @@ name: Nightly Cloudflare stats
 
 # Pulls daily visits, finished quizzes and shop clicks from Cloudflare Web
 # Analytics and saves them to stats/daily.json on the `stats` branch, so the
-# site (main) is never rebuilt by it.
+# site (main) is never rebuilt by it. Runs again whenever this file changes.
 on:
   schedule:
     - cron: "47 8 * * *"   # about 1:47 AM Pacific
