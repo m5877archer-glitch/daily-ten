@@ -27,16 +27,19 @@ jobs:
           fetch-depth: 1
 
       - name: Check out stats branch
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -x
+          mkdir statsbr && cd statsbr
+          git init -q
           git config user.name "10everyday-bot"
           git config user.email "hello@10everyday.com"
-          if git ls-remote --exit-code --heads origin stats >/dev/null; then
-            git fetch --depth 1 origin stats
-            git worktree add statsbr origin/stats
-            cd statsbr && git checkout -B stats
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          if git fetch --depth 1 origin stats; then
+            git checkout -q -b stats FETCH_HEAD
           else
-            git worktree add --detach statsbr
-            cd statsbr && git checkout --orphan stats && git rm -rq . && rm -rf ./*
+            git checkout -q --orphan stats
           fi
 
       - name: Pull numbers from Cloudflare
@@ -52,7 +55,7 @@ jobs:
           cd statsbr
           git add stats
           git commit -qm "Cloudflare stats $(date -u +%F)" || echo "No changes"
-          git push origin stats
+          git push origin HEAD:stats
 
       - name: Fail if the pull failed
         if: steps.pull.outcome == 'failure'
