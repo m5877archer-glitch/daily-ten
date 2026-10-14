@@ -140,6 +140,18 @@
     padding:11px 22px;
   }
   .coffee:hover{background:#fbecc2;}
+  .merchpage{text-align:center;display:none;}
+  .merchpage.show{display:block;}
+  .merchpage .mpkicker{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;margin-bottom:12px;}
+  .merchpage img{display:block;width:100%;height:auto;border:1px solid var(--line);margin-bottom:16px;}
+  .merchpage h2{font-size:clamp(1.3rem,6vw,1.75rem);margin-bottom:8px;}
+  .merchpage p{font-size:1rem;line-height:1.5;color:#3d382e;margin:0 auto 18px;max-width:460px;}
+  .merchpage .mpshop{display:block;width:100%;max-width:340px;margin:0 auto 12px;text-decoration:none;
+    background:#b23a48;color:#fff;border:1px solid #7d2531;font-family:inherit;font-size:1.15rem;font-weight:bold;padding:16px 30px;}
+  .merchpage .mpshop:hover{background:#962f3c;}
+  .merchpage .mpscore{display:block;width:100%;max-width:340px;margin:0 auto;cursor:pointer;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);font-family:inherit;font-size:1.05rem;font-weight:bold;padding:14px 30px;}
+  .merchpage .mpscore:hover{background:var(--ptdark);}
   .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
   .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
   .merch .mline{font-size:1rem;margin:6px 0 10px;}
@@ -244,6 +256,15 @@
     <div class="options" id="opts"></div>
     <div class="explain" id="explain"></div>
     <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card merchpage" id="merchPage">
+    <div class="mpkicker">One thing before your score</div>
+    <img src="shop-hero.png" alt="IYKYK, the holiday edition. Merch for people who play 10Everyday.com, the daily news quiz." width="2400" height="1000">
+    <h2>The holiday shop is open</h2>
+    <p>IYKYK shirts, mugs, hats and mousepads for 10Everyday players. Nine green dots and one red one. The people who get it, get it.</p>
+    <a class="mpshop" id="mpShop" href="/shop" target="_blank" rel="noopener">Visit the shop</a>
+    <button class="mpscore" id="mpScore">See my score →</button>
   </div>
 
   <div class="midsignup" id="midSignup">
@@ -461,9 +482,31 @@ nextBtn.onclick = ()=>{
   if(current < QUESTIONS.length){
     render();
   } else {
-    showResults();
+    showMerchPage();
   }
 };
+
+// Holiday shop interstitial: shown after the last answer, before the score.
+let finishedAt = null;
+function showMerchPage(){
+  finishedAt = Date.now();
+  const mp = document.getElementById("merchPage");
+  if(!mp){ showResults(); return; }
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  mp.classList.add("show");
+  window.scrollTo(0, 0);
+  trackPath("/merch-view");
+  document.getElementById("mpShop").onclick = function(){ trackPath("/merch-click"); };
+  document.getElementById("mpScore").onclick = function(){
+    mp.classList.remove("show");
+    showResults();
+    window.scrollTo(0, 0);
+  };
+}
 
 function formatTime(ms){
   const totalSec = Math.round(ms/1000);
@@ -556,7 +599,7 @@ function showResults(){
   }
   bar.style.width = "100%";
   qcount.textContent = "Complete";
-  const elapsed = Date.now() - startTime;
+  const elapsed = (finishedAt || Date.now()) - startTime;
   const timeStr = formatTime(elapsed);
   const r = document.getElementById("results");
   r.classList.add("show");
