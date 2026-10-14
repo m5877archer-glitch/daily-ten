@@ -140,6 +140,12 @@
     padding:11px 22px;
   }
   .coffee:hover{background:#fbecc2;}
+  .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
+  .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
+  .merch .mline{font-size:1rem;margin:6px 0 10px;}
+  .merch a{display:inline-block;text-decoration:none;font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ptdark);border:1px solid var(--ptdark);padding:10px 22px;}
+  .merch a:hover{background:#eef3ec;}
   .share{
     display:block;width:100%;max-width:340px;margin:0 auto 12px;
     font-family:inherit;font-size:1.15rem;font-weight:bold;
@@ -271,10 +277,15 @@
       </form>
       <div class="snote">Free. No spam. Unsubscribe anytime.</div>
     </div>
+    <div class="merch">
+      <div class="mkicker">New: the holiday shop</div>
+      <div class="mline" id="merchLine">IYKYK shirts, mugs and hats for 10Everyday players.</div>
+      <a href="/shop" target="_blank" rel="noopener">Visit the shop</a>
+    </div>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
 
-  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div><div style="margin-top:10px;"><a href="https://www.alldle.net/game/10everyday?ref=badge" target="_blank" rel="noopener" aria-label="Play on Alldle"><img src="https://www.alldle.net/badge.svg?g=7da81902-de22-42fe-bc3a-c0c88b347bea&variant=light&size=compact&content=text" alt="Play on Alldle" width="180" height="48" style="border:0;" /></a></div></footer>
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="/shop" target="_blank" rel="noopener" style="color:#8a8272;">Shop</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div><div style="margin-top:10px;"><a href="https://www.alldle.net/game/10everyday?ref=badge" target="_blank" rel="noopener" aria-label="Play on Alldle"><img src="https://www.alldle.net/badge.svg?g=7da81902-de22-42fe-bc3a-c0c88b347bea&variant=light&size=compact&content=text" alt="Play on Alldle" width="180" height="48" style="border:0;" /></a></div></footer>
  </div>
 </div>
 
@@ -569,6 +580,12 @@ function showResults(){
   } else {
     rank = "Crossword-First Reader";
     flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  // Holiday shop plug: speak to the score the player is looking at.
+  const merchEl = document.getElementById("merchLine");
+  if(merchEl){
+    if(score === 10) merchEl.textContent = "Ten for ten. You have earned the hat.";
+    else if(score === 9) merchEl.textContent = "Nine green, one red? There is a shirt for that.";
   }
   document.getElementById("rank").textContent = rank;
   document.getElementById("flavor").textContent = flavor;

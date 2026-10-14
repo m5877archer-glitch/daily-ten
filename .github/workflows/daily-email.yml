@@ -97,6 +97,7 @@ jobs:
               '<p><a href="' + LINK + '">' + LINK + '</a></p>'
               '<p>Ten questions. About three minutes.</p>'
               '<p>Matt</p>'
+              '<p style="font-size:14px;color:#6b6455;">P.S. IYKYK shirts, mugs and hats are in the <a href="https://10everyday.com/shop">holiday shop</a>.</p>'
           )
 
           def first_question(path):
@@ -132,6 +133,7 @@ jobs:
                   parts.append('<a href="' + LINK + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
               parts.append('<p>Tap your answer to play. Nine more after it, about three minutes.</p>')
               parts.append('<p>Matt</p>')
+              parts.append('<p style="font-size:14px;color:#6b6455;">P.S. IYKYK shirts, mugs and hats are in the <a href="https://10everyday.com/shop">holiday shop</a>.</p>')
               return "".join(parts)
 
           content = build_content(filename)
