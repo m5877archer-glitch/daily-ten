@@ -1,0 +1,59 @@
+name: Nightly Cloudflare stats
+
+# Pulls daily visits, finished quizzes and shop clicks from Cloudflare Web
+# Analytics and saves them to stats/daily.json on the `stats` branch, so the
+# site (main) is never rebuilt by it.
+on:
+  schedule:
+    - cron: "47 8 * * *"   # about 1:47 AM Pacific
+  push:
+    branches: [main]
+    paths: [".github/workflows/cf-stats.yml", "scripts/cf_stats.py"]
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: "Days to pull"
+        default: "30"
+
+permissions:
+  contents: write
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Check out stats branch
+        run: |
+          git config user.name "10everyday-bot"
+          git config user.email "hello@10everyday.com"
+          if git ls-remote --exit-code --heads origin stats >/dev/null; then
+            git fetch --depth 1 origin stats
+            git worktree add statsbr origin/stats
+            cd statsbr && git checkout -B stats
+          else
+            git worktree add --detach statsbr
+            cd statsbr && git checkout --orphan stats && git rm -rq . && rm -rf ./*
+          fi
+
+      - name: Pull numbers from Cloudflare
+        id: pull
+        continue-on-error: true
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          DAYS_BACK: ${{ github.event_name == 'schedule' && '3' || github.event.inputs.days_back || '30' }}
+        run: python3 scripts/cf_stats.py statsbr/stats
+
+      - name: Save to stats branch
+        run: |
+          cd statsbr
+          git add stats
+          git commit -qm "Cloudflare stats $(date -u +%F)" || echo "No changes"
+          git push origin stats
+
+      - name: Fail if the pull failed
+        if: steps.pull.outcome == 'failure'
+        run: exit 1
