@@ -593,8 +593,13 @@ function showResults(){
     if(rf){
       const ok = document.createElement("div");
       ok.className = "sok";
-      ok.textContent = "Check your inbox to confirm";
+      ok.textContent = "You're in. See you at 6 AM.";
       rf.parentNode.replaceChild(ok, rf);
+      const rl = document.createElement("a");
+      rl.href = "https://10everyday.kit.com/recommendations?email_address=" + encodeURIComponent(window.tenEmail || "");
+      rl.textContent = "More newsletters our players like \u2192";
+      rl.style.cssText = "display:block;margin-top:8px;font-size:.85rem;color:var(--ptdark);";
+      ok.parentNode.insertBefore(rl, ok.nextSibling);
     }
   }
   bar.style.width = "100%";
@@ -760,10 +765,18 @@ render();
         });
         if(!res.ok) throw new Error("bad response");
         window.tenSubscribed = true;
+        window.tenEmail = email;
         const ok = document.createElement("div");
         ok.className = "sok";
-        ok.textContent = "Check your inbox to confirm";
+        ok.textContent = "You're in. See you at 6 AM.";
         f.parentNode.replaceChild(ok, f);
+        // Results-card signups go on to Kit's Recommendations page (custom forms never trigger Kit's popup).
+        // Mid-quiz signups stay put so the game isn't interrupted; they get a link on the results card.
+        if(f.id === "kitForm"){
+          setTimeout(function(){
+            location.href = "https://10everyday.kit.com/recommendations?email_address=" + encodeURIComponent(email);
+          }, 1500);
+        }
       } catch(e) {
         f.submit();
       }
