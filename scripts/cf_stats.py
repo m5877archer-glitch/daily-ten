@@ -8,6 +8,7 @@ Writes stats/daily.json keyed by Pacific date:
   merch_view    saw the shop page before the score
   merch_click   tapped "Visit the shop" on that page
   shop          went through any /shop link
+  signups       email signups, split into signup_mid / signup_results / signup_merch
   email, share, reddit, facebook, pt   visits arriving on /e, /s, /r, /f, /pt
 Also writes stats/last-run.json with any errors, so problems are visible
 without opening the Actions log.
@@ -24,7 +25,8 @@ DAYS_BACK = int(os.environ.get("DAYS_BACK", "30"))
 TOKEN = os.environ["CF_API_TOKEN"]
 
 ENTRY = {"/e": "email", "/s": "share", "/r": "reddit", "/f": "facebook", "/pt": "pt"}
-COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": "shop"}
+COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": "shop",
+           "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch"}
 
 errors = []
 
@@ -98,7 +100,8 @@ def main():
             p = r["dimensions"]["requestPath"] or ""
             day = fresh.setdefault(d, {"visits": 0, "pageviews": 0, "done": 0,
                                        "merch_view": 0, "merch_click": 0, "shop": 0,
-                                       "email": 0, "share": 0, "reddit": 0, "facebook": 0, "pt": 0})
+                                       "email": 0, "share": 0, "reddit": 0, "facebook": 0, "pt": 0,
+                                       "signups": 0, "signup_mid": 0, "signup_results": 0, "signup_merch": 0})
             v = (r.get("sum") or {}).get("visits") or 0
             n = r.get("count") or 0
             day["visits"] += v
@@ -108,6 +111,8 @@ def main():
             key = COUNTED.get(p.rstrip("/").replace(".html", ""))
             if key:
                 day[key] += n
+                if key.startswith("signup_"):
+                    day["signups"] += n
             key = ENTRY.get(p.rstrip("/").replace(".html", ""))
             if key:
                 day[key] += v

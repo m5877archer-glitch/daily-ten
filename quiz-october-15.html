@@ -152,6 +152,15 @@
   .merchpage .mpscore{display:block;width:100%;max-width:340px;margin:0 auto;cursor:pointer;
     background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);font-family:inherit;font-size:1.05rem;font-weight:bold;padding:14px 30px;}
   .merchpage .mpscore:hover{background:var(--ptdark);}
+  .mpsignup{max-width:420px;margin:0 auto 18px;padding:14px 14px 12px;border:1px solid var(--ptmid);background:var(--ptrow);}
+  .mpsignup .mptext{font-size:1.05rem;font-weight:bold;margin-bottom:4px;}
+  .mpsignup .mpsub{font-size:.9rem;color:#524b3e;margin-bottom:10px;}
+  .mpsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .mpsignup input[type=email]{font-family:inherit;font-size:1rem;padding:10px 11px;border:1px solid var(--ptdark);background:var(--card);color:var(--ink);flex:1 1 200px;max-width:260px;}
+  .mpsignup button{font-family:inherit;font-size:1rem;font-weight:bold;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);padding:10px 18px;cursor:pointer;}
+  .mpsignup button:hover{background:var(--ptdark);}
+  .mpsignup .sok{font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
+  .results .signup{margin:14px 0 18px;padding-bottom:16px;border-bottom:1px solid var(--line);}
   .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
   .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
   .merch .mline{font-size:1rem;margin:6px 0 10px;}
@@ -263,6 +272,14 @@
     <img src="shop-hero.png" alt="IYKYK, the holiday edition. Merch for people who play 10Everyday.com, the daily news quiz." width="2400" height="1000">
     <h2>The holiday shop is open</h2>
     <p>IYKYK shirts, mugs, hats and mousepads for 10Everyday players. Nine green dots and one red one. The people who get it, get it.</p>
+    <div class="mpsignup" id="mpSignup">
+      <div class="mptext">Subscribers get 20% off</div>
+      <div class="mpsub">Get the quiz by email every weekday morning and we'll send you the code.</div>
+      <form class="kitform" id="kitFormMerch" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Get 20% off</button>
+      </form>
+    </div>
     <a class="mpshop" id="mpShop" href="/shop" target="_blank" rel="noopener">Visit the shop</a>
     <button class="mpscore" id="mpScore">See my score →</button>
   </div>
@@ -284,10 +301,6 @@
     <div class="flavor" id="flavor"></div>
     <div class="time" id="timeEl"></div>
     <div class="dots" id="dotsEl"></div>
-    <div class="challenge" id="challengeEl"></div>
-    <button class="share" id="shareBtn">Challenge a Friend</button>
-    <button class="replay" onclick="location.reload()">Play Again</button>
-    <div class="stats" id="statsEl"></div>
     <div class="signup">
       <div class="skicker">Delivered by email</div>
       <h3>Get it every weekday</h3>
@@ -298,6 +311,10 @@
       </form>
       <div class="snote">Free. Subscribers get 20% off the merch. Unsubscribe anytime.</div>
     </div>
+    <div class="challenge" id="challengeEl"></div>
+    <button class="share" id="shareBtn">Challenge a Friend</button>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
     <div class="merch">
       <div class="mkicker">New: the holiday shop</div>
       <div class="mline" id="merchLine">IYKYK shirts, mugs and hats for 10Everyday players.</div>
@@ -497,6 +514,7 @@ function showMerchPage(){
   if(midEl) midEl.classList.remove("show");
   bar.style.width = "100%";
   qcount.textContent = "Complete";
+  if(window.tenSubscribed){ const mps = document.getElementById("mpSignup"); if(mps) mps.style.display = "none"; }
   mp.classList.add("show");
   window.scrollTo(0, 0);
   trackPath("/merch-view");
@@ -747,6 +765,8 @@ function showResults(){
 render();
 
 (function(){
+  // Each signup spot logs its own path so the nightly stats can tell them apart.
+  const SIGNUP_PATH = { kitFormMid: "/signup-mid", kitForm: "/signup-results", kitFormMerch: "/signup-merch" };
   const forms = document.querySelectorAll("form.kitform");
   forms.forEach(function(f){
     f.addEventListener("submit", async function(ev){
@@ -766,9 +786,12 @@ render();
         if(!res.ok) throw new Error("bad response");
         window.tenSubscribed = true;
         window.tenEmail = email;
+        trackPath(SIGNUP_PATH[f.id] || "/signup-other");
         const ok = document.createElement("div");
         ok.className = "sok";
-        ok.textContent = "You're in. See you at 6 AM.";
+        ok.textContent = f.id === "kitFormMerch"
+          ? "You're in. Your 20% code is on its way."
+          : "You're in. See you at 6 AM.";
         f.parentNode.replaceChild(ok, f);
         // Results-card signups go on to Kit's Recommendations page (custom forms never trigger Kit's popup).
         // Mid-quiz signups stay put so the game isn't interrupted; they get a link on the results card.
@@ -778,7 +801,8 @@ render();
           }, 1500);
         }
       } catch(e) {
-        f.submit();
+        trackPath(SIGNUP_PATH[f.id] || "/signup-other");
+        setTimeout(function(){ f.submit(); }, 150);
       }
     });
   });
