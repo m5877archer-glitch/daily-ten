@@ -1,0 +1,46 @@
+name: Update sitemap
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'quiz-*.html'
+      - 'scripts/build_sitemap.py'
+  schedule:
+    # 07:17 UTC = just after midnight Pacific, so an edition built the
+    # evening before is added on the day it goes live.
+    - cron: '17 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sitemap
+  cancel-in-progress: false
+
+jobs:
+  sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Rebuild sitemap.xml
+        run: python scripts/build_sitemap.py
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet sitemap.xml; then
+            echo "sitemap.xml unchanged."
+            exit 0
+          fi
+          git config user.name "sitemap-bot"
+          git config user.email "sitemap-bot@users.noreply.github.com"
+          git add sitemap.xml
+          git commit -m "Update sitemap"
+          git pull --rebase
+          git push
