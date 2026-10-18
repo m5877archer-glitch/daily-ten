@@ -572,10 +572,10 @@
   "partial": false
  },
  "2026-10-17": {
-  "visits": 5,
-  "pageviews": 21,
+  "visits": 25,
+  "pageviews": 75,
   "done": 0,
-  "merch_view": 1,
+  "merch_view": 3,
   "merch_click": 0,
   "shop": 0,
   "email": 0,
@@ -587,6 +587,6 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
-  "partial": true
+  "partial": false
  }
 }
