@@ -588,5 +588,41 @@
   "signup_results": 0,
   "signup_merch": 0,
   "partial": false
+ },
+ "2026-10-18": {
+  "visits": 25,
+  "pageviews": 140,
+  "done": 3,
+  "merch_view": 12,
+  "merch_click": 0,
+  "shop": 0,
+  "email": 1,
+  "share": 0,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 1,
+  "signup_mid": 0,
+  "signup_results": 1,
+  "signup_merch": 0,
+  "partial": false
+ },
+ "2026-10-19": {
+  "visits": 21,
+  "pageviews": 90,
+  "done": 1,
+  "merch_view": 7,
+  "merch_click": 0,
+  "shop": 0,
+  "email": 0,
+  "share": 0,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "partial": true
  }
 }
