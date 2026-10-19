@@ -1,0 +1,3 @@
+img/photos/stadium-night.jpg  page: HTTP Error 401: Unauthorized; download: HTTP Error 401: Unauthorized
+img/photos/gas-price-sign.jpg  page: HTTP Error 401: Unauthorized; download: HTTP Error 401: Unauthorized
+img/photos/nyse-bw.jpg  page: HTTP Error 401: Unauthorized; download: HTTP Error 401: Unauthorized
