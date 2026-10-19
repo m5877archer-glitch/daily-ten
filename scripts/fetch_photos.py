@@ -44,6 +44,28 @@ def fetch(p):
             errs.append("%s: %s" % (how, e))
     raise RuntimeError("; ".join(errs))
 
+def commons_credit(name):
+    """Look up author and license for a Commons file via the public API."""
+    api = ("https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo"
+           "&iiprop=extmetadata&titles=" + urllib.parse.quote("File:" + name))
+    data = json.loads(get(api))
+    page = next(iter(data["query"]["pages"].values()))
+    meta = page["imageinfo"][0]["extmetadata"]
+    strip = lambda v: re.sub(r"<[^>]+>", "", v or "").strip()
+    return {"author": strip(meta.get("Artist", {}).get("value")),
+            "license": strip(meta.get("LicenseShortName", {}).get("value"))}
+
+def credits(photos):
+    out = {}
+    for p in photos:
+        if p.get("commons_file"):
+            try:
+                out[p["file"]] = commons_credit(p["commons_file"])
+            except Exception as e:
+                out[p["file"]] = {"error": str(e)}
+    with open("img/photos-credits.json", "w") as fh:
+        json.dump(out, fh, indent=2)
+
 def main():
     with open(MANIFEST) as fh:
         photos = json.load(fh)["photos"]
@@ -62,6 +84,7 @@ def main():
         except Exception as e:
             print("FAILED", out, e)
             report.append("%s  %s" % (out, e))
+    credits(photos)
     # Leave a readable report in the repo so failures are visible without
     # opening the Actions log.
     with open("img/photos-report.txt", "w") as fh:
