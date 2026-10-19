@@ -5,13 +5,13 @@ Runs on GitHub's servers (the fetch-photos workflow), resizes each photo to
 1200px wide and saves it as a JPG, so quiz pages never depend on another
 site to load an image.
 """
-import io, json, os, re, sys, urllib.request
+import io, json, os, re, sys, urllib.parse, urllib.request
 from PIL import Image
 
 MANIFEST = "img/photos.json"
 WIDTH = 1200
 
-UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+UA = ("10EverydayPhotoFetch/1.0 (https://10everyday.com; hello@10everyday.com) Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/129.0 Safari/537.36")
 
 def get(url):
@@ -19,6 +19,10 @@ def get(url):
     return urllib.request.urlopen(req, timeout=60).read()
 
 def candidates(p):
+    # Wikimedia Commons photos: Special:FilePath redirects to the file itself.
+    if p.get("commons_file"):
+        yield "commons", "https://commons.wikimedia.org/wiki/Special:FilePath/%s?width=1600" % urllib.parse.quote(p["commons_file"])
+        return
     # 1. The photo page's og:image, which points at images.unsplash.com.
     yield "page", None
     # 2. Unsplash's public download link.

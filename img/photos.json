@@ -18,6 +18,12 @@
       "unsplash_id": "4YFhbgm1keU",
       "page": "https://unsplash.com/photos/a-black-and-white-photo-of-the-new-york-stock-exchange-4YFhbgm1keU",
       "credit": "Photo: Martin Rajdl / Unsplash"
+    },
+    {
+      "file": "img/photos/test-commons-kickoff.jpg",
+      "commons_file": "American_Football_-_Kickoff_080816.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:American_Football_-_Kickoff_080816.jpg",
+      "credit": "Photo: Wikimedia Commons"
     }
   ]
 }
