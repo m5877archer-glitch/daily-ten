@@ -1,0 +1,23 @@
+{
+  "_note": "Stock photos used in quiz questions. The fetch-photos workflow downloads any entry whose file is missing. Only Unsplash photos marked free (not Unsplash+) go here.",
+  "photos": [
+    {
+      "file": "img/photos/stadium-night.jpg",
+      "unsplash_id": "b_XhrmGQnyc",
+      "page": "https://unsplash.com/photos/a-crowded-football-stadium-at-night-under-bright-lights-b_XhrmGQnyc",
+      "credit": "Photo: Scott Greer / Unsplash"
+    },
+    {
+      "file": "img/photos/gas-price-sign.jpg",
+      "unsplash_id": "B4r5K1wE7rY",
+      "page": "https://unsplash.com/photos/a-gas-station-sign-displays-the-time-for-gas-prices-B4r5K1wE7rY",
+      "credit": "Photo: Richard Bell / Unsplash"
+    },
+    {
+      "file": "img/photos/nyse-bw.jpg",
+      "unsplash_id": "4YFhbgm1keU",
+      "page": "https://unsplash.com/photos/a-black-and-white-photo-of-the-new-york-stock-exchange-4YFhbgm1keU",
+      "credit": "Photo: Martin Rajdl / Unsplash"
+    }
+  ]
+}

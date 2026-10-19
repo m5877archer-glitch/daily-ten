@@ -1,0 +1,31 @@
+name: Fetch quiz photos
+
+# Downloads stock photos listed in img/photos.json into the repo, so every
+# quiz image is served from 10everyday.com itself.
+on:
+  push:
+    branches: [main]
+    paths: ["img/photos.json", "scripts/fetch_photos.py", ".github/workflows/fetch-photos.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Pillow
+        run: pip install pillow
+      - name: Download missing photos
+        run: python3 scripts/fetch_photos.py
+      - name: Commit new photos
+        run: |
+          git config user.name "10everyday-bot"
+          git config user.email "hello@10everyday.com"
+          git add img/photos
+          git diff --cached --quiet && { echo "No new photos"; exit 0; }
+          git commit -qm "Fetch quiz photos"
+          git pull --rebase -q origin main
+          git push origin HEAD:main
