@@ -794,6 +794,20 @@ function showResults(){
 
 render();
 
+// Email answers: each button in the morning email links to /e#q1-MMDD-N
+// (N = that option's slot in QUESTIONS[0].options). The tap counts as the
+// Q1 answer, so players land on the result instead of answering twice.
+(function(){
+  const m = /^#q1-(\d{4})-(\d+)$/.exec(location.hash || "");
+  if(!m || current !== 0) return;
+  try{ history.replaceState(null, "", location.pathname); }catch(e){}
+  if(m[1] !== EDITION_DATE.slice(5).replace("-", "")) return;
+  const want = QUESTIONS[0].options[+m[2]];
+  if(want === undefined) return;
+  const b = Array.prototype.find.call(opts.querySelectorAll(".opt"), x => x.textContent === want);
+  if(b){ trackPath("/email-answer"); b.click(); }
+})();
+
 (function(){
   // Each signup spot logs its own path so the nightly stats can tell them apart.
   const SIGNUP_PATH = { kitFormMid: "/signup-mid", kitForm: "/signup-results", kitFormMerch: "/signup-merch" };

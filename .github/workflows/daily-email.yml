@@ -110,11 +110,20 @@ jobs:
               options = json.loads(opts.group(1))
               if not question or len(options) < 2:
                   raise ValueError("question looks empty")
-              return question, options
+              # Photo on the first question only (it ends at the next "q:").
+              first = block[q.end():]
+              nxt = re.search(r'\bq:\s*"', first)
+              first = first[:nxt.start()] if nxt else first
+              img = None
+              m = re.search(r'\bimg:\s*\{\s*src:\s*"([^"]+)"(?:\s*,\s*alt:\s*"((?:[^"\\]|\\.)*)")?', first)
+              if m:
+                  img = {"src": "https://10everyday.com/" + m.group(1).lstrip("/"),
+                         "alt": json.loads('"' + (m.group(2) or "") + '"')}
+              return question, options, img
 
           def build_content(path):
               try:
-                  question, options = first_question(path)
+                  question, options, img = first_question(path)
               except Exception as e:
                   print("WARNING: could not read first question (" + str(e) + "). Using plain email.")
                   return PLAIN
@@ -122,16 +131,23 @@ jobs:
               btn = ('display:block;margin:0 0 10px;padding:12px 16px;border:1px solid #1c2733;'
                      'border-radius:6px;color:#1c2733;text-decoration:none;font-size:16px;')
               parts = ['<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;">Question 1 of 10</p>',
-                       '<p style="font-size:20px;line-height:1.35;"><strong>' + html.escape(question) + '</strong></p>']
+                       ]
+              if img:
+                  parts.append('<a href="' + LINK + '"><img src="' + html.escape(img["src"]) + '" alt="' + html.escape(img["alt"]) + '" width="560" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d9d2c3;margin:0 0 14px;"></a>')
+              else:
+                  print("WARNING: first question has no photo.")
+              parts.append('<p style="font-size:20px;line-height:1.35;"><strong>' + html.escape(question) + '</strong></p>')
               # Shuffle like the site does, so the answer is not always the
               # first button. "All/None of the above" stays pinned last.
               import random
               pin = [o for o in options if re.match(r"^(all|none) of the above$", str(o).strip(), re.I)]
               rest = [o for o in options if o not in pin]
               random.shuffle(rest)
+              tag = "#q1-" + target.strftime("%m%d") + "-"
               for o in rest + pin:
-                  parts.append('<a href="' + LINK + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
-              parts.append('<p>Tap your answer to play. Nine more after it, about three minutes.</p>')
+                  href = LINK + tag + str(options.index(o))
+                  parts.append('<a href="' + href + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
+              parts.append('<p>Tap your answer and it counts. Nine more after it, about three minutes.</p>')
               parts.append('<p>Matt</p>')
               parts.append('<p style="font-size:14px;color:#6b6455;">P.S. IYKYK shirts, mugs and hats are in the <a href="https://10everyday.com/shop">holiday shop</a>.</p>')
               return "".join(parts)
