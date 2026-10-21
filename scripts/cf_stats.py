@@ -10,6 +10,7 @@ Writes stats/daily.json keyed by Pacific date:
   shop          went through any /shop link
   shop_q        tapped the product link inside a quiz question
   signups       email signups, split into signup_mid / signup_results / signup_merch
+  share_pressed tapped "Challenge a Friend" on the score card
   email, share, reddit, facebook, pt   visits arriving on /e, /s, /r, /f, /pt
 Also writes stats/last-run.json with any errors, so problems are visible
 without opening the Actions log.
@@ -27,7 +28,8 @@ TOKEN = os.environ["CF_API_TOKEN"]
 
 ENTRY = {"/e": "email", "/s": "share", "/r": "reddit", "/f": "facebook", "/pt": "pt"}
 COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": "shop", "/shop-q": "shop_q",
-           "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch"}
+           "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch",
+           "/share-pressed": "share_pressed"}
 
 errors = []
 
