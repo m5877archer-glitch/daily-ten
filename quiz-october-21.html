@@ -174,7 +174,9 @@
     padding:16px 30px;cursor:pointer;
   }
   .share:hover{background:var(--ptdark);}
-  .challenge{font-size:1.05rem;font-weight:bold;margin:0 0 8px;}
+  .challenge{margin:0 0 10px;}
+  .challenge .chk{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .challenge .chq{font-size:1.02rem;font-style:italic;line-height:1.4;margin:6px auto 0;max-width:420px;}
   .replay{
     display:block;width:100%;max-width:340px;margin:0 auto;
     font-family:inherit;font-size:.95rem;font-weight:bold;
@@ -307,7 +309,7 @@
     <div class="time" id="timeEl"></div>
     <div class="dots" id="dotsEl"></div>
     <div class="challenge" id="challengeEl"></div>
-    <button class="share" id="shareBtn">Challenge a Friend</button>
+    <button class="share" id="shareBtn">Stump a Friend</button>
     <div class="signup">
       <div class="skicker">Free, every weekday at 6 AM</div>
       <h3>Get tomorrow's quiz by email</h3>
@@ -409,6 +411,7 @@ const QUESTIONS = [
 let current = 0;
 let score = 0;
 const dots = [];
+const missedIdx = [];
 const startTime = Date.now();
 
 const qtext = document.getElementById("qtext");
@@ -497,6 +500,7 @@ function select(btn, chosen, q){
   } else {
     btn.classList.add("wrong");
     dots.push("\u{1F534}");
+    missedIdx.push(current);
     // Per-question miss tracking: logs /miss-MMDD-qN so Cloudflare shows
     // which questions trip players up, edition by edition.
     trackPath("/miss-" + EDITION_DATE.slice(5).replace("-", "") + "-q" + (current + 1));
@@ -711,36 +715,59 @@ function showResults(){
   }
 
   const shareBtn = document.getElementById("shareBtn");
-  // Frame sharing as a challenge, not a brag. Tracked via /share-pressed vs /done-MMDD.
-  const chEl = document.getElementById("challengeEl");
-  if(chEl){
-    chEl.textContent = score >= 6
-      ? "Think anyone you know can beat " + score + "?"
-      : "Rough one. See if your friends do any better.";
-  }
   const STATS_URL = "https://plain-block-5acctenevery-stats.m5877archer.workers.dev"; // your Worker URL
-  const MIN_PLAYERS = 5; // below this, skip the hook (too noisy)
+  const MIN_PLAYERS = 5; // below this, skip the "% got it" line (too noisy)
 
-  function hardestLine(s){
-    if(!s || !s.misses || !(s.done >= MIN_PLAYERS)) return null;
+  // Share a question, not just a score. Default: the first question this
+  // player missed (or Q1 on a perfect game). Upgraded to the day's hardest
+  // question once enough people have played. Question order is fixed per
+  // edition, so Qn in the stats matches QUESTIONS[n-1] for every player.
+  let shareIdx = missedIdx.length ? missedIdx[0] : 0;
+  let shareLead = missedIdx.length
+    ? "I missed this one on today's 10Everyday. Would you get it?"
+    : (score === 10 ? "I got all ten on today's 10Everyday. Here's one of them. Would you get it?"
+                    : "From today's 10Everyday. Would you get it?");
+
+  function stem(i){ return QUESTIONS[i] && QUESTIONS[i].q ? QUESTIONS[i].q : ""; }
+
+  function renderChallenge(){
+    const chEl = document.getElementById("challengeEl");
+    if(!chEl) return;
+    chEl.innerHTML = "";
+    const k = document.createElement("div");
+    k.className = "chk";
+    k.textContent = "Bet your friends miss this one";
+    const qq = document.createElement("div");
+    qq.className = "chq";
+    qq.textContent = "“" + stem(shareIdx) + "”";
+    chEl.appendChild(k); chEl.appendChild(qq);
+  }
+
+  function buildShare(){
+    return shareLead + "\n\n" +
+      "“" + stem(shareIdx) + "”\n\n" +
+      "Find out: https://10everyday.com/s\n\n" +
+      "My score: " + score + "/10 " + dotRow +
+      ((stats && stats.streak >= 2) ? " \u{1F525}" + stats.streak : "");
+  }
+
+  function useHardest(s){
+    if(!s || !s.misses || !(s.done >= MIN_PLAYERS)) return;
     const top = Object.entries(s.misses).sort((a, b) => b[1] - a[1])[0];
-    if(!top) return null;
+    if(!top) return;
+    const idx = (+top[0]) - 1;
+    if(!(idx >= 0 && idx < QUESTIONS.length)) return;
     const missed = Math.min(top[1], s.done);
     const pctRight = Math.round((1 - missed / s.done) * 10) * 10;
-    if(pctRight > 50) return null; // not hard enough to be a hook
-    return "Only about " + Math.max(pctRight, 10) + "% of players got Q" + top[0] + " today.";
+    if(pctRight > 60) return; // not hard enough to be a hook
+    shareIdx = idx;
+    shareLead = "Only about " + Math.max(pctRight, 10) + "% of 10Everyday players got this one today. Would you?";
+    shareText = buildShare();
+    renderChallenge();
   }
 
-  function buildShare(hook){
-    return "I got " + score + "/10 on today's 10Everyday. Can you beat it?\n" +
-      dotRow + "\n" +
-      rank + " · " + timeStr + "\n" +
-      ((stats && stats.streak >= 2) ? "🔥 " + stats.streak + "-day streak" + "\n" : "") +
-      (hook ? hook + "\n" : "Ten questions on today's news.\n") +
-      "https://10everyday.com/s";
-  }
-
-  let shareText = buildShare(null);
+  renderChallenge();
+  let shareText = buildShare();
 
   try {
     const ctrl = window.AbortController ? new AbortController() : null;
@@ -748,7 +775,7 @@ function showResults(){
     fetch(STATS_URL + "?d=" + EDITION_DATE.slice(5).replace("-", ""),
           ctrl ? { signal: ctrl.signal } : {})
       .then(r => r.ok ? r.json() : null)
-      .then(s => { const h = hardestLine(s); if(h) shareText = buildShare(h); })
+      .then(useHardest)
       .catch(() => {});
   } catch(e){}
 
@@ -770,7 +797,7 @@ function showResults(){
     try {
       await navigator.clipboard.writeText(shareText);
       shareBtn.textContent = "Copied! Paste it anywhere";
-      setTimeout(()=>{ shareBtn.textContent = "Challenge a Friend"; }, 2500);
+      setTimeout(()=>{ shareBtn.textContent = "Stump a Friend"; }, 2500);
       postShareNudge();
     } catch(e) {
       prompt("Copy your score:", shareText);
