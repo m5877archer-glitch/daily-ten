@@ -177,6 +177,19 @@
   .challenge{margin:0 0 10px;}
   .challenge .chk{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
   .challenge .chq{font-size:1.02rem;font-style:italic;line-height:1.4;margin:6px auto 0;max-width:420px;}
+  .predict{margin:18px 0 4px;padding:14px;border:1px solid var(--ptmid);background:var(--ptrow);}
+  .predict .pkicker{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .predict .pq{font-size:1.08rem;font-weight:bold;line-height:1.35;margin:6px 0 10px;}
+  .predict .popts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .predict .popts button{font-family:inherit;font-size:1rem;font-weight:bold;padding:10px 16px;cursor:pointer;
+    background:var(--card);color:var(--ptdark);border:1px solid var(--ptdark);flex:1 1 130px;max-width:220px;}
+  .predict .popts button.picked{background:var(--ptmid);color:#fff;}
+  .predict .popts button:disabled:not(.picked){opacity:.45;cursor:default;}
+  .predict .pnote{font-size:.9rem;font-style:italic;margin-top:10px;color:#4d473b;}
+  .called{max-width:640px;margin:0 auto 14px;padding:12px 14px;border:1px solid var(--ptdark);background:var(--card);text-align:center;}
+  .called .ck{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .called .cr{font-size:1.15rem;font-weight:bold;margin:4px 0 2px;}
+  .called .cd{font-size:.92rem;line-height:1.4;}
   .replay{
     display:block;width:100%;max-width:340px;margin:0 auto;
     font-family:inherit;font-size:.95rem;font-weight:bold;
@@ -266,6 +279,8 @@
     <span id="dotrow" class="dotrow" aria-label="Progress"></span>
   </div>
 
+  <div class="called" id="calledEl" hidden></div>
+
   <div class="card" id="quizCard">
     <figure class="qimg" id="qimg" hidden><img id="qimgEl" alt=""><figcaption id="qcap"></figcaption></figure>
     <div class="question" id="qtext"></div>
@@ -310,6 +325,12 @@
     <div class="dots" id="dotsEl"></div>
     <div class="challenge" id="challengeEl"></div>
     <button class="share" id="shareBtn">Stump a Friend</button>
+    <div class="predict" id="predictEl" hidden>
+      <div class="pkicker">Call it now</div>
+      <div class="pq" id="predictQ"></div>
+      <div class="popts" id="predictOpts"></div>
+      <div class="pnote" id="predictNote"></div>
+    </div>
     <div class="signup">
       <div class="skicker">Free, every weekday at 6 AM</div>
       <h3>Get tomorrow's quiz by email</h3>
@@ -338,6 +359,18 @@
 const EDITION_DATE = "2026-10-21";
 const PREV_EDITION = "2026-10-20";
 const EDITION_LABEL = "October 21, 2026";
+
+// Prediction question: asked on the score card, answered in a later edition.
+// Each build: set PREDICTION (or null to skip a day), and when one resolves,
+// prepend {id, q, answer, note} to RESOLVED. Keep RESOLVED to the last ~10.
+const PREDICTION = {
+  id: "1021-ws-g1",
+  q: "Who wins World Series Game 1 on Friday in Milwaukee?",
+  options: ["Brewers", "Rays"],
+  reveal: "Monday's quiz"
+};
+const RESOLVED = [
+];
 
 const QUESTIONS = [
   {
@@ -637,7 +670,61 @@ function reportToAlldle(grid){
   } catch(e){}
 }
 
+// Prediction storage: { id: { pick, seen } } in this browser only.
+function loadPicks(){ try { return JSON.parse(localStorage.getItem("tenPicks") || "{}") || {}; } catch(e){ return {}; } }
+function savePicks(p){ try { localStorage.setItem("tenPicks", JSON.stringify(p)); } catch(e){} }
+
+// Payoff: when a prediction this player made has resolved, say so up top.
+(function showCalled(){
+  const el = document.getElementById("calledEl");
+  if(!el || !RESOLVED.length) return;
+  const picks = loadPicks();
+  const hit = RESOLVED.find(r => picks[r.id] && !picks[r.id].seen);
+  if(!hit) return;
+  const right = picks[hit.id].pick === hit.answer;
+  el.innerHTML = "";
+  const k = document.createElement("div"); k.className = "ck"; k.textContent = "Your prediction";
+  const r = document.createElement("div"); r.className = "cr";
+  r.textContent = right ? "\u{1F7E2} You called it." : "\u{1F534} Not this time.";
+  const d = document.createElement("div"); d.className = "cd";
+  d.textContent = hit.q + " You picked " + picks[hit.id].pick + ". Answer: " + hit.answer + "." + (hit.note ? " " + hit.note : "");
+  el.appendChild(k); el.appendChild(r); el.appendChild(d);
+  el.hidden = false;
+  picks[hit.id].seen = true; savePicks(picks);
+  trackPath(right ? "/called-right" : "/called-wrong");
+})();
+
+function renderPrediction(){
+  const box = document.getElementById("predictEl");
+  if(!box || !PREDICTION || !PREDICTION.options) return;
+  const picks = loadPicks();
+  const mine = picks[PREDICTION.id] && picks[PREDICTION.id].pick;
+  document.getElementById("predictQ").textContent = PREDICTION.q;
+  const wrap = document.getElementById("predictOpts");
+  const note = document.getElementById("predictNote");
+  wrap.innerHTML = "";
+  PREDICTION.options.forEach(function(o, i){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = o;
+    if(mine){ b.disabled = true; if(o === mine) b.classList.add("picked"); }
+    b.onclick = function(){
+      const p = loadPicks();
+      p[PREDICTION.id] = { pick: o, seen: false };
+      savePicks(p);
+      trackPath("/pick-" + PREDICTION.id + "-o" + (i + 1));
+      renderPrediction();
+    };
+    wrap.appendChild(b);
+  });
+  note.textContent = mine
+    ? "Locked in: " + mine + ". Find out in " + PREDICTION.reveal + "."
+    : "Doesn't count toward your score. The answer comes in " + PREDICTION.reveal + ".";
+  box.hidden = false;
+}
+
 function showResults(){
+  renderPrediction();
   document.getElementById("quizCard").style.display = "none";
   const midEl = document.getElementById("midSignup");
   if(midEl) midEl.classList.remove("show");
