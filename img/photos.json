@@ -66,6 +66,30 @@
       "commons_file": "Harvesting_soybeans.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Harvesting_soybeans.jpg",
       "credit": "Soybean harvest. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/linc-eagles-gameday.jpg",
+      "commons_file": "Washington_Commanders_vs_Philadelphia_Eagles,_2022.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Washington_Commanders_vs_Philadelphia_Eagles%2C_2022.jpg",
+      "credit": "Lincoln Financial Field, Philadelphia. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/td-garden-celtics.jpg",
+      "commons_file": "NBA_-_February_2014_-_Celtics_vs_Spurs_-_TD_Garden_-_4.JPG",
+      "page": "https://commons.wikimedia.org/wiki/File:NBA_-_February_2014_-_Celtics_vs_Spurs_-_TD_Garden_-_4.JPG",
+      "credit": "TD Garden, Boston. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/ryman-stage.jpg",
+      "commons_file": "Ryman_stage.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Ryman_stage.jpg",
+      "credit": "Ryman Auditorium, Nashville. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/havana-malecon.jpg",
+      "commons_file": "Hotel_Nacional_y_Malecon_de_La_Habana.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Hotel_Nacional_y_Malecon_de_La_Habana.jpg",
+      "credit": "Havana, Cuba. Photo: Wikimedia Commons"
     }
   ]
 }
