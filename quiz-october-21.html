@@ -160,7 +160,7 @@
   .mpsignup button{font-family:inherit;font-size:1rem;font-weight:bold;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);padding:10px 18px;cursor:pointer;}
   .mpsignup button:hover{background:var(--ptdark);}
   .mpsignup .sok{font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
-  .results .signup{margin:14px 0 18px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+  .results .signup{margin:18px 0 14px;padding-top:16px;border-top:1px solid var(--line);}
   .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
   .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
   .merch .mline{font-size:1rem;margin:6px 0 10px;}
@@ -306,18 +306,18 @@
     <div class="flavor" id="flavor"></div>
     <div class="time" id="timeEl"></div>
     <div class="dots" id="dotsEl"></div>
-    <div class="signup">
-      <div class="skicker">Delivered by email</div>
-      <h3>Get it every weekday</h3>
-      <div class="ssub" id="ssub">Ten questions on the day's news, in your inbox each morning.</div>
-      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
-        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
-        <button type="submit">Subscribe</button>
-      </form>
-      <div class="snote">Free. Subscribers get 20% off the merch. Unsubscribe anytime.</div>
-    </div>
     <div class="challenge" id="challengeEl"></div>
     <button class="share" id="shareBtn">Challenge a Friend</button>
+    <div class="signup">
+      <div class="skicker">Free, every weekday at 6 AM</div>
+      <h3>Get tomorrow's quiz by email</h3>
+      <div class="ssub" id="ssub">Ten questions on the day's news in your inbox, plus 20% off the holiday merch.</div>
+      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Send me tomorrow's</button>
+      </form>
+      <div class="snote">No spam. Unsubscribe anytime.</div>
+    </div>
     <button class="replay" onclick="location.reload()">Play Again</button>
     <div class="stats" id="statsEl"></div>
     <div class="merch">
@@ -539,7 +539,8 @@ let finishedAt = null;
 function showMerchPage(){
   finishedAt = Date.now();
   const mp = document.getElementById("merchPage");
-  if(!mp){ showResults(); return; }
+  // Score first: the gate before the score was costing shares. Merch lives on the results card.
+  if(!mp || !window.SHOW_MERCH_GATE){ document.getElementById("quizCard").style.display = "none"; const me = document.getElementById("midSignup"); if(me) me.classList.remove("show"); bar.style.width = "100%"; qcount.textContent = "Complete"; showResults(); window.scrollTo(0, 0); return; }
   document.getElementById("quizCard").style.display = "none";
   const midEl = document.getElementById("midSignup");
   if(midEl) midEl.classList.remove("show");
