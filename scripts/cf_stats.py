@@ -104,7 +104,8 @@ def main():
             day = fresh.setdefault(d, {"visits": 0, "pageviews": 0, "done": 0,
                                        "merch_view": 0, "merch_click": 0, "shop": 0, "shop_q": 0,
                                        "email": 0, "share": 0, "reddit": 0, "facebook": 0, "pt": 0,
-                                       "signups": 0, "signup_mid": 0, "signup_results": 0, "signup_merch": 0})
+                                       "signups": 0, "signup_mid": 0, "signup_results": 0, "signup_merch": 0,
+                                       "share_pressed": 0})
             v = (r.get("sum") or {}).get("visits") or 0
             n = r.get("count") or 0
             day["visits"] += v
@@ -113,7 +114,7 @@ def main():
                 day["done"] += n
             key = COUNTED.get(p.rstrip("/").replace(".html", ""))
             if key:
-                day[key] += n
+                day[key] = day.get(key, 0) + n
                 if key.startswith("signup_"):
                     day["signups"] += n
             key = ENTRY.get(p.rstrip("/").replace(".html", ""))
