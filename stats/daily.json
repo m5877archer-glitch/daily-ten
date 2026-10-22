@@ -140,6 +140,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 10,
   "partial": false
  },
  "2026-09-23": {
@@ -159,6 +160,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-24": {
@@ -178,6 +180,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-25": {
@@ -197,6 +200,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-26": {
@@ -216,6 +220,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-27": {
@@ -235,6 +240,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-28": {
@@ -254,6 +260,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-29": {
@@ -273,6 +280,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-09-30": {
@@ -292,6 +300,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-01": {
@@ -311,6 +320,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-02": {
@@ -330,6 +340,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 10,
   "partial": false
  },
  "2026-10-03": {
@@ -349,6 +360,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-04": {
@@ -368,6 +380,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-05": {
@@ -387,6 +400,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-06": {
@@ -406,6 +420,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-07": {
@@ -425,6 +440,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-08": {
@@ -444,6 +460,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-09": {
@@ -463,6 +480,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-10": {
@@ -518,56 +536,19 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-13": {
-  "visits": 46,
-  "pageviews": 387,
-  "done": 15,
+  "visits": 50,
+  "pageviews": 350,
+  "done": 10,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
-  "email": 4,
+  "email": 0,
   "share": 0,
-  "reddit": 0,
-  "facebook": 0,
-  "pt": 3,
-  "signups": 0,
-  "signup_mid": 0,
-  "signup_results": 0,
-  "signup_merch": 0,
-  "partial": false
- },
- "2026-10-14": {
-  "visits": 65,
-  "pageviews": 452,
-  "done": 18,
-  "merch_view": 15,
-  "merch_click": 3,
-  "shop": 8,
-  "shop_q": 0,
-  "email": 1,
-  "share": 3,
-  "reddit": 0,
-  "facebook": 0,
-  "pt": 4,
-  "signups": 0,
-  "signup_mid": 0,
-  "signup_results": 0,
-  "signup_merch": 0,
-  "partial": false
- },
- "2026-10-15": {
-  "visits": 47,
-  "pageviews": 340,
-  "done": 6,
-  "merch_view": 21,
-  "merch_click": 1,
-  "shop": 3,
-  "shop_q": 0,
-  "email": 1,
-  "share": 3,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -575,6 +556,47 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
+  "partial": false
+ },
+ "2026-10-14": {
+  "visits": 80,
+  "pageviews": 420,
+  "done": 20,
+  "merch_view": 0,
+  "merch_click": 10,
+  "shop": 10,
+  "shop_q": 0,
+  "email": 0,
+  "share": 10,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "share_pressed": 0,
+  "partial": false
+ },
+ "2026-10-15": {
+  "visits": 60,
+  "pageviews": 390,
+  "done": 10,
+  "merch_view": 40,
+  "merch_click": 0,
+  "shop": 10,
+  "shop_q": 0,
+  "email": 0,
+  "share": 0,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-16": {
@@ -594,6 +616,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 1,
   "partial": false
  },
  "2026-10-17": {
@@ -613,6 +636,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-18": {
@@ -632,6 +656,7 @@
   "signup_mid": 0,
   "signup_results": 1,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-19": {
@@ -651,6 +676,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 2,
   "partial": false
  },
  "2026-10-20": {
@@ -670,13 +696,34 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-21": {
-  "visits": 9,
-  "pageviews": 54,
-  "done": 2,
-  "merch_view": 6,
+  "visits": 46,
+  "pageviews": 251,
+  "done": 16,
+  "merch_view": 10,
+  "merch_click": 0,
+  "shop": 1,
+  "shop_q": 0,
+  "email": 3,
+  "share": 2,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 6,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "share_pressed": 3,
+  "partial": false
+ },
+ "2026-10-22": {
+  "visits": 6,
+  "pageviews": 60,
+  "done": 4,
+  "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
@@ -689,6 +736,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
+  "share_pressed": 1,
   "partial": true
  }
 }
