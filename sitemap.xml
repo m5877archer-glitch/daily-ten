@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://10everyday.com/</loc><lastmod>2026-10-21</lastmod><changefreq>daily</changefreq></url>
-  <url><loc>https://10everyday.com/archive.html</loc><lastmod>2026-10-21</lastmod><changefreq>daily</changefreq></url>
+  <url><loc>https://10everyday.com/</loc><lastmod>2026-10-22</lastmod><changefreq>daily</changefreq></url>
+  <url><loc>https://10everyday.com/archive.html</loc><lastmod>2026-10-22</lastmod><changefreq>daily</changefreq></url>
   <url><loc>https://10everyday.com/games.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://10everyday.com/pricing.html</loc><changefreq>monthly</changefreq></url>
   <url><loc>https://10everyday.com/work.html</loc><changefreq>monthly</changefreq></url>
+  <url><loc>https://10everyday.com/quiz-october-22.html</loc><lastmod>2026-10-22</lastmod><changefreq>never</changefreq></url>
   <url><loc>https://10everyday.com/quiz-october-21.html</loc><lastmod>2026-10-21</lastmod><changefreq>never</changefreq></url>
   <url><loc>https://10everyday.com/quiz-october-20.html</loc><lastmod>2026-10-20</lastmod><changefreq>never</changefreq></url>
   <url><loc>https://10everyday.com/quiz-october-19.html</loc><lastmod>2026-10-19</lastmod><changefreq>never</changefreq></url>
