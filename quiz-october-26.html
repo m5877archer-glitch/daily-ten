@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Quiz for Oct 26, 2026: World Series heads to Tampa, clocks fall back, and Apple's foldable · 10Everyday</title>
+<meta name="description" content="News quiz for October 26, 2026: the World Series moves to Tampa Bay, clocks fall back this weekend, Apple's first foldable iPhone, record fall gas prices and six more stories. Ten questions, three minutes.">
+<meta property="og:title" content="10Everyday · Oct 26: World Series heads to Tampa, clocks fall back, and Apple's foldable">
+<meta property="og:description" content="Ten questions on the day's news, answered in about three minutes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://10everyday.com/">
+<meta property="og:site_name" content="10Everyday">
+<meta name="twitter:card" content="summary">
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --correct:#2e7d4f;
+    --wrong:#c0392b;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 22px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{text-align:center;margin-bottom:14px;}
+  header .kicker{
+    font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:#6b6455;
+  }
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;margin:2px 0;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;font-size:.9rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  header .dateline{
+    display:flex;justify-content:space-between;gap:8px;
+    border-bottom:1px solid var(--ink);padding:6px 2px;
+    font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:#524b3e;
+  }
+  header .dateline .dl-date{font-weight:bold;}
+  .progress{
+    background:#e6e1d2;height:8px;overflow:hidden;
+    margin:16px 0 6px;border:1px solid var(--line);
+  }
+  .progress .bar{
+    height:100%;width:0;background:var(--ptmid);transition:width .35s ease;
+  }
+  .meta .dotrow{display:flex;gap:4px;align-items:center;}
+  .meta .dotrow i{width:11px;height:11px;border-radius:2px;background:var(--line);display:block;}
+  .meta .dotrow i.ok{background:var(--ptdark);}
+  .meta .dotrow i.no{background:var(--wrong);}
+  .meta{
+    display:flex;justify-content:space-between;font-size:.85rem;
+    font-weight:bold;color:#fff;background:var(--ptmid);
+    border:1px solid var(--ptdark);padding:7px 12px;margin-bottom:14px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);
+    padding:22px;
+  }
+  .question{font-size:1.15rem;line-height:1.55;margin-bottom:18px;}
+  .question::first-letter{
+    float:left;font-size:3.1rem;line-height:.82;font-weight:bold;
+    padding:4px 8px 0 0;
+  }
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .opt{
+    font-family:inherit;font-size:1rem;text-align:left;
+    background:#fffdf7;border:1px solid var(--line);
+    padding:12px 14px;cursor:pointer;
+    transition:border-color .15s, background .15s;line-height:1.4;
+  }
+  .opt:nth-child(even){background:var(--ptrow);}
+  .opt:hover:not(:disabled){border-color:var(--ptmid);border-width:1px;outline:1px solid var(--ptmid);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{
+    background:#eaf5ee;border-color:var(--correct);
+    color:var(--correct);font-weight:bold;
+  }
+  .opt.wrong{
+    background:#fbeeec;border-color:var(--wrong);color:var(--wrong);
+  }
+  .explain{
+    margin-top:16px;padding:14px;border-left:4px solid var(--ptmid);
+    background:var(--paper);font-size:.95rem;line-height:1.55;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next{
+    display:none;margin-top:18px;width:100%;
+    font-family:inherit;font-size:1.05rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:13px;cursor:pointer;
+  }
+  .next.show{display:block;}
+  .next:hover{background:var(--ptdark);}
+  .results{text-align:center;display:none;}
+  .results.show{display:block;}
+  .results .score{
+    font-size:3.4rem;font-weight:bold;margin:10px 0 2px;
+  }
+  .results .outof{color:#6b6455;margin-bottom:14px;}
+  .results .rank{
+    font-size:1.4rem;font-weight:bold;margin-bottom:8px;
+  }
+  .results .flavor{
+    font-style:italic;color:#524b3e;line-height:1.55;margin-bottom:14px;
+  }
+  .results .time{
+    font-size:.9rem;color:#6b6455;margin-bottom:10px;
+  }
+  .results .dots{
+    font-size:1.3rem;letter-spacing:.12em;margin-bottom:18px;
+  }
+  .results .stats{
+    font-size:.82rem;color:#6b6455;margin-top:16px;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .coffee{
+    display:inline-block;text-decoration:none;margin-top:14px;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ink);background:#fdf3d7;border:1px solid #e8d9a8;
+    padding:11px 22px;
+  }
+  .coffee:hover{background:#fbecc2;}
+  .merchpage{text-align:center;display:none;}
+  .merchpage.show{display:block;}
+  .merchpage .mpkicker{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;margin-bottom:12px;}
+  .merchpage img{display:block;width:100%;height:auto;border:1px solid var(--line);margin-bottom:16px;}
+  .merchpage h2{font-size:clamp(1.3rem,6vw,1.75rem);margin-bottom:8px;}
+  .merchpage p{font-size:1rem;line-height:1.5;color:#3d382e;margin:0 auto 18px;max-width:460px;}
+  .merchpage .mpshop{display:block;width:100%;max-width:340px;margin:0 auto 12px;text-decoration:none;
+    background:#b23a48;color:#fff;border:1px solid #7d2531;font-family:inherit;font-size:1.15rem;font-weight:bold;padding:16px 30px;}
+  .merchpage .mpshop:hover{background:#962f3c;}
+  .merchpage .mpscore{display:block;width:100%;max-width:340px;margin:0 auto;cursor:pointer;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);font-family:inherit;font-size:1.05rem;font-weight:bold;padding:14px 30px;}
+  .merchpage .mpscore:hover{background:var(--ptdark);}
+  .mpsignup{max-width:420px;margin:0 auto 18px;padding:14px 14px 12px;border:1px solid var(--ptmid);background:var(--ptrow);}
+  .mpsignup .mptext{font-size:1.05rem;font-weight:bold;margin-bottom:4px;}
+  .mpsignup .mpsub{font-size:.9rem;color:#524b3e;margin-bottom:10px;}
+  .mpsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .mpsignup input[type=email]{font-family:inherit;font-size:1rem;padding:10px 11px;border:1px solid var(--ptdark);background:var(--card);color:var(--ink);flex:1 1 200px;max-width:260px;}
+  .mpsignup button{font-family:inherit;font-size:1rem;font-weight:bold;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);padding:10px 18px;cursor:pointer;}
+  .mpsignup button:hover{background:var(--ptdark);}
+  .mpsignup .sok{font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
+  .results .signup{margin:18px 0 14px;padding-top:16px;border-top:1px solid var(--line);}
+  .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
+  .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
+  .merch .mline{font-size:1rem;margin:6px 0 10px;}
+  .merch a{display:inline-block;text-decoration:none;font-family:inherit;font-size:.95rem;font-weight:bold;
+    color:var(--ptdark);border:1px solid var(--ptdark);padding:10px 22px;}
+  .merch a:hover{background:#eef3ec;}
+  .share{
+    display:block;width:100%;max-width:340px;margin:0 auto 12px;
+    font-family:inherit;font-size:1.15rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:16px 30px;cursor:pointer;
+  }
+  .share:hover{background:var(--ptdark);}
+  .challenge{margin:0 0 10px;}
+  .challenge .chk{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .challenge .chq{font-size:1.02rem;font-style:italic;line-height:1.4;margin:6px auto 0;max-width:420px;}
+  .predict{margin:18px 0 4px;padding:14px;border:1px solid var(--ptmid);background:var(--ptrow);}
+  .predict .pkicker{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .predict .pq{font-size:1.08rem;font-weight:bold;line-height:1.35;margin:6px 0 10px;}
+  .predict .popts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .predict .popts button{font-family:inherit;font-size:1rem;font-weight:bold;padding:10px 16px;cursor:pointer;
+    background:var(--card);color:var(--ptdark);border:1px solid var(--ptdark);flex:1 1 130px;max-width:220px;}
+  .predict .popts button.picked{background:var(--ptmid);color:#fff;}
+  .predict .popts button:disabled:not(.picked){opacity:.45;cursor:default;}
+  .predict .pnote{font-size:.9rem;font-style:italic;margin-top:10px;color:#4d473b;}
+  .called{max-width:640px;margin:0 auto 14px;padding:12px 14px;border:1px solid var(--ptdark);background:var(--card);text-align:center;}
+  .called .ck{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
+  .called .cr{font-size:1.15rem;font-weight:bold;margin:4px 0 2px;}
+  .called .cd{font-size:.92rem;line-height:1.4;}
+  .replay{
+    display:block;width:100%;max-width:340px;margin:0 auto;
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:transparent;color:var(--ptmid);border:2px solid var(--ptmid);
+    padding:10px 26px;cursor:pointer;
+  }
+  .replay:hover{background:var(--ptrow);}
+  .signup{
+    margin-top:16px;border-top:1px solid var(--line);
+    padding-top:14px;text-align:center;
+  }
+  .signup .skicker{
+    font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;
+  }
+  .signup h3{font-size:1.25rem;margin:3px 0 4px;}
+  .signup .ssub{
+    font-style:italic;color:#524b3e;font-size:.9rem;margin-bottom:10px;
+  }
+  .signup form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .signup input[type=email]{
+    font-family:inherit;font-size:1rem;padding:11px 12px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 220px;max-width:300px;
+  }
+  .signup button{
+    font-family:inherit;font-size:1rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:11px 22px;cursor:pointer;
+  }
+  .signup button:hover{background:var(--ptdark);}
+  .signup .snote{font-size:.75rem;color:#8a8272;margin-top:8px;}
+  .signup .sok{
+    font-weight:bold;color:var(--correct);font-size:1.05rem;margin:10px 0 4px;
+  }
+  .midsignup{
+    display:none;margin-top:14px;padding:12px 14px;
+    background:var(--ptrow);border:1px solid var(--ptmid);text-align:center;
+  }
+  .midsignup.show{display:block;}
+  .progressnote{margin-top:8px;font-weight:bold;font-style:normal;color:var(--ptdark);}
+  .midsignup .mtext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
+  .midsignup form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .midsignup input[type=email]{
+    font-family:inherit;font-size:.95rem;padding:9px 10px;
+    border:1px solid var(--ptdark);background:var(--card);color:var(--ink);
+    flex:1 1 200px;max-width:260px;
+  }
+  .midsignup button{
+    font-family:inherit;font-size:.95rem;font-weight:bold;
+    background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+    padding:9px 18px;cursor:pointer;
+  }
+  .midsignup button:hover{background:var(--ptdark);}
+  .midsignup .mnote{font-size:.72rem;color:#6b6455;margin-top:6px;}
+  .midsignup .sok{
+    font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;
+  }
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;
+    border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer .byline{margin-top:4px;}
+  .qimg{margin:0 0 16px;}
+  .qimg img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line);background:var(--paper);}
+  .qimg figcaption{font-size:.72rem;color:#8a8272;font-style:italic;margin-top:5px;text-align:right;}
+  .explain .shoplink{display:inline-block;margin-top:10px;font-weight:bold;color:var(--ptdark);text-decoration:none;border-bottom:1px solid var(--ptmid);}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <div class="kicker">Est. 2026 &middot; Free every weekday</div>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions. Three minutes. No paywall.</div>
+    <div class="dateline">
+      <span>Vol. I, No. 77</span>
+      <span class="dl-date">Monday, October 26, 2026</span>
+      <span>Morning edition</span>
+    </div>
+  </header>
+
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="meta">
+    <span id="qcount">Question 1 of 10</span>
+    <span id="dotrow" class="dotrow" aria-label="Progress"></span>
+  </div>
+
+  <div class="called" id="calledEl" hidden></div>
+
+  <div class="card" id="quizCard">
+    <figure class="qimg" id="qimg" hidden><img id="qimgEl" alt=""><figcaption id="qcap"></figcaption></figure>
+    <div class="question" id="qtext"></div>
+    <div class="options" id="opts"></div>
+    <div class="explain" id="explain"></div>
+    <button class="next" id="nextBtn">Next Question →</button>
+  </div>
+
+  <div class="card merchpage" id="merchPage">
+    <div class="mpkicker">One thing before your score</div>
+    <img src="shop-hero.png" alt="IYKYK, the holiday edition. Merch for people who play 10Everyday.com, the daily news quiz." width="2400" height="1000">
+    <h2>The holiday shop is open</h2>
+    <p>IYKYK shirts, mugs, hats and mousepads for 10Everyday players. Nine green dots and one red one. The people who get it, get it.</p>
+    <div class="mpsignup" id="mpSignup">
+      <div class="mptext">Subscribers get 20% off</div>
+      <div class="mpsub">Get the quiz by email every weekday morning and we'll send you the code.</div>
+      <form class="kitform" id="kitFormMerch" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Get 20% off</button>
+      </form>
+    </div>
+    <a class="mpshop" id="mpShop" href="/shop" target="_blank" rel="noopener">Visit the shop</a>
+    <button class="mpscore" id="mpScore">See my score →</button>
+  </div>
+
+  <div class="midsignup" id="midSignup">
+    <div class="mtext">Want the next one in your inbox?</div>
+    <form class="kitform" id="kitFormMid" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Subscribe</button>
+    </form>
+    <div class="mnote">Free. Weekday mornings. Subscribers get 20% off the merch.</div>
+  </div>
+
+  <div class="card results" id="results">
+    <div style="font-size:1.1rem;color:#6b6455;">Final Edition</div>
+    <div class="score" id="finalScore"></div>
+    <div class="outof">out of 10</div>
+    <div class="rank" id="rank"></div>
+    <div class="flavor" id="flavor"></div>
+    <div class="time" id="timeEl"></div>
+    <div class="dots" id="dotsEl"></div>
+    <div class="challenge" id="challengeEl"></div>
+    <button class="share" id="shareBtn">Stump a Friend</button>
+    <div class="predict" id="predictEl" hidden>
+      <div class="pkicker">Call it now</div>
+      <div class="pq" id="predictQ"></div>
+      <div class="popts" id="predictOpts"></div>
+      <div class="pnote" id="predictNote"></div>
+    </div>
+    <div class="signup">
+      <div class="skicker">Free, every weekday at 6 AM</div>
+      <h3>Get tomorrow's quiz by email</h3>
+      <div class="ssub" id="ssub">Ten questions on the day's news in your inbox, plus 20% off the holiday merch.</div>
+      <form class="kitform" id="kitForm" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+        <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit">Send me tomorrow's</button>
+      </form>
+      <div class="snote">No spam. Unsubscribe anytime.</div>
+    </div>
+    <button class="replay" onclick="location.reload()">Play Again</button>
+    <div class="stats" id="statsEl"></div>
+    <div class="merch">
+      <div class="mkicker">New: the holiday shop</div>
+      <div class="mline" id="merchLine">IYKYK shirts, mugs and hats for 10Everyday players.</div>
+      <a href="/shop" target="_blank" rel="noopener">Visit the shop</a>
+    </div>
+    <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
+  </div>
+
+  <footer>10Everyday.com · Fresh questions every weekday · <a href="games.html" style="color:#8a8272;">Games we like</a> · <a href="/shop" target="_blank" rel="noopener" style="color:#8a8272;">Shop</a> · <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener" style="color:#8a8272;">☕ Buy me a coffee</a><div class="byline">10Everyday is edited in San Marcos, California · <a href="work.html" style="color:#8a8272;">Want one for your business?</a></div><div style="margin-top:10px;"><a href="https://www.alldle.net/game/10everyday?ref=badge" target="_blank" rel="noopener" aria-label="Play on Alldle"><img src="https://www.alldle.net/badge.svg?g=7da81902-de22-42fe-bc3a-c0c88b347bea&variant=light&size=compact&content=text" alt="Play on Alldle" width="180" height="48" style="border:0;" /></a></div></footer>
+ </div>
+</div>
+
+<script>
+const EDITION_DATE = "2026-10-26";
+const PREV_EDITION = "2026-10-23";
+const EDITION_LABEL = "October 26, 2026";
+
+// Prediction question: asked on the score card, answered in a later edition.
+// Each build: set PREDICTION (or null to skip a day), and when one resolves,
+// prepend {id, q, answer, note} to RESOLVED. Keep RESOLVED to the last ~10.
+const PREDICTION = {
+  id: "1026-ws-champ",
+  q: "Who wins the World Series?",
+  options: ["Brewers", "Rays"],
+  reveal: "the quiz after the final out"
+};
+const RESOLVED = [
+];
+
+const QUESTIONS = [
+  {
+    q:"The World Series moves to Tampa Bay for Game 3. No matter who wins, what's guaranteed about this year's champion?",
+    img:{src:"img/photos/brewers-home-crowd.jpg", alt:"A packed crowd watches the Brewers at home in Milwaukee.", credit:"American Family Field, Milwaukee. Photo: Wikimedia Commons"},
+    options:["It will win its first title ever", "It will be from the National League", "It will be from Florida", "It will be paid entirely in cheese curds"],
+    answer:"It will win its first title ever",
+    explain:"Neither the Brewers nor the Rays has ever won a World Series. Games 3, 4 and 5 are in Tampa Bay."
+  },
+  {
+    q:"Daylight saving time ends this weekend. What do most Americans do to their clocks?",
+    options:["Set them back one hour", "Set them forward one hour", "Nothing, it was canceled for good", "Wind them with a tiny golden key"],
+    answer:"Set them back one hour",
+    explain:"Clocks fall back at 2 a.m. Sunday, Nov. 1, the night after Halloween. You get an extra hour of sleep."
+  },
+  {
+    q:"Apple's first foldable phone went on sale for about $2,000. What is it called?",
+    options:["iPhone Duo", "iPhone Flip", "iPhone Fold", "iPhone Taco"],
+    answer:"iPhone Duo",
+    explain:"It works with the Apple Pencil. Preorders sold out fast and some deliveries slipped into 2027."
+  },
+  {
+    q:"Gas prices this fall are the highest ever for this time of year. Which state has the most expensive gas?",
+    options:["California", "Texas", "Ohio", "Antarctica"],
+    answer:"California",
+    explain:"California averaged about $6.34 a gallon, per AAA. This is the first October the national average topped $4."
+  },
+  {
+    q:"Spirit Halloween says one of this year's hottest costume trends comes from which animated hit?",
+    img:{src:"img/products/crop-tee-front.jpg", alt:"The black IYKYK crop tee with white serif lettering.", credit:"The IYKYK crop tee, from the 10Everyday holiday shop"},
+    options:["KPop Demon Hunters", "Ratatouille", "The Land Before Time", "Tax Season: The Animated Series"],
+    answer:"KPop Demon Hunters",
+    explain:"Toy Story, Spider-Man and Fortnite also made the list. The lowest-effort costume is still a shirt that says IYKYK.",
+    shop:{href:"/shop", label:"See the crop tee in the shop →"}
+  },
+  {
+    q:"The Supreme Court let New Hampshire refuse which kind of ID at the polls in next week's election?",
+    options:["Student IDs", "Driver's licenses", "Passports", "Costco cards"],
+    answer:"Student IDs",
+    explain:"The ruling came on an emergency request from the state. Justice Ketanji Brown Jackson dissented."
+  },
+  {
+    q:"The Pentagon cleared Homeland Security to test a nonlethal weapon at the southern border. How does it work?",
+    options:["An invisible beam that makes skin feel like it's burning", "A net fired from a drone", "A super loud siren", "It plays polka music until you leave"],
+    answer:"An invisible beam that makes skin feel like it's burning",
+    explain:"It's called the Active Denial System, nicknamed the heat ray. The military sent it to Afghanistan but never used it in combat."
+  },
+  {
+    q:"A polling firm called Wedgewood admitted its election polls were fake. What reason did it give?",
+    options:["To expose weaknesses in political polling", "To win a bet", "To test a new AI tool", "A ghost told it to"],
+    answer:"To expose weaknesses in political polling",
+    explain:"A fake Wedgewood poll was blamed for pushing a Michigan Senate candidate out of the race in June."
+  },
+  {
+    q:"The Brewers' only other World Series was in 1982. Which team beat them in seven games?",
+    options:["St. Louis Cardinals", "New York Yankees", "Los Angeles Dodgers", "The Milwaukee Symphony Orchestra"],
+    answer:"St. Louis Cardinals",
+    explain:"Milwaukee won a franchise-record 103 games this year. The Rays are in their third World Series."
+  },
+  {
+    q:"Phish is famous for wearing a \"musical costume\" at its Halloween shows. What does that mean?",
+    options:["Playing a whole album as if it were their own", "Swapping instruments for the night", "Playing every song backwards", "Performing inside a giant pumpkin"],
+    answer:"Playing a whole album as if it were their own",
+    explain:"It started in 1994 with the Beatles' White Album. Lately they've debuted albums of brand new songs instead."
+  }
+];
+
+let current = 0;
+let score = 0;
+const dots = [];
+const missedIdx = [];
+const startTime = Date.now();
+
+const qtext = document.getElementById("qtext");
+const opts = document.getElementById("opts");
+const explain = document.getElementById("explain");
+const nextBtn = document.getElementById("nextBtn");
+const bar = document.getElementById("bar");
+const qcount = document.getElementById("qcount");
+const dotRowEl = document.getElementById("dotrow");
+
+// Ten slots visible from question one. Answered slots fill in, the rest
+// stay light. Gives the player a finish line to see and shows them the
+// share artifact before they are ever asked to share it.
+function renderDotRow(){
+  if(!dotRowEl) return;
+  let out = "";
+  for(let i = 0; i < QUESTIONS.length; i++){
+    const d = dots[i];
+    const cls = d === undefined ? "" : (d === "\u{1F7E2}" ? " class=\"ok\"" : " class=\"no\"");
+    out += "<i" + cls + "></i>";
+  }
+  dotRowEl.innerHTML = out;
+}
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function shuffleOptions(options){
+  const isPinned = t => /^(all|none) of the above$/i.test(t.trim());
+  const pinned = options.filter(isPinned);
+  const rest = shuffle(options.filter(o=>!isPinned(o)));
+  return rest.concat(pinned);
+}
+
+// Warm the cache so each photo is ready when its question comes up.
+QUESTIONS.forEach(function(q){ if(q.img){ const i = new Image(); i.src = q.img.src; } });
+
+function render(){
+  const q = QUESTIONS[current];
+  qtext.textContent = q.q;
+  // Optional photo: { src, alt, credit }. Questions without one stay text only.
+  const fig = document.getElementById("qimg");
+  if(q.img){
+    document.getElementById("qimgEl").src = q.img.src;
+    document.getElementById("qimgEl").alt = q.img.alt || "";
+    document.getElementById("qcap").textContent = q.img.credit || "";
+    fig.hidden = false;
+  } else { fig.hidden = true; }
+  explain.textContent = "";
+  explain.classList.remove("show");
+  nextBtn.classList.remove("show");
+  opts.innerHTML = "";
+  shuffleOptions(q.options).forEach(optText=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.textContent = optText;
+    btn.onclick = ()=>select(btn, optText, q);
+    opts.appendChild(btn);
+  });
+  bar.style.width = ((current)/QUESTIONS.length*100) + "%";
+  qcount.textContent = "Question " + (current+1) + " of " + QUESTIONS.length;
+  // Mid-quiz signup: shown under every question so people who quit before
+  // the results card still see the ask.
+  if(!window.tenSubscribed){
+    const mid = document.getElementById("midSignup");
+    if(mid) mid.classList.add("show");
+  }
+  renderDotRow();
+}
+
+function select(btn, chosen, q){
+  const buttons = opts.querySelectorAll(".opt");
+  buttons.forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === q.answer) b.classList.add("correct");
+  });
+  if(chosen === q.answer){
+    score++;
+    dots.push("\u{1F7E2}");
+  } else {
+    btn.classList.add("wrong");
+    dots.push("\u{1F534}");
+    missedIdx.push(current);
+    // Per-question miss tracking: logs /miss-MMDD-qN so Cloudflare shows
+    // which questions trip players up, edition by edition.
+    trackPath("/miss-" + EDITION_DATE.slice(5).replace("-", "") + "-q" + (current + 1));
+  }
+  renderDotRow();
+  explain.textContent = q.explain;
+  // Daily product question: link to the item in the shop, tracked as /shop-q.
+  if(q.shop){
+    const a = document.createElement("a");
+    a.className = "shoplink"; a.href = q.shop.href; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = q.shop.label;
+    a.onclick = function(){ trackPath("/shop-q"); };
+    explain.appendChild(document.createElement("br"));
+    explain.appendChild(a);
+  }
+  // Countdown note from the halfway mark on, keyed to answers given.
+  const PROGRESS = {4:"Halfway there.", 5:"4 more to go.", 6:"Only 3 left.", 7:"2 to go.", 8:"One more. Make it count."};
+  if(PROGRESS[current] && QUESTIONS.length === 10){
+    const pn = document.createElement("div");
+    pn.className = "progressnote";
+    pn.textContent = PROGRESS[current];
+    explain.appendChild(pn);
+  }
+  explain.classList.add("show");
+  nextBtn.textContent = current === QUESTIONS.length-1 ? "See Results →" : "Next Question →";
+  nextBtn.classList.add("show");
+}
+
+nextBtn.onclick = ()=>{
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showMerchPage();
+  }
+};
+
+// Holiday shop interstitial: shown after the last answer, before the score.
+let finishedAt = null;
+function showMerchPage(){
+  finishedAt = Date.now();
+  const mp = document.getElementById("merchPage");
+  // Score first: the gate before the score was costing shares. Merch lives on the results card.
+  if(!mp || !window.SHOW_MERCH_GATE){ document.getElementById("quizCard").style.display = "none"; const me = document.getElementById("midSignup"); if(me) me.classList.remove("show"); bar.style.width = "100%"; qcount.textContent = "Complete"; showResults(); window.scrollTo(0, 0); return; }
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  if(window.tenSubscribed){ const mps = document.getElementById("mpSignup"); if(mps) mps.style.display = "none"; }
+  mp.classList.add("show");
+  window.scrollTo(0, 0);
+  trackPath("/merch-view");
+  document.getElementById("mpShop").onclick = function(){ trackPath("/merch-click"); };
+  document.getElementById("mpScore").onclick = function(){
+    mp.classList.remove("show");
+    showResults();
+    window.scrollTo(0, 0);
+  };
+}
+
+function formatTime(ms){
+  const totalSec = Math.round(ms/1000);
+  const m = Math.floor(totalSec/60);
+  const s = totalSec % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+
+function updateStats(){
+  try{
+    const doneKey = "tenEveryday.done." + EDITION_DATE;
+    if(localStorage.getItem(doneKey)) return JSON.parse(localStorage.getItem("tenEveryday.stats"));
+    let stats;
+    try{ stats = JSON.parse(localStorage.getItem("tenEveryday.stats")) || {}; }
+    catch(e){ stats = {}; }
+    stats.played = (stats.played || 0) + 1;
+    stats.correct = (stats.correct || 0) + score;
+    stats.streak = (stats.lastDate === PREV_EDITION) ? (stats.streak || 0) + 1 : 1;
+    stats.lastDate = EDITION_DATE;
+    localStorage.setItem("tenEveryday.stats", JSON.stringify(stats));
+    localStorage.setItem(doneKey, "1");
+    return stats;
+  }catch(e){
+    return null;
+  }
+}
+
+// Cloudflare counts a path, not an event, so we briefly push a fake path,
+// let the beacon see it, and restore the real URL. Wrapped in try/catch
+// because a failure here must never take the quiz down with it.
+function trackPath(path){
+  try {
+    const back = location.pathname + location.search + location.hash;
+    history.pushState(null, "", path);
+    setTimeout(function(){
+      try { history.replaceState(null, "", back); } catch(e){}
+    }, 120);
+  } catch(e){}
+}
+
+// Alldle SDK: only loads when the quiz is framed (i.e. played on alldle.net).
+// Reports the finished game so it counts toward Alldle's daily lineup,
+// cross-game streak and Daily Card. Failure here must never affect the quiz.
+var alldleReady = null, alldleReported = false;
+(function(){
+  try {
+    if (window.self === window.top) return;
+    var sc = document.createElement("script");
+    sc.src = "https://www.alldle.net/sdk/0.1.1/sdk.js";
+    sc.onload = function(){
+      try {
+        var al = new Alldle({ gameSlug: "10everyday" });
+        alldleReady = al.connect().then(function(){ return al; }).catch(function(){ return null; });
+      } catch(e){}
+    };
+    document.head.appendChild(sc);
+  } catch(e){}
+})();
+
+function reportToAlldle(grid){
+  try {
+    if (!alldleReady || alldleReported) return;
+    alldleReported = true;
+    alldleReady.then(function(al){
+      if (!al) return;
+      return al.completeMode("classic", {
+        won: score >= 6,
+        score: score,
+        puzzleId: EDITION_DATE,
+        durationMs: Date.now() - startTime,
+        resultGrid: grid
+      });
+    }).catch(function(){});
+  } catch(e){}
+}
+
+// Prediction storage: { id: { pick, seen } } in this browser only.
+function loadPicks(){ try { return JSON.parse(localStorage.getItem("tenPicks") || "{}") || {}; } catch(e){ return {}; } }
+function savePicks(p){ try { localStorage.setItem("tenPicks", JSON.stringify(p)); } catch(e){} }
+
+// Payoff: when a prediction this player made has resolved, say so up top.
+(function showCalled(){
+  const el = document.getElementById("calledEl");
+  if(!el || !RESOLVED.length) return;
+  const picks = loadPicks();
+  const hit = RESOLVED.find(r => picks[r.id] && !picks[r.id].seen);
+  if(!hit) return;
+  const right = picks[hit.id].pick === hit.answer;
+  el.innerHTML = "";
+  const k = document.createElement("div"); k.className = "ck"; k.textContent = "Your prediction";
+  const r = document.createElement("div"); r.className = "cr";
+  r.textContent = right ? "\u{1F7E2} You called it." : "\u{1F534} Not this time.";
+  const d = document.createElement("div"); d.className = "cd";
+  d.textContent = hit.q + " You picked " + picks[hit.id].pick + ". Answer: " + hit.answer + "." + (hit.note ? " " + hit.note : "");
+  el.appendChild(k); el.appendChild(r); el.appendChild(d);
+  el.hidden = false;
+  picks[hit.id].seen = true; savePicks(picks);
+  trackPath(right ? "/called-right" : "/called-wrong");
+})();
+
+function renderPrediction(){
+  const box = document.getElementById("predictEl");
+  if(!box || !PREDICTION || !PREDICTION.options) return;
+  const picks = loadPicks();
+  const mine = picks[PREDICTION.id] && picks[PREDICTION.id].pick;
+  document.getElementById("predictQ").textContent = PREDICTION.q;
+  const wrap = document.getElementById("predictOpts");
+  const note = document.getElementById("predictNote");
+  wrap.innerHTML = "";
+  PREDICTION.options.forEach(function(o, i){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = o;
+    if(mine){ b.disabled = true; if(o === mine) b.classList.add("picked"); }
+    b.onclick = function(){
+      const p = loadPicks();
+      p[PREDICTION.id] = { pick: o, seen: false };
+      savePicks(p);
+      trackPath("/pick-" + PREDICTION.id + "-o" + (i + 1));
+      renderPrediction();
+    };
+    wrap.appendChild(b);
+  });
+  note.textContent = mine
+    ? "Locked in: " + mine + ". Find out in " + PREDICTION.reveal + "."
+    : "Doesn't count toward your score. The answer comes in " + PREDICTION.reveal + ".";
+  box.hidden = false;
+}
+
+function showResults(){
+  renderPrediction();
+  document.getElementById("quizCard").style.display = "none";
+  const midEl = document.getElementById("midSignup");
+  if(midEl) midEl.classList.remove("show");
+  // Already subscribed mid-quiz: do not ask a second time.
+  if(window.tenSubscribed){
+    const rf = document.getElementById("kitForm");
+    if(rf){
+      const ok = document.createElement("div");
+      ok.className = "sok";
+      ok.textContent = "You're in. See you at 6 AM.";
+      rf.parentNode.replaceChild(ok, rf);
+      const rl = document.createElement("a");
+      rl.href = "https://10everyday.kit.com/recommendations?email_address=" + encodeURIComponent(window.tenEmail || "");
+      rl.textContent = "More newsletters our players like \u2192";
+      rl.style.cssText = "display:block;margin-top:8px;font-size:.85rem;color:var(--ptdark);";
+      ok.parentNode.insertBefore(rl, ok.nextSibling);
+    }
+  }
+  bar.style.width = "100%";
+  qcount.textContent = "Complete";
+  const elapsed = (finishedAt || Date.now()) - startTime;
+  const timeStr = formatTime(elapsed);
+  const r = document.getElementById("results");
+  r.classList.add("show");
+  document.getElementById("finalScore").textContent = score;
+  trackPath("/score-" + score);
+  // Per-edition completion count: denominator for per-question miss rates.
+  setTimeout(function(){ trackPath("/done-" + EDITION_DATE.slice(5).replace("-", "")); }, 400);
+  let rank, flavor;
+  if(score === 10){
+    rank = "Front Page Legend";
+    flavor = "A perfect ten. The Emperor is a fan of your work.";
+  } else if(score >= 8){
+    rank = "Editor-in-Chief";
+    flavor = "Sharp. You missed a beat or two, but the newsroom runs on your watch.";
+  } else if(score >= 6){
+    rank = "Beat Reporter";
+    flavor = "Solid work. You've got the big stories down. Now dig into the details.";
+  } else if(score >= 4){
+    rank = "Weekend Skimmer";
+    flavor = "You caught the headlines between coffee refills. Tomorrow's edition awaits.";
+  } else {
+    rank = "Crossword-First Reader";
+    flavor = "Hey, the puzzles are a legitimate reason to buy the paper. Come back tomorrow and redeem yourself.";
+  }
+  // Holiday shop plug: speak to the score the player is looking at.
+  const merchEl = document.getElementById("merchLine");
+  if(merchEl){
+    if(score === 10) merchEl.textContent = "Ten for ten. You have earned the hat.";
+    else if(score === 9) merchEl.textContent = "Nine green, one red? There is a shirt for that.";
+  }
+  document.getElementById("rank").textContent = rank;
+  document.getElementById("flavor").textContent = flavor;
+  document.getElementById("timeEl").textContent = "Finished in " + timeStr;
+  const dotRow = dots.join("");
+  document.getElementById("dotsEl").textContent = dotRow;
+  reportToAlldle(dotRow);
+
+  const stats = updateStats();
+  if(stats){
+    document.getElementById("statsEl").textContent =
+      "Editions played: " + stats.played +
+      " · Correct all-time: " + stats.correct +
+      " · Streak: " + stats.streak + (stats.streak === 1 ? " day" : " days");
+  }
+
+  // Streak-aware signup copy: loss aversion once there is something to lose.
+  // Falls back to the generic subhead for first-timers and broken streaks.
+  if(stats && stats.streak >= 2){
+    const subEl = document.getElementById("ssub");
+    if(subEl){
+      subEl.textContent =
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+    }
+  }
+
+  const shareBtn = document.getElementById("shareBtn");
+  const STATS_URL = "https://plain-block-5acctenevery-stats.m5877archer.workers.dev"; // your Worker URL
+  const MIN_PLAYERS = 5; // below this, skip the "% got it" line (too noisy)
+
+  // Share a question, not just a score. Default: the first question this
+  // player missed (or Q1 on a perfect game). Upgraded to the day's hardest
+  // question once enough people have played. Question order is fixed per
+  // edition, so Qn in the stats matches QUESTIONS[n-1] for every player.
+  let shareIdx = missedIdx.length ? missedIdx[0] : 0;
+  let shareLead = missedIdx.length
+    ? "I missed this one on today's 10Everyday. Would you get it?"
+    : (score === 10 ? "I got all ten on today's 10Everyday. Here's one of them. Would you get it?"
+                    : "From today's 10Everyday. Would you get it?");
+
+  function stem(i){ return QUESTIONS[i] && QUESTIONS[i].q ? QUESTIONS[i].q : ""; }
+
+  function renderChallenge(){
+    const chEl = document.getElementById("challengeEl");
+    if(!chEl) return;
+    chEl.innerHTML = "";
+    const k = document.createElement("div");
+    k.className = "chk";
+    k.textContent = "Bet your friends miss this one";
+    const qq = document.createElement("div");
+    qq.className = "chq";
+    qq.textContent = "“" + stem(shareIdx) + "”";
+    chEl.appendChild(k); chEl.appendChild(qq);
+  }
+
+  function buildShare(){
+    return shareLead + "\n\n" +
+      "“" + stem(shareIdx) + "”\n\n" +
+      "Find out: https://10everyday.com/s\n\n" +
+      "My score: " + score + "/10 " + dotRow +
+      ((stats && stats.streak >= 2) ? " \u{1F525}" + stats.streak : "");
+  }
+
+  function useHardest(s){
+    if(!s || !s.misses || !(s.done >= MIN_PLAYERS)) return;
+    const top = Object.entries(s.misses).sort((a, b) => b[1] - a[1])[0];
+    if(!top) return;
+    const idx = (+top[0]) - 1;
+    if(!(idx >= 0 && idx < QUESTIONS.length)) return;
+    const missed = Math.min(top[1], s.done);
+    const pctRight = Math.round((1 - missed / s.done) * 10) * 10;
+    if(pctRight > 60) return; // not hard enough to be a hook
+    shareIdx = idx;
+    shareLead = "Only about " + Math.max(pctRight, 10) + "% of 10Everyday players got this one today. Would you?";
+    shareText = buildShare();
+    renderChallenge();
+  }
+
+  renderChallenge();
+  let shareText = buildShare();
+
+  try {
+    const ctrl = window.AbortController ? new AbortController() : null;
+    if(ctrl) setTimeout(() => ctrl.abort(), 3000);
+    fetch(STATS_URL + "?d=" + EDITION_DATE.slice(5).replace("-", ""),
+          ctrl ? { signal: ctrl.signal } : {})
+      .then(r => r.ok ? r.json() : null)
+      .then(useHardest)
+      .catch(() => {});
+  } catch(e){}
+
+  // After a share lands, the reader is at their warmest. Pull the
+  // signup into view rather than leaving it below the fold.
+  function postShareNudge(){
+    if(window.tenSubscribed) return;
+    const su = document.querySelector(".results .signup");
+    if(!su) return;
+    const subEl = document.getElementById("ssub");
+    if(subEl && !(stats && stats.streak >= 2)){
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+    }
+    try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
+    catch(e){ su.scrollIntoView(); }
+  }
+
+  async function copyFallback(){
+    try {
+      await navigator.clipboard.writeText(shareText);
+      shareBtn.textContent = "Copied! Paste it anywhere";
+      setTimeout(()=>{ shareBtn.textContent = "Stump a Friend"; }, 2500);
+      postShareNudge();
+    } catch(e) {
+      prompt("Copy your score:", shareText);
+    }
+  }
+
+  shareBtn.onclick = async () => {
+    trackPath("/share-pressed");
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({ text: shareText });
+        postShareNudge();
+      } catch(e) {
+        if (e && e.name === "AbortError") return;
+        await copyFallback();
+      }
+    } else {
+      await copyFallback();
+    }
+  };
+}
+
+render();
+
+// Email answers: each button in the morning email links to /e#q1-MMDD-N
+// (N = that option's slot in QUESTIONS[0].options). The tap counts as the
+// Q1 answer, so players land on the result instead of answering twice.
+(function(){
+  const m = /^#q1-(\d{4})-(\d+)$/.exec(location.hash || "");
+  if(!m || current !== 0) return;
+  try{ history.replaceState(null, "", location.pathname); }catch(e){}
+  if(m[1] !== EDITION_DATE.slice(5).replace("-", "")) return;
+  const want = QUESTIONS[0].options[+m[2]];
+  if(want === undefined) return;
+  const b = Array.prototype.find.call(opts.querySelectorAll(".opt"), x => x.textContent === want);
+  if(b){ trackPath("/email-answer"); b.click(); }
+})();
+
+(function(){
+  // Each signup spot logs its own path so the nightly stats can tell them apart.
+  const SIGNUP_PATH = { kitFormMid: "/signup-mid", kitForm: "/signup-results", kitFormMerch: "/signup-merch" };
+  const forms = document.querySelectorAll("form.kitform");
+  forms.forEach(function(f){
+    f.addEventListener("submit", async function(ev){
+      ev.preventDefault();
+      const btn = f.querySelector("button");
+      const input = f.querySelector("input[name=email_address]");
+      const email = (input.value || "").trim();
+      if(!email) return;
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      try {
+        const res = await fetch(f.action, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ email_address: email })
+        });
+        if(!res.ok) throw new Error("bad response");
+        window.tenSubscribed = true;
+        window.tenEmail = email;
+        trackPath(SIGNUP_PATH[f.id] || "/signup-other");
+        const ok = document.createElement("div");
+        ok.className = "sok";
+        ok.textContent = f.id === "kitFormMerch"
+          ? "You're in. Your 20% code is on its way."
+          : "You're in. See you at 6 AM.";
+        f.parentNode.replaceChild(ok, f);
+        // Results-card signups go on to Kit's Recommendations page (custom forms never trigger Kit's popup).
+        // Mid-quiz signups stay put so the game isn't interrupted; they get a link on the results card.
+        if(f.id === "kitForm"){
+          setTimeout(function(){
+            location.href = "https://10everyday.kit.com/recommendations?email_address=" + encodeURIComponent(email);
+          }, 1500);
+        }
+      } catch(e) {
+        trackPath(SIGNUP_PATH[f.id] || "/signup-other");
+        setTimeout(function(){ f.submit(); }, 150);
+      }
+    });
+  });
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
