@@ -760,15 +760,15 @@
   "partial": false
  },
  "2026-10-24": {
-  "visits": 1,
-  "pageviews": 2,
-  "done": 0,
+  "visits": 16,
+  "pageviews": 92,
+  "done": 4,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
   "email": 0,
-  "share": 0,
+  "share": 4,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -776,7 +776,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
-  "share_pressed": 0,
-  "partial": true
+  "share_pressed": 3,
+  "partial": false
  }
 }
