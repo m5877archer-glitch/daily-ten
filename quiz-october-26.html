@@ -186,7 +186,7 @@
   .predict .popts button.picked{background:var(--ptmid);color:#fff;}
   .predict .popts button:disabled:not(.picked){opacity:.45;cursor:default;}
   .predict .pnote{font-size:.9rem;font-style:italic;margin-top:10px;color:#4d473b;}
-  .called{max-width:640px;margin:0 auto 14px;padding:12px 14px;border:1px solid var(--ptdark);background:var(--card);text-align:center;}
+  .called{max-width:640px;margin:18px auto 4px;padding:12px 14px;border:1px solid var(--ptdark);background:var(--card);text-align:center;}
   .called .ck{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
   .called .cr{font-size:1.15rem;font-weight:bold;margin:4px 0 2px;}
   .called .cd{font-size:.92rem;line-height:1.4;}
@@ -279,7 +279,6 @@
     <span id="dotrow" class="dotrow" aria-label="Progress"></span>
   </div>
 
-  <div class="called" id="calledEl" hidden></div>
 
   <div class="card" id="quizCard">
     <figure class="qimg" id="qimg" hidden><img id="qimgEl" alt=""><figcaption id="qcap"></figcaption></figure>
@@ -325,6 +324,7 @@
     <div class="dots" id="dotsEl"></div>
     <div class="challenge" id="challengeEl"></div>
     <button class="share" id="shareBtn">Stump a Friend</button>
+    <div class="called" id="calledEl" hidden></div>
     <div class="predict" id="predictEl" hidden>
       <div class="pkicker">Call it now</div>
       <div class="pq" id="predictQ"></div>
@@ -672,8 +672,8 @@ function reportToAlldle(grid){
 function loadPicks(){ try { return JSON.parse(localStorage.getItem("tenPicks") || "{}") || {}; } catch(e){ return {}; } }
 function savePicks(p){ try { localStorage.setItem("tenPicks", JSON.stringify(p)); } catch(e){} }
 
-// Payoff: when a prediction this player made has resolved, say so up top.
-(function showCalled(){
+// Payoff: when a prediction this player made has resolved, say so once, on the score card.
+function showCalled(){
   const el = document.getElementById("calledEl");
   if(!el || !RESOLVED.length) return;
   const picks = loadPicks();
@@ -690,7 +690,7 @@ function savePicks(p){ try { localStorage.setItem("tenPicks", JSON.stringify(p))
   el.hidden = false;
   picks[hit.id].seen = true; savePicks(picks);
   trackPath(right ? "/called-right" : "/called-wrong");
-})();
+}
 
 function renderPrediction(){
   const box = document.getElementById("predictEl");
@@ -722,6 +722,7 @@ function renderPrediction(){
 }
 
 function showResults(){
+  showCalled();
   renderPrediction();
   document.getElementById("quizCard").style.display = "none";
   const midEl = document.getElementById("midSignup");
