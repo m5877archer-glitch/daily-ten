@@ -800,9 +800,9 @@
   "partial": false
  },
  "2026-10-26": {
-  "visits": 8,
-  "pageviews": 43,
-  "done": 3,
+  "visits": 11,
+  "pageviews": 66,
+  "done": 5,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
@@ -816,7 +816,7 @@
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
-  "share_pressed": 0,
+  "share_pressed": 1,
   "partial": true
  }
 }
