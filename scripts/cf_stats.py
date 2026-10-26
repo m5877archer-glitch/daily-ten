@@ -9,7 +9,9 @@ Writes stats/daily.json keyed by Pacific date:
   merch_click   tapped "Visit the shop" on that page
   shop          went through any /shop link
   shop_q        tapped the product link inside a quiz question
-  signups       email signups, split into signup_mid / signup_results / signup_merch
+  signups       email signups, split into signup_mid / signup_results / signup_merch / signup_pick
+  picks         made a prediction pick; called_right / called_wrong saw the payoff
+  pick_ask      saw the "get the answer in your inbox" box after making a prediction pick
   share_pressed tapped "Challenge a Friend" on the score card
   email, share, reddit, facebook, pt   visits arriving on /e, /s, /r, /f, /pt
 Also writes stats/last-run.json with any errors, so problems are visible
@@ -28,7 +30,7 @@ TOKEN = os.environ["CF_API_TOKEN"]
 
 ENTRY = {"/e": "email", "/s": "share", "/r": "reddit", "/f": "facebook", "/pt": "pt"}
 COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": "shop", "/shop-q": "shop_q",
-           "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch",
+           "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch", "/signup-pick": "signup_pick", "/pick-ask": "pick_ask",
            "/share-pressed": "share_pressed"}
 
 errors = []
@@ -104,7 +106,7 @@ def main():
             day = fresh.setdefault(d, {"visits": 0, "pageviews": 0, "done": 0,
                                        "merch_view": 0, "merch_click": 0, "shop": 0, "shop_q": 0,
                                        "email": 0, "share": 0, "reddit": 0, "facebook": 0, "pt": 0,
-                                       "signups": 0, "signup_mid": 0, "signup_results": 0, "signup_merch": 0,
+                                       "signups": 0, "signup_mid": 0, "signup_results": 0, "signup_merch": 0, "signup_pick": 0, "pick_ask": 0,
                                        "share_pressed": 0})
             v = (r.get("sum") or {}).get("visits") or 0
             n = r.get("count") or 0
@@ -112,6 +114,10 @@ def main():
             day["pageviews"] += n
             if p.startswith("/done-"):
                 day["done"] += n
+            if p.startswith("/pick-") and p.rstrip("/") != "/pick-ask":
+                day["picks"] = day.get("picks", 0) + n
+            if p in ("/called-right", "/called-wrong"):
+                day[p[1:].replace("-", "_")] = day.get(p[1:].replace("-", "_"), 0) + n
             key = COUNTED.get(p.rstrip("/").replace(".html", ""))
             if key:
                 day[key] = day.get(key, 0) + n

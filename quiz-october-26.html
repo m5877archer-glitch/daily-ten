@@ -186,6 +186,14 @@
   .predict .popts button.picked{background:var(--ptmid);color:#fff;}
   .predict .popts button:disabled:not(.picked){opacity:.45;cursor:default;}
   .predict .pnote{font-size:.9rem;font-style:italic;margin-top:10px;color:#4d473b;}
+  .predict .psign{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--ptmid);}
+  .predict .psign.show{display:block;}
+  .predict .psign .ptext{font-size:.95rem;font-weight:bold;margin-bottom:8px;}
+  .predict .psign form{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+  .predict .psign input[type=email]{font-family:inherit;font-size:.95rem;padding:9px 10px;border:1px solid var(--ptdark);background:var(--card);color:var(--ink);flex:1 1 200px;max-width:260px;}
+  .predict .psign button{font-family:inherit;font-size:.95rem;font-weight:bold;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);padding:9px 18px;cursor:pointer;}
+  .predict .psign .pfine{font-size:.72rem;color:#6b6455;margin-top:6px;}
+  .predict .psign .sok{font-weight:bold;color:var(--correct);font-size:1rem;margin:6px 0 2px;}
   .called{max-width:640px;margin:18px auto 4px;padding:12px 14px;border:1px solid var(--ptdark);background:var(--card);text-align:center;}
   .called .ck{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:#6b6455;}
   .called .cr{font-size:1.15rem;font-weight:bold;margin:4px 0 2px;}
@@ -330,6 +338,14 @@
       <div class="pq" id="predictQ"></div>
       <div class="popts" id="predictOpts"></div>
       <div class="pnote" id="predictNote"></div>
+      <div class="psign" id="pickSignup">
+        <div class="ptext">Want to know if you called it? Get the answer in your inbox.</div>
+        <form class="kitform" id="kitFormPick" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+          <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+          <button type="submit">Tell me</button>
+        </form>
+        <div class="pfine">Comes with the free quiz every weekday morning. Unsubscribe anytime.</div>
+      </div>
     </div>
     <div class="signup">
       <div class="skicker">Free, every weekday at 6 AM</div>
@@ -668,6 +684,10 @@ function reportToAlldle(grid){
   } catch(e){}
 }
 
+// Remembered across visits: set on any signup and on arrivals from the email.
+function isSubbed(){ if(window.tenSubscribed) return true; try { return localStorage.getItem("tenSubbed") === "1"; } catch(e){ return false; } }
+function markSubbed(){ window.tenSubscribed = true; try { localStorage.setItem("tenSubbed", "1"); } catch(e){} }
+
 // Prediction storage: { id: { pick, seen } } in this browser only.
 function loadPicks(){ try { return JSON.parse(localStorage.getItem("tenPicks") || "{}") || {}; } catch(e){ return {}; } }
 function savePicks(p){ try { localStorage.setItem("tenPicks", JSON.stringify(p)); } catch(e){} }
@@ -718,6 +738,12 @@ function renderPrediction(){
   note.textContent = mine
     ? "Locked in: " + mine + ". Find out in " + PREDICTION.reveal + "."
     : "Doesn't count toward your score. The answer comes in " + PREDICTION.reveal + ".";
+  // Right after a pick is the moment they most want the answer: ask for the email there.
+  const ps = document.getElementById("pickSignup");
+  if(ps && mine && !isSubbed() && document.getElementById("kitFormPick")){
+    if(!ps.classList.contains("show")) trackPath("/pick-ask");
+    ps.classList.add("show");
+  }
   box.hidden = false;
 }
 
@@ -920,12 +946,12 @@ render();
   const want = QUESTIONS[0].options[+m[2]];
   if(want === undefined) return;
   const b = Array.prototype.find.call(opts.querySelectorAll(".opt"), x => x.textContent === want);
-  if(b){ trackPath("/email-answer"); b.click(); }
+  if(b){ markSubbed(); trackPath("/email-answer"); b.click(); }
 })();
 
 (function(){
   // Each signup spot logs its own path so the nightly stats can tell them apart.
-  const SIGNUP_PATH = { kitFormMid: "/signup-mid", kitForm: "/signup-results", kitFormMerch: "/signup-merch" };
+  const SIGNUP_PATH = { kitFormMid: "/signup-mid", kitForm: "/signup-results", kitFormMerch: "/signup-merch", kitFormPick: "/signup-pick" };
   const forms = document.querySelectorAll("form.kitform");
   forms.forEach(function(f){
     f.addEventListener("submit", async function(ev){
@@ -943,15 +969,23 @@ render();
           body: JSON.stringify({ email_address: email })
         });
         if(!res.ok) throw new Error("bad response");
-        window.tenSubscribed = true;
+        markSubbed();
         window.tenEmail = email;
         trackPath(SIGNUP_PATH[f.id] || "/signup-other");
         const ok = document.createElement("div");
         ok.className = "sok";
         ok.textContent = f.id === "kitFormMerch"
           ? "You're in. Your 20% code is on its way."
+          : f.id === "kitFormPick"
+          ? "You're in. The answer comes with the quiz in your inbox."
           : "You're in. See you at 6 AM.";
         f.parentNode.replaceChild(ok, f);
+        if(f.id === "kitFormPick"){
+          const pf = document.querySelector("#pickSignup .pfine"); if(pf) pf.remove();
+          // Do not ask again in the results signup box below.
+          const rf = document.getElementById("kitForm");
+          if(rf){ const ok2 = document.createElement("div"); ok2.className = "sok"; ok2.textContent = "You're in. See you at 6 AM."; rf.parentNode.replaceChild(ok2, rf); }
+        }
         // Results-card signups go on to Kit's Recommendations page (custom forms never trigger Kit's popup).
         // Mid-quiz signups stay put so the game isn't interrupted; they get a link on the results card.
         if(f.id === "kitForm"){

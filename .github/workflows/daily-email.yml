@@ -121,6 +121,35 @@ jobs:
                          "alt": json.loads('"' + (m.group(2) or "") + '"')}
               return question, options, img
 
+          def latest_resolved(path):
+              # The newest resolved prediction in this edition, only if it is new since the prior edition.
+              def first(src):
+                  m = re.search(r'const RESOLVED = \[\s*\{(.*?)\}', src, re.S)
+                  if not m:
+                      return None
+                  out = {}
+                  for k in ("id", "q", "answer", "note"):
+                      f = re.search(r'\b' + k + r':\s*"((?:[^"\\]|\\.)*)"', m.group(1))
+                      out[k] = json.loads('"' + f.group(1) + '"') if f else ""
+                  return out if out["id"] and out["answer"] else None
+              try:
+                  src = open(path, encoding="utf-8").read()
+                  cur = first(src)
+                  if not cur:
+                      return None
+                  pm = re.search(r'const PREV_EDITION = "(\d{4})-(\d{2})-(\d{2})"', src)
+                  if pm:
+                      pd = datetime(int(pm.group(1)), int(pm.group(2)), int(pm.group(3))).date()
+                      prev_file = "quiz-" + pd.strftime("%B").lower() + "-" + str(pd.day) + ".html"
+                      if os.path.exists(prev_file):
+                          old = first(open(prev_file, encoding="utf-8").read())
+                          if old and old["id"] == cur["id"]:
+                              return None
+                  return cur
+              except Exception as e:
+                  print("WARNING: could not read prediction result (" + str(e) + ").")
+                  return None
+
           def build_content(path):
               try:
                   question, options, img = first_question(path)
@@ -132,6 +161,13 @@ jobs:
                      'border-radius:6px;color:#1c2733;text-decoration:none;font-size:16px;')
               parts = ['<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;">Question 1 of 10</p>',
                        ]
+              res = latest_resolved(path)
+              if res:
+                  print("Prediction payoff: " + res["q"] + " -> " + res["answer"])
+                  parts.insert(0, '<div style="border:1px solid #5b8c5b;background:#eef3ea;padding:12px 14px;margin:0 0 18px;">'
+                               '<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;margin:0 0 4px;">Did you call it?</p>'
+                               '<p style="font-size:16px;margin:0;"><strong>' + html.escape(res["q"]) + '</strong> Answer: ' + html.escape(res["answer"]) + '.'
+                               + ((' ' + html.escape(res["note"])) if res["note"] else '') + '</p></div>')
               if img:
                   parts.append('<a href="' + LINK + '"><img src="' + html.escape(img["src"]) + '" alt="' + html.escape(img["alt"]) + '" width="560" style="display:block;width:100%;max-width:560px;height:auto;border:1px solid #d9d2c3;margin:0 0 14px;"></a>')
               else:
