@@ -164,6 +164,8 @@
   .merch{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
   .merch .mkicker{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:#6b6455;}
   .merch .mline{font-size:1rem;margin:6px 0 10px;}
+  .merch .mimg{display:block;width:100%;max-width:300px;height:auto;margin:10px auto 4px;border:1px solid var(--line);}
+  .merch .mdisc{font-size:.85rem;color:#6b6455;margin-top:8px;}
   .merch a{display:inline-block;text-decoration:none;font-family:inherit;font-size:.95rem;font-weight:bold;
     color:var(--ptdark);border:1px solid var(--ptdark);padding:10px 22px;}
   .merch a:hover{background:#eef3ec;}
@@ -264,6 +266,7 @@
   .qimg{margin:0 0 16px;}
   .qimg img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border:1px solid var(--line);background:var(--paper);}
   .qimg figcaption{font-size:.72rem;color:#8a8272;font-style:italic;margin-top:5px;text-align:right;}
+  .explain .shopdisc{font-size:.85rem;color:#6b6455;margin-top:4px;}
   .explain .shoplink{display:inline-block;margin-top:10px;font-weight:bold;color:var(--ptdark);text-decoration:none;border-bottom:1px solid var(--ptmid);}
 </style>
 </head>
@@ -344,7 +347,7 @@
           <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
           <button type="submit">Tell me</button>
         </form>
-        <div class="pfine">Comes with the free quiz every weekday morning. Unsubscribe anytime.</div>
+        <div class="pfine">Comes with the free quiz every weekday morning, plus 20% off the merch. Unsubscribe anytime.</div>
       </div>
     </div>
     <div class="signup">
@@ -361,8 +364,10 @@
     <div class="stats" id="statsEl"></div>
     <div class="merch">
       <div class="mkicker">New: the holiday shop</div>
+      <img class="mimg" id="merchImg" src="img/products/tee-cream-front.jpg" alt="The IYKYK tee in cream from the 10Everyday holiday shop." hidden>
       <div class="mline" id="merchLine">IYKYK shirts, mugs and hats for 10Everyday players.</div>
-      <a href="/shop" target="_blank" rel="noopener">Visit the shop</a>
+      <a href="/shop" id="merchLink" target="_blank" rel="noopener">Visit the shop</a>
+      <div class="mdisc">Subscribers get 20% off.</div>
     </div>
     <div><a class="coffee" href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">☕ Enjoyed it? Buy me a coffee</a></div>
   </div>
@@ -450,10 +455,11 @@ const QUESTIONS = [
     shop:{href:"/shop", label:"See the tee in the shop →"}
   },
   {
-    q:"Flávio Bolsonaro conceded Brazil's presidential runoff, handing a new term to which leader?",
-    options:["Lula da Silva", "Javier Milei", "Nicolás Maduro", "Pelé"],
-    answer:"Lula da Silva",
-    explain:"Lula won by nearly 4.5 million votes. Bolsonaro dropped his pledge to challenge the result."
+    q:"James Madison's football team, unbeaten all season, lost for the first time last Thursday when an overtime field goal attempt doinked off the upright at Appalachian State. Who is the Dukes' first-year head coach, who previously led Florida?",
+    img:{src:"img/photos/i81-woodstock-va.jpg", alt:"A North Interstate 81 sign along the highway in Virginia's Shenandoah Valley.", credit:"I-81 near Woodstock, Va. Photo: Famartin / Wikimedia Commons, CC BY-SA 4.0"},
+    options:["Billy Napier", "Lane Kiffin", "Deion Sanders", "The Duke of Earl"],
+    answer:"Billy Napier",
+    explain:"Napier left Florida and took over in Harrisonburg this season. The 34-31 loss dropped JMU to 7-1 and badly hurt its College Football Playoff hopes."
   }
 ];
 
@@ -564,6 +570,12 @@ function select(btn, chosen, q){
     a.onclick = function(){ trackPath("/shop-q"); };
     explain.appendChild(document.createElement("br"));
     explain.appendChild(a);
+    const sd = document.createElement("div");
+    sd.className = "shopdisc";
+    sd.textContent = "Subscribers get 20% off.";
+    explain.appendChild(sd);
+    // Product view: denominator for /shop-q taps.
+    trackPath("/shop-q-view");
   }
   // Countdown note from the halfway mark on, keyed to answers given.
   const PROGRESS = {4:"Halfway there.", 5:"4 more to go.", 6:"Only 3 left.", 7:"2 to go.", 8:"One more. Make it count."};
@@ -799,10 +811,19 @@ function showResults(){
   }
   // Holiday shop plug: speak to the score the player is looking at.
   const merchEl = document.getElementById("merchLine");
-  if(merchEl){
-    if(score === 10) merchEl.textContent = "Ten for ten. You have earned the hat.";
-    else if(score === 9) merchEl.textContent = "Nine green, one red? There is a shirt for that.";
+  const highScore = score >= 9;
+  if(merchEl && highScore){
+    merchEl.textContent = "You clearly know. Wear it.";
+    const mi = document.getElementById("merchImg");
+    if(mi) mi.hidden = false;
+    // Move the offer up, right under the signup, while the score is fresh.
+    const mb = document.querySelector(".results .merch");
+    const rp = document.querySelector(".results .replay");
+    if(mb && rp) rp.parentNode.insertBefore(mb, rp);
+    trackPath("/merch-results-view-hi");
   }
+  const ml = document.getElementById("merchLink");
+  if(ml) ml.onclick = function(){ trackPath("/merch-results-tap-" + (highScore ? "hi" : "lo")); };
   document.getElementById("rank").textContent = rank;
   document.getElementById("flavor").textContent = flavor;
   document.getElementById("timeEl").textContent = "Finished in " + timeStr;
@@ -824,7 +845,7 @@ function showResults(){
     const subEl = document.getElementById("ssub");
     if(subEl){
       subEl.textContent =
-        "You're on a " + stats.streak + " day streak. Get the email so you don't break it.";
+        "You're on a " + stats.streak + " day streak. Get the email so you don't break it, plus 20% off merch.";
     }
   }
 
@@ -901,7 +922,7 @@ function showResults(){
     if(!su) return;
     const subEl = document.getElementById("ssub");
     if(subEl && !(stats && stats.streak >= 2)){
-      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget.";
+      subEl.textContent = "Nice. Get tomorrow's in your inbox before you forget, plus 20% off merch.";
     }
     try { su.scrollIntoView({ behavior:"smooth", block:"center" }); }
     catch(e){ su.scrollIntoView(); }
