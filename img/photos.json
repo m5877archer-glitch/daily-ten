@@ -90,6 +90,12 @@
       "commons_file": "Hotel_Nacional_y_Malecon_de_La_Habana.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Hotel_Nacional_y_Malecon_de_La_Habana.jpg",
       "credit": "Havana, Cuba. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/us-capitol.jpg",
+      "commons_file": "United_States_Capitol_west_front_edit2.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:United_States_Capitol_west_front_edit2.jpg",
+      "credit": "U.S. Capitol, Washington. Photo: Wikimedia Commons"
     }
   ]
 }
