@@ -10,7 +10,7 @@ Writes stats/daily.json keyed by Pacific date:
   shop          went through any /shop link
   shop_q        tapped the product link inside a quiz question
   signups       email signups, split into signup_mid / signup_results / signup_merch / signup_pick
-  picks         made a prediction pick; called_right / called_wrong saw the payoff
+  picks         made a prediction pick (pick_split breaks it out by question id and option, o1/o2); called_right / called_wrong saw the payoff
   pick_ask      saw the "get the answer in your inbox" box after making a prediction pick
   share_pressed tapped "Challenge a Friend" on the score card
   email, share, reddit, facebook, pt   visits arriving on /e, /s, /r, /f, /pt
@@ -116,6 +116,10 @@ def main():
                 day["done"] += n
             if p.startswith("/pick-") and p.rstrip("/") != "/pick-ask":
                 day["picks"] = day.get("picks", 0) + n
+                # Per-option split, e.g. {"senate-2026-o1": 4}, so we can say how players picked.
+                split = day.setdefault("pick_split", {})
+                k = p.rstrip("/")[len("/pick-"):]
+                split[k] = split.get(k, 0) + n
             if p in ("/called-right", "/called-wrong"):
                 day[p[1:].replace("-", "_")] = day.get(p[1:].replace("-", "_"), 0) + n
             key = COUNTED.get(p.rstrip("/").replace(".html", ""))
