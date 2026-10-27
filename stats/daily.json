@@ -724,15 +724,15 @@
   "partial": false
  },
  "2026-10-20": {
-  "visits": 17,
-  "pageviews": 117,
-  "done": 3,
-  "merch_view": 10,
+  "visits": 20,
+  "pageviews": 140,
+  "done": 0,
+  "merch_view": 20,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
-  "email": 2,
-  "share": 2,
+  "email": 0,
+  "share": 0,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -766,6 +766,9 @@
   "pick_ask": 0,
   "share_pressed": 3,
   "picks": 2,
+  "pick_split": {
+   "1021-ws-g1-o1": 2
+  },
   "partial": false
  },
  "2026-10-22": {
@@ -789,6 +792,9 @@
   "pick_ask": 0,
   "share_pressed": 4,
   "picks": 2,
+  "pick_split": {
+   "1021-ws-g1-o1": 2
+  },
   "partial": false
  },
  "2026-10-23": {
@@ -812,6 +818,10 @@
   "pick_ask": 0,
   "share_pressed": 1,
   "picks": 3,
+  "pick_split": {
+   "1023-snf-kc-sea-o1": 2,
+   "1021-ws-g1-o1": 1
+  },
   "partial": false
  },
  "2026-10-24": {
@@ -835,6 +845,9 @@
   "pick_ask": 0,
   "share_pressed": 3,
   "picks": 2,
+  "pick_split": {
+   "1023-snf-kc-sea-o2": 2
+  },
   "partial": false
  },
  "2026-10-25": {
@@ -858,6 +871,9 @@
   "pick_ask": 0,
   "share_pressed": 0,
   "picks": 1,
+  "pick_split": {
+   "1023-snf-kc-sea-o2": 1
+  },
   "partial": false
  },
  "2026-10-26": {
@@ -881,19 +897,22 @@
   "pick_ask": 1,
   "share_pressed": 2,
   "picks": 3,
+  "pick_split": {
+   "1026-ws-champ-o1": 3
+  },
   "called_right": 4,
   "partial": false
  },
  "2026-10-27": {
-  "visits": 5,
-  "pageviews": 47,
+  "visits": 6,
+  "pageviews": 51,
   "done": 2,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
   "email": 0,
-  "share": 0,
+  "share": 1,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -905,6 +924,9 @@
   "pick_ask": 1,
   "share_pressed": 0,
   "picks": 2,
+  "pick_split": {
+   "1026-ws-champ-o1": 2
+  },
   "partial": true
  }
 }
