@@ -56,6 +56,9 @@ jobs:
 
           filename = "quiz-" + target.strftime("%B").lower() + "-" + str(target.day) + ".html"
           subject = "10Everyday, " + target.strftime("%A %B ") + str(target.day)
+          # One-off subject lines for special editions, keyed by send date.
+          SUBJECT_OVERRIDES = {"2026-10-30": "10Everyday, the Halloween edition"}
+          subject = SUBJECT_OVERRIDES.get(target.date().isoformat(), subject)
 
           print("Now:      " + now.isoformat())
           print("Next send: " + target.isoformat())

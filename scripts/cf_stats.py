@@ -31,7 +31,9 @@ TOKEN = os.environ["CF_API_TOKEN"]
 ENTRY = {"/e": "email", "/s": "share", "/r": "reddit", "/f": "facebook", "/pt": "pt"}
 COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": "shop", "/shop-q": "shop_q",
            "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch", "/signup-pick": "signup_pick", "/pick-ask": "pick_ask",
-           "/share-pressed": "share_pressed"}
+           "/share-pressed": "share_pressed",
+           "/shop-q-view": "shop_q_view", "/merch-results-view-hi": "merch_results_view_hi",
+           "/merch-results-tap-hi": "merch_results_tap_hi", "/merch-results-tap-lo": "merch_results_tap_lo"}
 
 errors = []
 
@@ -120,6 +122,11 @@ def main():
                 split = day.setdefault("pick_split", {})
                 k = p.rstrip("/")[len("/pick-"):]
                 split[k] = split.get(k, 0) + n
+            if p.startswith("/costume-"):
+                # Halloween look picker (Oct 30, 2026): which costume players switched to.
+                cs = day.setdefault("costume_split", {})
+                k = p.rstrip("/")[len("/costume-"):]
+                cs[k] = cs.get(k, 0) + n
             if p in ("/called-right", "/called-wrong"):
                 day[p[1:].replace("-", "_")] = day.get(p[1:].replace("-", "_"), 0) + n
             key = COUNTED.get(p.rstrip("/").replace(".html", ""))
