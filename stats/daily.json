@@ -746,41 +746,15 @@
   "partial": false
  },
  "2026-10-21": {
-  "visits": 46,
-  "pageviews": 251,
-  "done": 16,
+  "visits": 20,
+  "pageviews": 260,
+  "done": 50,
   "merch_view": 10,
-  "merch_click": 0,
-  "shop": 1,
-  "shop_q": 0,
-  "email": 3,
-  "share": 2,
-  "reddit": 0,
-  "facebook": 0,
-  "pt": 6,
-  "signups": 0,
-  "signup_mid": 0,
-  "signup_results": 0,
-  "signup_merch": 0,
-  "signup_pick": 0,
-  "pick_ask": 0,
-  "share_pressed": 3,
-  "picks": 2,
-  "pick_split": {
-   "1021-ws-g1-o1": 2
-  },
-  "partial": false
- },
- "2026-10-22": {
-  "visits": 18,
-  "pageviews": 152,
-  "done": 11,
-  "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
-  "email": 2,
-  "share": 4,
+  "email": 0,
+  "share": 0,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -790,11 +764,33 @@
   "signup_merch": 0,
   "signup_pick": 0,
   "pick_ask": 0,
-  "share_pressed": 4,
-  "picks": 2,
+  "share_pressed": 10,
+  "picks": 10,
   "pick_split": {
-   "1021-ws-g1-o1": 2
+   "1021-ws-g1-o1": 10
   },
+  "partial": false
+ },
+ "2026-10-22": {
+  "visits": 10,
+  "pageviews": 80,
+  "done": 10,
+  "merch_view": 0,
+  "merch_click": 0,
+  "shop": 0,
+  "shop_q": 0,
+  "email": 0,
+  "share": 0,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "signup_pick": 0,
+  "pick_ask": 0,
+  "share_pressed": 0,
   "partial": false
  },
  "2026-10-23": {
@@ -950,6 +946,8 @@
   "signup_pick": 1,
   "pick_ask": 9,
   "share_pressed": 4,
+  "merch_results_view_hi": 8,
+  "shop_q_view": 15,
   "picks": 2,
   "pick_split": {
    "1026-ws-champ-o1": 2
@@ -957,15 +955,15 @@
   "partial": false
  },
  "2026-10-29": {
-  "visits": 7,
-  "pageviews": 67,
-  "done": 5,
+  "visits": 17,
+  "pageviews": 145,
+  "done": 10,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
-  "email": 2,
-  "share": 0,
+  "email": 5,
+  "share": 1,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
@@ -974,11 +972,13 @@
   "signup_results": 0,
   "signup_merch": 0,
   "signup_pick": 0,
-  "pick_ask": 0,
+  "pick_ask": 1,
   "share_pressed": 2,
-  "picks": 1,
+  "shop_q_view": 10,
+  "merch_results_view_hi": 2,
+  "picks": 3,
   "pick_split": {
-   "1026-ws-champ-o1": 1
+   "1026-ws-champ-o1": 3
   },
   "partial": true
  }
