@@ -931,25 +931,55 @@
   "partial": false
  },
  "2026-10-28": {
-  "visits": 4,
-  "pageviews": 69,
-  "done": 4,
+  "visits": 20,
+  "pageviews": 219,
+  "done": 14,
+  "merch_view": 0,
+  "merch_click": 0,
+  "shop": 1,
+  "shop_q": 0,
+  "email": 1,
+  "share": 3,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 2,
+  "signups": 2,
+  "signup_mid": 1,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "signup_pick": 1,
+  "pick_ask": 9,
+  "share_pressed": 4,
+  "picks": 2,
+  "pick_split": {
+   "1026-ws-champ-o1": 2
+  },
+  "partial": false
+ },
+ "2026-10-29": {
+  "visits": 7,
+  "pageviews": 67,
+  "done": 5,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
   "shop_q": 0,
-  "email": 1,
+  "email": 2,
   "share": 0,
   "reddit": 0,
   "facebook": 0,
   "pt": 0,
-  "signups": 1,
+  "signups": 0,
   "signup_mid": 0,
   "signup_results": 0,
   "signup_merch": 0,
-  "signup_pick": 1,
-  "pick_ask": 6,
-  "share_pressed": 4,
+  "signup_pick": 0,
+  "pick_ask": 0,
+  "share_pressed": 2,
+  "picks": 1,
+  "pick_split": {
+   "1026-ws-champ-o1": 1
+  },
   "partial": true
  }
 }
