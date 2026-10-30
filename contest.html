@@ -205,6 +205,7 @@
     }
     var line = "You're playing as " + me.name + ". ";
     if(me.rank) line += "You're " + ord(me.rank) + " with " + me.total + " points over " + me.days + (me.days === 1 ? " day. " : " days. ");
+    else if(me.outside) line += "You're outside the top 10 for now, with " + me.total + " points over " + me.days + (me.days === 1 ? " day. " : " days. ") + "Every weekday is a chance to climb. ";
     box.appendChild(document.createTextNode(line));
     var ch = el("button", null, "Change name");
     ch.onclick = function(){

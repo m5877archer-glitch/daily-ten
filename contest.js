@@ -128,6 +128,7 @@
     var headline;
     if (state.reason === "late") headline = "Contest scores count on the day of the edition.";
     else if (me.rank) headline = "You're " + ord(me.rank) + " this month, with " + me.total + " points.";
+    else if (me.outside) headline = "You're outside the top 10 for now, with " + me.total + " points.";
     else headline = "You're in. Every weekday counts.";
     el.appendChild(node("div", "cl", headline));
 

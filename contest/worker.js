@@ -122,7 +122,9 @@ async function standings(db, month, me) {
     const mine = by.get(me);
     const pl = await db.prepare("SELECT name, optout FROM players WHERE id = ?1").bind(me).first();
     if (pl) {
-      out.me = { name: pl.name, out: !!pl.optout, rank: mine ? mine.rank : null, total: mine ? mine.total : 0, days: mine ? mine.days : 0, tens: mine ? mine.tens : 0, weeks: mine ? mine.weeks : weeks.map(() => 0) };
+      // Ranks past the top 10 are never sent: they would hint at how many play.
+      const inTop = !!(mine && mine.rank <= TOP);
+      out.me = { name: pl.name, out: !!pl.optout, rank: inTop ? mine.rank : null, outside: !!(mine && !inTop), total: mine ? mine.total : 0, days: mine ? mine.days : 0, tens: mine ? mine.tens : 0, weeks: mine ? mine.weeks : weeks.map(() => 0) };
     }
   }
   return out;
