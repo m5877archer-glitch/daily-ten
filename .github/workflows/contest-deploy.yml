@@ -36,6 +36,13 @@ jobs:
       - name: Install wrangler
         run: npm install --no-save --no-audit --no-fund wrangler@3
 
+      - name: Clean up the token
+        run: |
+          T=$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '[:space:]"'"'" | sed 's/^Bearer//I')
+          echo "::add-mask::$T"
+          echo "Token length after trimming: ${#T} (was ${#CLOUDFLARE_API_TOKEN}), starts with: ${T:0:5}" | tee -a ../deploy-log.txt
+          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
+
       - name: Check the token
         run: |
           npx wrangler whoami 2>&1 | tee -a ../deploy-log.txt
