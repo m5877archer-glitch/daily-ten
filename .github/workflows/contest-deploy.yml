@@ -13,6 +13,9 @@ on:
     paths: ["contest/**", ".github/workflows/contest-deploy.yml"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -33,8 +36,15 @@ jobs:
       - name: Install wrangler
         run: npm install --no-save --no-audit --no-fund wrangler@3
 
+      - name: Check the token
+        run: |
+          npx wrangler whoami 2>&1 | tee -a ../deploy-log.txt
+          curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" https://api.cloudflare.com/client/v4/user/tokens/verify | tee -a ../deploy-log.txt
+          echo | tee -a ../deploy-log.txt
+
       - name: Find or create the database
         run: |
+          exec > >(tee -a ../deploy-log.txt) 2>&1
           find_db() {
             npx wrangler d1 list --json | python3 -c 'import json,sys
           for d in json.load(sys.stdin):
@@ -60,12 +70,28 @@ jobs:
           EOF
 
       - name: Create tables
-        run: npx wrangler d1 execute tenevery-contest --remote --file schema.sql --yes
+        run: npx wrangler d1 execute tenevery-contest --remote --file schema.sql --yes 2>&1 | tee -a ../deploy-log.txt; exit ${PIPESTATUS[0]}
 
       - name: Deploy
-        run: npx wrangler deploy
+        run: npx wrangler deploy 2>&1 | tee -a ../deploy-log.txt; exit ${PIPESTATUS[0]}
 
       - name: Smoke test
         run: |
           sleep 10
           curl -fsS "https://tenevery-contest.m5877archer.workers.dev/board?month=2026-11" | head -c 300
+
+      # Saves the log to the deploy-log branch so problems can be read
+      # without opening the Actions page.
+      - name: Save log
+        if: always()
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir logbr && cd logbr && git init -q
+          git config user.name "10everyday-bot"; git config user.email "hello@10everyday.com"
+          git checkout -q --orphan deploy-log
+          cp ../deploy-log.txt . 2>/dev/null || echo "no log" > deploy-log.txt
+          sed -i "s/$CLOUDFLARE_API_TOKEN/[token]/g" deploy-log.txt || true
+          git add . && git commit -qm "Contest deploy log $(date -u +%FT%TZ)"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:deploy-log
