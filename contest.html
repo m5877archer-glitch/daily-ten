@@ -86,7 +86,7 @@
 
   <div class="leaders" id="leaders" hidden></div>
 
-  <div class="banner"><span>Leaderboard</span><span>Points by week</span></div>
+  <div class="banner"><span>Top 10</span><span>Points by week</span></div>
   <div class="tablewrap" id="board"><div class="empty">Loading...</div></div>
 
   <div class="you" id="you"></div>
@@ -146,14 +146,14 @@
     var status = document.getElementById("status");
     if(pacificToday < "2026-11-02"){
       status.textContent = "The first contest starts with Monday's edition, Nov. 2. Just play, and you're in.";
-    } else if(!b.count){
+    } else if(!b.players.length){
       status.textContent = "No scores yet this month. Play today's edition to get on the board.";
     } else if(finished){
       var w = b.players.filter(function(p){ return p.rank === 1; }).map(function(p){ return p.name; });
       status.textContent = "Final standings. " + (w.length > 1 ? "Co-champions: " : "Champion: ") + w.join(" and ") + ".";
       document.getElementById("kicker").textContent = "Final";
     } else {
-      status.textContent = b.count + (b.count === 1 ? " player" : " players") + " on the board. Every weekday counts until the end of the month.";
+      status.textContent = "The top 10 so far. Every weekday counts until the end of the month.";
     }
 
     // Weekly tally: leaders of the latest week that has scores.

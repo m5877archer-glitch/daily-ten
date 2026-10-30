@@ -18,7 +18,7 @@
 //   UPDATE players SET hidden = 1 WHERE name = 'Their Name';
 
 const FIRST_DAY = "2026-11-02";   // contest starts with the Nov 2 edition
-const TOP = 50;                    // rows returned on the board
+const TOP = 10;                    // rows shown on the public board
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -89,7 +89,8 @@ async function body(request) {
 
 async function standings(db, month, me) {
   const weeks = weeksOf(month);
-  const out = { month, weeks: weeks.map((w) => ({ label: w.label, dates: w.dates })), players: [], count: 0, me: null };
+  // No player count is ever returned: only the top rows and your own rank.
+  const out = { month, weeks: weeks.map((w) => ({ label: w.label, dates: w.dates })), players: [], me: null };
   if (!weeks.length) return out;
   const first = weeks[0].dates[0];
   const last = weeks[weeks.length - 1].dates.slice(-1)[0];
@@ -116,7 +117,6 @@ async function standings(db, month, me) {
     const prev = list[i - 1];
     p.rank = prev && prev.total === p.total && prev.tens === p.tens ? prev.rank : i + 1;
   });
-  out.count = list.length;
   out.players = list.slice(0, TOP).map((p) => ({ name: p.name, weeks: p.weeks, total: p.total, tens: p.tens, days: p.days, rank: p.rank, me: p.id === me || undefined }));
   if (validId(me)) {
     const mine = by.get(me);
@@ -175,7 +175,7 @@ export default {
           if (!counted) reason = "already";
         }
         const board = await standings(db, date.slice(0, 7), b.id);
-        return json({ ok: true, counted, reason, me: board.me, count: board.count, weeks: board.weeks });
+        return json({ ok: true, counted, reason, me: board.me, weeks: board.weeks });
       }
 
       if (url.pathname === "/name") {

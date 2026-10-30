@@ -127,7 +127,7 @@
     var me = state.me || {};
     var headline;
     if (state.reason === "late") headline = "Contest scores count on the day of the edition.";
-    else if (me.rank) headline = "You're " + ord(me.rank) + " of " + state.count + ", with " + me.total + " points.";
+    else if (me.rank) headline = "You're " + ord(me.rank) + " this month, with " + me.total + " points.";
     else headline = "You're in. Every weekday counts.";
     el.appendChild(node("div", "cl", headline));
 
@@ -199,14 +199,14 @@
     var p = first
       ? call("/score", { id: id, name: name, date: EDITION_DATE, score: score })
       : call("/board?month=" + EDITION_DATE.slice(0, 7) + "&me=" + id).then(function (b) {
-          return { ok: true, counted: false, reason: "already", me: b.me, count: b.count };
+          return { ok: true, counted: false, reason: "already", me: b.me };
         });
     p.then(function (r) {
       if (!r || !r.ok) return;
       if (r.me && r.me.out) { set(K.out, "1"); render({ out: true, first: first }); return; }
       if (r.me && r.me.name) set(K.name, r.me.name);
       if (r.counted) track("/contest-in");
-      render({ counted: r.counted, reason: r.reason, me: r.me, count: r.count, score: score, first: first });
+      render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first });
     }).catch(function () {});
   }
 
