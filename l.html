@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're invited to a 10Everyday league</title>
+<meta name="description" content="Ten questions on the news every weekday. Join your group's league and see who knows the most.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="You're invited to a 10Everyday league">
+<meta property="og:description" content="Ten questions on the news every weekday. Join the league and see who knows the most.">
+<meta property="og:url" content="https://10everyday.com/l">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --ink:#1c2733;--paper:#f7f4ec;--card:#fffdf7;--pt:#5b8c5b;--ptdark:#1e3a1e;--ptmid:#4a7c4a;--ptrow:#ffffcc;--line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Georgia,'Times New Roman',serif;background:var(--pt);color:var(--ink);min-height:100vh;
+       display:flex;justify-content:center;padding:24px 12px 48px;}
+  .wrap{width:100%;max-width:680px;}
+  .page{background:var(--paper);border:1px solid var(--ptdark);padding:26px 18px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);}
+  header{text-align:center;margin-bottom:16px;}
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{font-style:italic;color:#524b3e;margin-top:4px;font-size:.95rem;border-bottom:3px double var(--ink);padding-bottom:12px;}
+  .kicker{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;text-align:center;}
+  h2{text-align:center;font-size:1.6rem;margin:4px 0 6px;}
+  .status{text-align:center;font-size:1rem;margin:4px 0 14px;line-height:1.45;color:#3d3a33;}
+  .champ{text-align:center;font-size:.9rem;color:#6b6455;font-style:italic;margin-bottom:10px;}
+  .actions{text-align:center;margin:14px 0 18px;}
+  .btn{display:inline-block;font:inherit;font-size:1.05rem;padding:12px 24px;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+       text-decoration:none;cursor:pointer;width:100%;max-width:340px;}
+  .btn2{display:inline-block;margin-top:10px;font:inherit;font-size:.95rem;padding:9px 18px;background:#fff;color:var(--ptdark);border:1px solid var(--ptdark);cursor:pointer;width:100%;max-width:340px;}
+  .flash{font-size:.85rem;color:#6b6455;margin-top:6px;min-height:1em;}
+  .banner{display:flex;justify-content:space-between;font-size:.85rem;font-weight:bold;color:#fff;background:var(--ptmid);border:1px solid var(--ptdark);padding:7px 12px;}
+  .tablewrap{background:var(--card);border:1px solid var(--line);border-top:none;overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#6b6455;font-weight:normal;}
+  th small{display:block;letter-spacing:0;text-transform:none;font-size:.68rem;}
+  td.nm{text-align:left;white-space:normal;}
+  td.tot{font-weight:bold;}
+  tr:nth-child(even) td{background:var(--ptrow);}
+  tr.me td{background:#dfeedd !important;font-weight:bold;}
+  .empty{padding:22px;text-align:center;color:#6b6455;font-style:italic;}
+  .signup{margin:22px auto 0;max-width:420px;border:1px solid var(--ptdark);background:var(--card);padding:16px;text-align:center;}
+  .signup .skicker{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;}
+  .signup h3{font-size:1.2rem;margin:6px 0 4px;}
+  .signup .ssub{font-size:.9rem;color:#3d3a33;}
+  .signup form{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+  .signup input{font:inherit;font-size:.95rem;padding:8px;border:1px solid #b8b09c;width:62%;}
+  .signup button{font:inherit;font-size:.95rem;padding:8px 12px;background:var(--ptdark);color:#fff;border:0;cursor:pointer;}
+  .signup .snote{font-size:.78rem;color:#6b6455;margin-top:6px;}
+  .sok{font-weight:bold;color:var(--ptdark);margin-top:10px;}
+  .small{text-align:center;font-size:.85rem;color:#6b6455;margin-top:14px;}
+  .small button{font:inherit;font-size:.85rem;color:var(--ptdark);background:none;border:0;text-decoration:underline;cursor:pointer;}
+  .back{display:block;text-align:center;margin-top:22px;color:#524b3e;font-size:.9rem;font-weight:bold;}
+  footer{text-align:center;margin-top:18px;padding-top:8px;border-top:3px double var(--ink);font-size:.8rem;color:#8a8272;font-style:italic;}
+  footer a{color:#8a8272;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline">Ten questions on the news, every weekday</div>
+  </header>
+
+  <div class="kicker" id="kicker">League</div>
+  <h2 id="lname">Loading...</h2>
+  <div class="champ" id="champ" hidden></div>
+  <div class="status" id="status"></div>
+
+  <div class="actions" id="actions"></div>
+
+  <div class="banner"><span id="bannerL">Standings</span><span>Points by week</span></div>
+  <div class="tablewrap" id="board"><div class="empty">Loading...</div></div>
+
+  <div class="signup" id="signup">
+    <div class="skicker">Free, every weekday at 6 AM</div>
+    <h3>Get the quiz by email</h3>
+    <div class="ssub">So you never miss a day and fall behind your league.</div>
+    <form id="kitFormLeague" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
+      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit">Send it to me</button>
+    </form>
+    <div class="snote">No spam. Unsubscribe anytime.</div>
+  </div>
+
+  <div class="small" id="small"></div>
+
+  <a class="back" href="/">&larr; Today's ten</a>
+
+  <footer>10Everyday.com &middot; Fresh questions every weekday &middot; <a href="/contest">The monthly contest</a><div style="margin-top:4px;">10Everyday is edited in San Marcos, California &middot; <a href="work.html">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+// Same fake-path trick the editions use, so Cloudflare counts league events.
+function trackPath(path){
+  try {
+    var back = location.pathname + location.search + location.hash;
+    history.pushState(null, "", path);
+    setTimeout(function(){ try { history.replaceState(null, "", back); } catch(e){} }, 120);
+  } catch(e){}
+}
+</script>
+<script src="contest.js"></script>
+<script>
+(function(){
+  var T = window.tenContest;
+  var code = (location.search.match(/[?&]c=([a-z0-9-]{3,40})/) || [])[1];
+  function el(tag, cls, text){ var n = document.createElement(tag); if(cls) n.className = cls; if(text != null) n.textContent = text; return n; }
+  var $ = function(id){ return document.getElementById(id); };
+  var pacificToday = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  var month = pacificToday < "2026-11-02" ? "2026-11" : pacificToday.slice(0, 7);
+  var monthName = new Date(month + "-15T12:00:00Z").toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+
+  if(!T || !code){
+    $("lname").textContent = "League not found";
+    $("status").textContent = "That league link looks incomplete. Ask whoever sent it for a fresh one.";
+    $("board").innerHTML = "";
+    return;
+  }
+
+  var id = T.playerId();
+
+  function load(){
+    T.call("/league?code=" + code + "&month=" + month + "&me=" + id).then(draw).catch(function(){
+      $("status").textContent = "The league didn't load. Try again in a minute.";
+    });
+  }
+
+  function draw(b){
+    if(!b || !b.ok){
+      $("lname").textContent = "League not found";
+      $("status").textContent = (b && b.error) || "That league link doesn't work.";
+      $("board").innerHTML = "";
+      return;
+    }
+    document.title = b.name + " · a 10Everyday league";
+    $("lname").textContent = b.name;
+    $("kicker").textContent = monthName + " league standings";
+    $("bannerL").textContent = b.name;
+    if(b.lastChampions && b.lastChampions.length){
+      $("champ").textContent = "Last month's champion" + (b.lastChampions.length > 1 ? "s: " : ": ") + b.lastChampions.join(" and ");
+      $("champ").hidden = false;
+    }
+
+    var actions = $("actions"); actions.innerHTML = "";
+    var small = $("small"); small.innerHTML = "";
+    if(b.member){
+      $("status").textContent = pacificToday < "2026-11-02"
+        ? "You're in. Scoring starts with Monday's edition, Nov. 2."
+        : "You're in. Your first play of each edition counts.";
+      var play = el("a", "btn", "Play today's ten"); play.href = "/";
+      actions.appendChild(play);
+      actions.appendChild(el("br"));
+      var inv = el("button", "btn2", "Invite more people");
+      var flash = el("div", "flash");
+      inv.onclick = function(){ T.shareLeague(b.code, b.name, flash); };
+      actions.appendChild(inv); actions.appendChild(flash);
+      var lv = el("button", null, "Leave this league");
+      lv.onclick = function(){
+        if(!window.confirm("Leave " + b.name + "?")) return;
+        T.track("/league-leave");
+        T.call("/league/leave", { id: id, code: b.code }).then(load);
+      };
+      small.appendChild(document.createTextNode("Playing as " + T.playerName() + ". Change your name on the score card. "));
+      small.appendChild(lv);
+    } else {
+      $("status").textContent = "You've been invited. Ten questions on the news every weekday, and this group is keeping score.";
+      var join = el("button", "btn", "Join and play today's ten");
+      join.onclick = function(){
+        join.disabled = true; join.textContent = "Joining...";
+        T.call("/league/join", { id: id, code: b.code, name: T.playerName() }).then(function(r){
+          if(r && r.ok){ T.track("/league-join"); setTimeout(function(){ location.href = "/"; }, 300); }
+          else { join.disabled = false; join.textContent = "Join and play today's ten"; $("status").textContent = (r && r.error) || "Couldn't join just now."; }
+        }).catch(function(){ join.disabled = false; join.textContent = "Join and play today's ten"; });
+      };
+      actions.appendChild(join);
+      small.textContent = "No signup needed. You'll get a random name you can change after you play.";
+    }
+
+    var wrap = $("board"); wrap.innerHTML = "";
+    if(!b.players.length){ wrap.appendChild(el("div", "empty", "No one here yet.")); return; }
+    var t = el("table"), hr = el("tr");
+    hr.appendChild(el("th", null, "#"));
+    var hn = el("th", null, "Name"); hn.style.textAlign = "left"; hr.appendChild(hn);
+    b.weeks.forEach(function(w, i){ var th = el("th", null, "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
+    hr.appendChild(el("th", null, "Total"));
+    t.appendChild(hr);
+    b.players.forEach(function(p){
+      var tr = el("tr", p.me ? "me" : null);
+      tr.appendChild(el("td", null, String(p.rank)));
+      tr.appendChild(el("td", "nm", p.name + (p.me ? " (you)" : "")));
+      p.weeks.forEach(function(v){ tr.appendChild(el("td", null, String(v))); });
+      tr.appendChild(el("td", "tot", String(p.total)));
+      t.appendChild(tr);
+    });
+    wrap.appendChild(t);
+  }
+
+  // Email signup: same Kit form as the quiz.
+  if(T.isSubbed()){
+    $("signup").hidden = true;
+  } else {
+    var f = $("kitFormLeague");
+    f.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      var btn = f.querySelector("button"), email = f.querySelector("input").value.trim();
+      if(!email) return;
+      btn.disabled = true; btn.textContent = "Sending...";
+      T.kitSubscribe(email).then(function(){
+        T.track("/signup-league-page");
+        var ok = el("div", "sok", "You're in. See you at 6 AM.");
+        f.parentNode.replaceChild(ok, f);
+      }).catch(function(){ T.track("/signup-league-page"); f.submit(); });
+    });
+  }
+
+  T.track("/league-view");
+  load();
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

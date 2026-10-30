@@ -13,6 +13,8 @@ Writes stats/daily.json keyed by Pacific date:
   picks         made a prediction pick (pick_split breaks it out by question id and option, o1/o2); called_right / called_wrong saw the payoff
   pick_ask      saw the "get the answer in your inbox" box after making a prediction pick
   share_pressed tapped "Challenge a Friend" on the score card
+  contest_*     monthly contest: contest_in (score recorded), board, rename, out, rejoin
+  league_*      leagues: start, share (sent the invite), join, leave, view (opened a league page)
   email, share, reddit, facebook, pt   visits arriving on /e, /s, /r, /f, /pt
 Also writes stats/last-run.json with any errors, so problems are visible
 without opening the Actions log.
@@ -33,7 +35,13 @@ COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": 
            "/signup-mid": "signup_mid", "/signup-results": "signup_results", "/signup-merch": "signup_merch", "/signup-pick": "signup_pick", "/pick-ask": "pick_ask",
            "/share-pressed": "share_pressed",
            "/shop-q-view": "shop_q_view", "/merch-results-view-hi": "merch_results_view_hi",
-           "/merch-results-tap-hi": "merch_results_tap_hi", "/merch-results-tap-lo": "merch_results_tap_lo"}
+           "/merch-results-tap-hi": "merch_results_tap_hi", "/merch-results-tap-lo": "merch_results_tap_lo",
+           # Monthly contest and leagues (Nov 2026)
+           "/contest-in": "contest_in", "/contest-board": "contest_board", "/contest-rename": "contest_rename",
+           "/contest-out": "contest_out", "/contest-rejoin": "contest_rejoin",
+           "/league-start": "league_start", "/league-share": "league_share", "/league-join": "league_join",
+           "/league-leave": "league_leave", "/league-view": "league_view",
+           "/signup-league": "signup_league", "/signup-league-page": "signup_league_page"}
 
 errors = []
 

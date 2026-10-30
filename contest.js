@@ -6,6 +6,9 @@
 // random name; the first play of each edition is sent to the contest Worker
 // and the score card shows where the player stands. Players can rename
 // themselves or leave the contest from the score card or /contest.
+// Leagues: private boards for a group, started from the score card (email
+// subscribers only) and joined through a link to /l?c=CODE (see l.html).
+// window.tenContest exposes the shared helpers to l.html.
 // Any failure here is swallowed: the quiz must never break because of it.
 (function () {
   "use strict";
@@ -54,6 +57,42 @@
     return fetch(API + path, opts).then(function (r) { return r.json(); });
   }
 
+  var KIT = "https://app.kit.com/forms/9732657/subscriptions";
+  function isSubbed() { return !!window.tenSubscribed || get("tenSubbed") === "1"; }
+  function markSubbed() { window.tenSubscribed = true; set("tenSubbed", "1"); }
+  function kitSubscribe(email) {
+    return fetch(KIT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ email_address: email })
+    }).then(function (r) { if (!r.ok) throw new Error("kit"); markSubbed(); window.tenEmail = email; });
+  }
+  function leagueUrl(code) { return "https://10everyday.com/l?c=" + encodeURIComponent(code); }
+  function shareLeague(code, name, flashEl) {
+    var url = leagueUrl(code);
+    var text = "Join my 10Everyday league, \u201C" + name + "\u201D. Ten questions on the news every weekday. Let's see who knows the most.";
+    track("/league-share");
+    var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+    if (mobile && navigator.share) {
+      navigator.share({ title: name, text: text, url: url }).catch(function () {});
+      return;
+    }
+    var done = function () { if (flashEl) flashEl.textContent = "Link copied. Paste it in your group chat."; };
+    try {
+      navigator.clipboard.writeText(text + " " + url).then(done, function () { window.prompt("Copy this link:", url); });
+    } catch (e) { window.prompt("Copy this link:", url); }
+  }
+  function pts(n) { return n + (n === 1 ? " point" : " points"); }
+  function leagueText(l) {
+    if (l.alone) return "just you so far. Send the link.";
+    if (!l.rank) return "you're in.";
+    if (l.rank === 1) {
+      if (l.tiedWith) return "tied for 1st with " + l.tiedWith + ".";
+      return l.ahead > 0 ? "you're 1st, " + pts(l.ahead) + " ahead of " + l.nextName + "." : "you're 1st on the tiebreaker over " + l.nextName + ".";
+    }
+    return l.behind > 0 ? "you're " + ord(l.rank) + ", " + pts(l.behind) + " behind " + l.leaderName + "." : "you're " + ord(l.rank) + ", level on points with " + l.leaderName + ".";
+  }
+
   function monthName(d) {
     return new Date(d + "T12:00:00Z").toLocaleString("en-US", { month: "long", timeZone: "UTC" });
   }
@@ -78,7 +117,15 @@
       ".contest form{display:flex;gap:6px;justify-content:center;margin-top:8px;}" +
       ".contest input{font:inherit;font-size:.95rem;padding:6px 8px;border:1px solid #b8b09c;width:60%;}" +
       ".contest form button{font:inherit;font-size:.9rem;padding:6px 12px;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
-      ".contest .cerr{color:#a33;font-size:.82rem;margin-top:4px;}";
+      ".contest .cerr{color:#a33;font-size:.82rem;margin-top:4px;}" +
+      ".contest .lg{margin-top:12px;padding-top:10px;border-top:1px dashed #cfc7b2;}" +
+      ".contest .lrow{font-size:.9rem;margin:4px 0;}" +
+      ".contest .lrow a{font-size:.9rem;font-weight:bold;}" +
+      ".contest .lform{flex-direction:column;align-items:center;}" +
+      ".contest .lform input{width:85%;}" +
+      ".contest .lnote{font-size:.78rem;color:#6b6455;margin-top:4px;}" +
+      ".contest .lready{font-size:.9rem;margin-top:8px;}" +
+      ".contest .lshare{margin-top:8px;font:inherit;font-size:.95rem;padding:8px 16px;background:var(--ptmid,#4a7c4a);color:#fff;border:0;cursor:pointer;}";
     document.head.appendChild(st);
   }
 
@@ -121,6 +168,7 @@
       };
       bar0.appendChild(back);
       el.appendChild(bar0);
+      leaguesBlock(el, state);
       return;
     }
 
@@ -158,10 +206,84 @@
       set(K.out, "1");
       track("/contest-out");
       call("/optout", { id: playerId(), name: playerName(), out: true }).catch(function () {});
-      render({ out: true, first: state.first });
+      render({ out: true, first: state.first, leagues: state.leagues });
     };
     bar.appendChild(lv);
     el.appendChild(bar);
+    leaguesBlock(el, state);
+  }
+
+  function leaguesBlock(el, state) {
+    var wrap = node("div", "lg");
+    var leagues = state.leagues || [];
+    if (leagues.length) {
+      leagues.forEach(function (l) {
+        var row = node("div", "lrow");
+        var a = node("a", null, l.name);
+        a.href = "/l?c=" + encodeURIComponent(l.code);
+        row.appendChild(a);
+        row.appendChild(document.createTextNode(": " + leagueText(l)));
+        wrap.appendChild(row);
+      });
+    }
+    var start = node("button", "clink", leagues.length ? "Start another league" : "Start a league with friends");
+    start.onclick = function () { startForm(wrap, start, state); };
+    var bar = node("div", "cbar");
+    bar.appendChild(start);
+    wrap.appendChild(bar);
+    el.appendChild(wrap);
+  }
+
+  function startForm(wrap, startBtn, state) {
+    if (wrap.querySelector("form")) return;
+    startBtn.style.display = "none";
+    var needEmail = !isSubbed();
+    var f = node("form", "lform");
+    var nm = node("input");
+    nm.maxLength = 30; nm.placeholder = "League name, like Archer Family";
+    nm.setAttribute("aria-label", "League name");
+    f.appendChild(nm);
+    var em = null;
+    if (needEmail) {
+      em = node("input"); em.type = "email"; em.required = true; em.placeholder = "you@example.com";
+      em.setAttribute("aria-label", "Email address");
+      f.appendChild(em);
+    }
+    var b = node("button", null, "Start the league"); b.type = "submit";
+    f.appendChild(b);
+    wrap.appendChild(f);
+    var note = node("div", "lnote", needEmail
+      ? "Leagues come with the free daily quiz email. Unsubscribe anytime."
+      : "You'll get a link to send your group.");
+    wrap.appendChild(note);
+    var err = node("div", "cerr");
+    wrap.appendChild(err);
+    nm.focus();
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      var name = nm.value.replace(/\s+/g, " ").trim();
+      if (name.length < 2) { err.textContent = "Give your league a name."; return; }
+      b.disabled = true; b.textContent = "Starting...";
+      var first = needEmail
+        ? kitSubscribe(em.value.trim()).then(function () { track("/signup-league"); })
+        : Promise.resolve();
+      first.then(function () {
+        return call("/league/create", { id: playerId(), name: name, player: playerName() });
+      }).then(function (r) {
+        if (!r || !r.ok) { err.textContent = (r && r.error) || "That didn't work. Try again."; b.disabled = false; b.textContent = "Start the league"; return; }
+        track("/league-start");
+        f.remove(); note.remove(); err.textContent = "";
+        var ready = node("div", "lready", "\u201C" + r.name + "\u201D is ready. Send the link to your group.");
+        var sh = node("button", "lshare", "Send the invite");
+        var flash = node("div", "lnote");
+        sh.onclick = function () { shareLeague(r.code, r.name, flash); };
+        wrap.appendChild(ready); wrap.appendChild(sh); wrap.appendChild(flash);
+        state.leagues = (state.leagues || []).concat([{ code: r.code, name: r.name, alone: true }]);
+      }).catch(function () {
+        err.textContent = needEmail ? "Couldn't sign you up just now. Check the email and try again." : "Couldn't reach the scoreboard. Try again in a minute.";
+        b.disabled = false; b.textContent = "Start the league";
+      });
+    };
   }
 
   function renameForm(el, state) {
@@ -195,19 +317,25 @@
   }
 
   function start(first) {
-    if (get(K.out) === "1") { render({ out: true, first: first }); return; }
     var id = playerId(), name = playerName();
+    var month = EDITION_DATE.slice(0, 7);
+    // Scores are recorded even for players who left the contest, so their
+    // leagues still count them; the public board leaves them off.
     var p = first
       ? call("/score", { id: id, name: name, date: EDITION_DATE, score: score })
-      : call("/board?month=" + EDITION_DATE.slice(0, 7) + "&me=" + id).then(function (b) {
-          return { ok: true, counted: false, reason: "already", me: b.me };
+      : Promise.all([
+          call("/board?month=" + month + "&me=" + id),
+          call("/leagues?month=" + month + "&me=" + id)
+        ]).then(function (rs) {
+          return { ok: true, counted: false, reason: "already", me: rs[0].me, leagues: rs[1].leagues };
         });
     p.then(function (r) {
       if (!r || !r.ok) return;
-      if (r.me && r.me.out) { set(K.out, "1"); render({ out: true, first: first }); return; }
       if (r.me && r.me.name) set(K.name, r.me.name);
       if (r.counted) track("/contest-in");
-      render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first });
+      var out = get(K.out) === "1" || (r.me && r.me.out);
+      if (out) { set(K.out, "1"); render({ out: true, first: first, leagues: r.leagues }); return; }
+      render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first, leagues: r.leagues });
     }).catch(function () {});
   }
 
@@ -239,6 +367,11 @@
       };
     }
   } catch (e) {}
+
+  window.tenContest = {
+    api: API, playerId: playerId, playerName: playerName, call: call, setName: function (n) { set(K.name, n); },
+    isSubbed: isSubbed, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
+  };
 
   try {
     if (typeof EDITION_DATE === "undefined" || EDITION_DATE < START) return;
