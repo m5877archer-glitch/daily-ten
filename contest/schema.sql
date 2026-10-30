@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS players (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  optout INTEGER NOT NULL DEFAULT 0,
+  hidden INTEGER NOT NULL DEFAULT 0,
+  created TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS scores (
+  player TEXT NOT NULL,
+  date TEXT NOT NULL,
+  score INTEGER NOT NULL,
+  at TEXT NOT NULL,
+  PRIMARY KEY (player, date)
+);
+
+CREATE INDEX IF NOT EXISTS scores_date ON scores (date);

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Monthly Contest · 10Everyday</title>
+<meta name="description" content="The 10Everyday monthly contest: everyone who plays is in, every weekday counts, and the top total at the end of the month wins.">
+<link rel="canonical" href="https://10everyday.com/contest">
+<style>
+  :root{
+    --ink:#1c2733;
+    --paper:#f7f4ec;
+    --card:#fffdf7;
+    --pt:#5b8c5b;
+    --ptdark:#1e3a1e;
+    --ptmid:#4a7c4a;
+    --ptrow:#ffffcc;
+    --line:#d8d2c0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--pt);color:var(--ink);min-height:100vh;
+    display:flex;justify-content:center;padding:24px 12px 48px;
+  }
+  .wrap{width:100%;max-width:680px;}
+  .page{
+    background:var(--paper);border:1px solid var(--ptdark);
+    padding:26px 18px 20px;box-shadow:0 3px 14px rgba(20,40,20,.35);
+  }
+  header{text-align:center;margin-bottom:16px;}
+  header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;}
+  header h1 .dot{color:#b23a48;}
+  header .tagline{
+    font-style:italic;color:#524b3e;margin-top:4px;font-size:.95rem;
+    border-bottom:3px double var(--ink);padding-bottom:12px;
+  }
+  .kicker{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;text-align:center;}
+  .status{text-align:center;font-size:1.05rem;margin:6px 0 16px;line-height:1.45;}
+  .leaders{border:1px solid var(--ptdark);background:var(--card);padding:12px 14px;margin-bottom:18px;text-align:center;}
+  .leaders .lrow{font-size:.98rem;margin-top:6px;}
+  .banner{
+    display:flex;justify-content:space-between;font-size:.85rem;font-weight:bold;
+    color:#fff;background:var(--ptmid);border:1px solid var(--ptdark);padding:7px 12px;
+  }
+  .tablewrap{background:var(--card);border:1px solid var(--line);border-top:none;overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:.9rem;}
+  th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap;}
+  th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#6b6455;font-weight:normal;}
+  th small{display:block;letter-spacing:0;text-transform:none;font-size:.68rem;}
+  td.nm{text-align:left;white-space:normal;}
+  td.tot{font-weight:bold;}
+  tr:nth-child(even) td{background:var(--ptrow);}
+  tr.me td{background:#dfeedd !important;font-weight:bold;}
+  .empty{padding:22px;text-align:center;color:#6b6455;font-style:italic;}
+  .you{margin-top:16px;text-align:center;font-size:.92rem;color:#3d3a33;line-height:1.6;}
+  .you button{color:var(--ptdark);font:inherit;background:none;border:0;text-decoration:underline;cursor:pointer;}
+  .you form{display:flex;gap:6px;justify-content:center;margin-top:8px;}
+  .you input{font:inherit;padding:6px 8px;border:1px solid #b8b09c;width:55%;max-width:240px;}
+  .you form button{text-decoration:none;padding:6px 12px;background:var(--ptdark);color:#fff;}
+  .cerr{color:#a33;font-size:.85rem;}
+  .rules{font-size:.88rem;color:#524b3e;line-height:1.55;margin-top:20px;padding-top:14px;border-top:1px solid var(--line);}
+  .rules h2{font-size:1rem;margin-bottom:6px;color:var(--ink);}
+  .rules li{margin:0 0 4px 18px;}
+  .back{display:block;text-align:center;margin-top:22px;color:#524b3e;font-size:.9rem;font-weight:bold;}
+  footer{
+    text-align:center;margin-top:18px;padding-top:8px;border-top:3px double var(--ink);
+    font-size:.8rem;color:#8a8272;font-style:italic;
+  }
+  footer a{color:#8a8272;}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="page">
+  <header>
+    <h1>10Everyday<span class="dot">.</span>com</h1>
+    <div class="tagline" id="tagline">The Monthly Contest</div>
+  </header>
+
+  <div class="kicker" id="kicker">Standings</div>
+  <div class="status" id="status">Loading the standings...</div>
+
+  <div class="leaders" id="leaders" hidden></div>
+
+  <div class="banner"><span>Leaderboard</span><span>Points by week</span></div>
+  <div class="tablewrap" id="board"><div class="empty">Loading...</div></div>
+
+  <div class="you" id="you"></div>
+
+  <div class="rules">
+    <h2>How it works</h2>
+    <ul>
+      <li>Everyone who plays is in. No signup needed.</li>
+      <li>Your first play of each edition counts, on the day it's published. Replays and back issues don't count.</li>
+      <li>Every weekday counts. A missed day is a zero, so showing up matters.</li>
+      <li>Highest total for the month wins. Ties go to whoever has more perfect 10s.</li>
+      <li>The prize is glory. The winner is named in the first edition of the next month.</li>
+      <li>You get a random name to start. Change it, or leave the contest, anytime below or on your score card.</li>
+      <li>Your scores are tied to this browser, so play on the same device all month.</li>
+    </ul>
+  </div>
+
+  <a class="back" href="/">&larr; Back to today's ten</a>
+
+  <footer>10Everyday.com &middot; Fresh questions every weekday &middot; <a href="https://buymeacoffee.com/10everyday" target="_blank" rel="noopener">&#9749; Buy me a coffee</a><div style="margin-top:4px;">10Everyday is edited in San Marcos, California &middot; <a href="work.html">Want one for your business?</a></div></footer>
+ </div>
+</div>
+
+<script>
+(function(){
+  var API = "https://tenevery-contest.m5877archer.workers.dev";
+  function get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  function el(tag, cls, text){ var n = document.createElement(tag); if(cls) n.className = cls; if(text != null) n.textContent = text; return n; }
+  function ord(n){ var s = ["th","st","nd","rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+  function post(path, data){
+    return fetch(API + path, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(data) })
+      .then(function(r){ return r.json(); });
+  }
+
+  var id = get("tenContest.id");
+  var qm = (location.search.match(/[?&]m=(\d{4}-\d{2})/) || [])[1];
+  var pacificToday = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  var month = qm || (pacificToday < "2026-11-02" ? "2026-11" : pacificToday.slice(0, 7));
+  var monthName = new Date(month + "-15T12:00:00Z").toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  document.getElementById("tagline").textContent = "The " + monthName + " Contest";
+
+  function load(){
+    fetch(API + "/board?month=" + month + (id ? "&me=" + id : ""))
+      .then(function(r){ return r.json(); })
+      .then(draw)
+      .catch(function(){
+        document.getElementById("status").textContent = "The standings didn't load. Try again in a minute.";
+        document.getElementById("board").innerHTML = "<div class='empty'>No connection to the scoreboard.</div>";
+      });
+  }
+
+  function draw(b){
+    var weeks = b.weeks || [];
+    var last = weeks.length ? weeks[weeks.length - 1].dates.slice(-1)[0] : "";
+    var finished = last && pacificToday > last;
+    var status = document.getElementById("status");
+    if(pacificToday < "2026-11-02"){
+      status.textContent = "The first contest starts with Monday's edition, Nov. 2. Just play, and you're in.";
+    } else if(!b.count){
+      status.textContent = "No scores yet this month. Play today's edition to get on the board.";
+    } else if(finished){
+      var w = b.players.filter(function(p){ return p.rank === 1; }).map(function(p){ return p.name; });
+      status.textContent = "Final standings. " + (w.length > 1 ? "Co-champions: " : "Champion: ") + w.join(" and ") + ".";
+      document.getElementById("kicker").textContent = "Final";
+    } else {
+      status.textContent = b.count + (b.count === 1 ? " player" : " players") + " on the board. Every weekday counts until the end of the month.";
+    }
+
+    // Weekly tally: leaders of the latest week that has scores.
+    var lw = -1;
+    weeks.forEach(function(w, i){ if(b.players.some(function(p){ return p.weeks[i] > 0; })) lw = i; });
+    var lead = document.getElementById("leaders");
+    if(lw >= 0){
+      var top = b.players.slice().sort(function(a, c){ return c.weeks[lw] - a.weeks[lw]; }).filter(function(p){ return p.weeks[lw] > 0; }).slice(0, 3);
+      lead.innerHTML = "";
+      lead.appendChild(el("div", "kicker", "Week " + (lw + 1) + " leaders, " + weeks[lw].label));
+      top.forEach(function(p, i){ lead.appendChild(el("div", "lrow", (i + 1) + ". " + p.name + ", " + p.weeks[lw] + " points")); });
+      lead.hidden = false;
+    }
+
+    var wrap = document.getElementById("board");
+    wrap.innerHTML = "";
+    if(!b.players.length){ wrap.appendChild(el("div", "empty", "The board is empty for now.")); }
+    else {
+      var t = el("table"), hr = el("tr");
+      hr.appendChild(el("th", null, "#"));
+      var hn = el("th", null, "Name"); hn.style.textAlign = "left"; hr.appendChild(hn);
+      weeks.forEach(function(w, i){ var th = el("th", null, "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
+      hr.appendChild(el("th", null, "Total"));
+      t.appendChild(hr);
+      b.players.forEach(function(p){
+        var tr = el("tr", p.me ? "me" : null);
+        tr.appendChild(el("td", null, String(p.rank)));
+        tr.appendChild(el("td", "nm", p.name + (p.me ? " (you)" : "")));
+        p.weeks.forEach(function(v){ tr.appendChild(el("td", null, String(v))); });
+        tr.appendChild(el("td", "tot", String(p.total)));
+        t.appendChild(tr);
+      });
+      wrap.appendChild(t);
+    }
+    you(b);
+  }
+
+  function you(b){
+    var box = document.getElementById("you");
+    box.innerHTML = "";
+    if(!id || !b.me){ box.textContent = "Play an edition and you'll show up here under a random name you can change."; return; }
+    var me = b.me;
+    if(me.out){
+      box.appendChild(document.createTextNode("You're sitting out the contest. "));
+      var back = el("button", null, "Count me back in");
+      back.onclick = function(){ post("/optout", { id: id, out: false }).then(function(){ set("tenContest.out", "0"); load(); }); };
+      box.appendChild(back);
+      return;
+    }
+    var line = "You're playing as " + me.name + ". ";
+    if(me.rank) line += "You're " + ord(me.rank) + " with " + me.total + " points over " + me.days + (me.days === 1 ? " day. " : " days. ");
+    box.appendChild(document.createTextNode(line));
+    var ch = el("button", null, "Change name");
+    ch.onclick = function(){
+      if(box.querySelector("form")) return;
+      var f = el("form"), inp = el("input"), sv = el("button", null, "Save"), err = el("div", "cerr");
+      inp.maxLength = 20; inp.value = me.name; inp.setAttribute("aria-label", "Leaderboard name"); sv.type = "submit";
+      f.appendChild(inp); f.appendChild(sv);
+      f.onsubmit = function(e){
+        e.preventDefault();
+        post("/name", { id: id, name: inp.value.replace(/\s+/g, " ").trim() }).then(function(r){
+          if(r && r.ok){ set("tenContest.name", r.name); load(); }
+          else err.textContent = (r && r.error) || "That name didn't work. Try another.";
+        }).catch(function(){ err.textContent = "Couldn't save just now."; });
+      };
+      box.appendChild(f); box.appendChild(err); inp.focus();
+    };
+    box.appendChild(ch);
+    box.appendChild(document.createTextNode(" · "));
+    var lv = el("button", null, "Leave the contest");
+    lv.onclick = function(){ post("/optout", { id: id, out: true }).then(function(){ set("tenContest.out", "1"); load(); }); };
+    box.appendChild(lv);
+  }
+
+  load();
+})();
+</script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
