@@ -955,9 +955,9 @@
   "partial": false
  },
  "2026-10-29": {
-  "visits": 17,
-  "pageviews": 145,
-  "done": 10,
+  "visits": 18,
+  "pageviews": 158,
+  "done": 11,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
@@ -972,14 +972,48 @@
   "signup_results": 0,
   "signup_merch": 0,
   "signup_pick": 0,
-  "pick_ask": 1,
+  "pick_ask": 4,
   "share_pressed": 2,
-  "shop_q_view": 10,
+  "shop_q_view": 11,
   "merch_results_view_hi": 2,
   "picks": 3,
   "pick_split": {
    "1026-ws-champ-o1": 3
   },
+  "partial": false
+ },
+ "2026-10-30": {
+  "visits": 5,
+  "pageviews": 65,
+  "done": 4,
+  "merch_view": 0,
+  "merch_click": 0,
+  "shop": 0,
+  "shop_q": 0,
+  "email": 1,
+  "share": 1,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "signup_pick": 0,
+  "pick_ask": 0,
+  "share_pressed": 0,
+  "picks": 1,
+  "pick_split": {
+   "1030-house-o1": 1
+  },
+  "called_right": 2,
+  "costume_split": {
+   "midnight": 1,
+   "pumpkin": 2,
+   "candy": 1
+  },
+  "shop_q_view": 4,
+  "merch_results_view_hi": 2,
   "partial": true
  }
 }
