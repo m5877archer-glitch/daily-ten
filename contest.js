@@ -125,6 +125,8 @@
       ".contest .lform input{width:85%;}" +
       ".contest .lnote{font-size:.78rem;color:#6b6455;margin-top:4px;}" +
       ".contest .lready{font-size:.9rem;margin-top:8px;}" +
+      ".contest button.lbig{display:block;width:100%;margin:14px 0 4px;font:inherit;font-size:1.45rem;font-weight:bold;line-height:1.2;padding:20px 12px;background:var(--ptmid,#4a7c4a);color:#fff;border:3px solid var(--ptdark,#1e3a1e);box-shadow:0 4px 0 var(--ptdark,#1e3a1e);cursor:pointer;text-decoration:none;}" +
+      ".contest button.lbig:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ptdark,#1e3a1e);}" +
       ".contest .lshare{margin-top:8px;font:inherit;font-size:.95rem;padding:8px 16px;background:var(--ptmid,#4a7c4a);color:#fff;border:0;cursor:pointer;}";
     document.head.appendChild(st);
   }
@@ -226,7 +228,7 @@
         wrap.appendChild(row);
       });
     }
-    var start = node("button", "clink", leagues.length ? "Start another league" : "Start a league with friends");
+    var start = node("button", "lbig", leagues.length ? "Start another league" : "Start a league with friends");
     start.onclick = function () { startForm(wrap, start, state); };
     var bar = node("div", "cbar");
     bar.appendChild(start);
