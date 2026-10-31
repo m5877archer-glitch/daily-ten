@@ -26,14 +26,14 @@
   header h1{font-size:clamp(1.55rem,8.5vw,2.5rem);letter-spacing:.02em;}
   header h1 .dot{color:#b23a48;}
   header .tagline{font-style:italic;color:#524b3e;margin-top:4px;font-size:.95rem;border-bottom:3px double var(--ink);padding-bottom:12px;}
-  .kicker{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;text-align:center;}
-  h2{text-align:center;font-size:1.6rem;margin:4px 0 6px;}
-  .status{text-align:center;font-size:1rem;margin:4px 0 14px;line-height:1.45;color:#3d3a33;}
-  .champ{text-align:center;font-size:.9rem;color:#6b6455;font-style:italic;margin-bottom:10px;}
+  .kicker{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:#3d3a33;font-weight:bold;text-align:center;}
+  h2{text-align:center;font-size:1.9rem;margin:6px 0 8px;}
+  .status{text-align:center;font-size:1.2rem;margin:6px 0 16px;line-height:1.45;color:#1c2733;}
+  .champ{text-align:center;font-size:1.05rem;color:#3d3a33;margin-bottom:10px;}
   .actions{text-align:center;margin:14px 0 18px;}
-  .btn{display:inline-block;font:inherit;font-size:1.05rem;padding:12px 24px;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
+  .btn{display:inline-block;font:inherit;font-size:1.3rem;font-weight:bold;padding:18px 24px;box-sizing:border-box;background:var(--ptmid);color:#fff;border:1px solid var(--ptdark);
        text-decoration:none;cursor:pointer;width:100%;max-width:340px;}
-  .btn2{display:inline-block;margin-top:10px;font:inherit;font-size:.95rem;padding:9px 18px;background:#fff;color:var(--ptdark);border:1px solid var(--ptdark);cursor:pointer;width:100%;max-width:340px;}
+  .btn2{display:inline-block;margin-top:12px;font:inherit;font-size:1.2rem;font-weight:bold;padding:16px 18px;background:#fff;color:var(--ptdark);border:1px solid var(--ptdark);cursor:pointer;width:100%;max-width:340px;}
   .flash{font-size:.85rem;color:#6b6455;margin-top:6px;min-height:1em;}
   .banner{display:flex;justify-content:space-between;font-size:.85rem;font-weight:bold;color:#fff;background:var(--ptmid);border:1px solid var(--ptdark);padding:7px 12px;}
   .tablewrap{background:var(--card);border:1px solid var(--line);border-top:none;overflow-x:auto;}
@@ -43,20 +43,25 @@
   th small{display:block;letter-spacing:0;text-transform:none;font-size:.68rem;}
   td.nm{text-align:left;white-space:normal;}
   td.tot{font-weight:bold;}
-  @media (max-width:560px){ th.wk:not(.cur),td.wk:not(.cur){display:none;} }
+  .wkshort{display:none;}
+  @media (max-width:560px){ th.wk:not(.cur),td.wk:not(.cur){display:none;} th.cur .wkfull{display:none;} th.cur .wkshort{display:inline;} }
   tr:nth-child(even) td{background:var(--ptrow);}
   tr.me td{background:#dfeedd !important;font-weight:bold;}
   .empty{padding:22px;text-align:center;color:#6b6455;font-style:italic;}
   .signup{margin:22px auto 0;max-width:420px;border:1px solid var(--ptdark);background:var(--card);padding:16px;text-align:center;}
   .signup .skicker{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;}
-  .signup h3{font-size:1.2rem;margin:6px 0 4px;}
-  .signup .ssub{font-size:.9rem;color:#3d3a33;}
-  .signup form{display:flex;gap:6px;justify-content:center;margin-top:10px;}
-  .signup input{font:inherit;font-size:.95rem;padding:8px;border:1px solid #b8b09c;width:62%;}
-  .signup button{font:inherit;font-size:.95rem;padding:8px 12px;background:var(--ptdark);color:#fff;border:0;cursor:pointer;}
-  .signup .snote{font-size:.78rem;color:#6b6455;margin-top:6px;}
+  .signup h3{font-size:1.35rem;margin:6px 0 4px;}
+  .signup .ssub{font-size:1.05rem;color:#1c2733;}
+  .signup form{display:block;margin-top:10px;}
+  .signup input{font:inherit;font-size:1.15rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;margin-bottom:8px;}
+  .signup button{font:inherit;font-size:1.2rem;font-weight:bold;width:100%;padding:14px 12px;background:var(--ptdark);color:#fff;border:0;cursor:pointer;}
+  .signup .snote{font-size:1rem;color:#3d3a33;margin-top:6px;}
   .sok{font-weight:bold;color:var(--ptdark);margin-top:10px;}
-  .small{text-align:center;font-size:.85rem;color:#6b6455;margin-top:14px;}
+  .small{text-align:center;font-size:1.05rem;color:#3d3a33;margin-top:16px;line-height:1.5;}
+  .joinname{display:block;max-width:340px;margin:0 auto;text-align:left;}
+  .joinname label{display:block;font-size:1.15rem;font-weight:bold;margin-bottom:6px;}
+  .joinname input{font:inherit;font-size:1.2rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;background:#fff;margin-bottom:12px;}
+  .jerr{color:#a33;font-weight:bold;font-size:1.05rem;margin-top:8px;}
   .small button{font:inherit;font-size:.85rem;color:var(--ptdark);background:none;border:0;text-decoration:underline;cursor:pointer;}
   .back{display:block;text-align:center;margin-top:22px;color:#524b3e;font-size:.9rem;font-weight:bold;}
   footer{text-align:center;margin-top:18px;padding-top:8px;border-top:3px double var(--ink);font-size:.8rem;color:#8a8272;font-style:italic;}
@@ -71,30 +76,30 @@
     <div class="tagline">Ten questions on the news, every weekday</div>
   </header>
 
-  <div class="kicker" id="kicker">League</div>
+  <div class="kicker" id="kicker">Family scoreboard</div>
   <h2 id="lname">Loading...</h2>
   <div class="champ" id="champ" hidden></div>
   <div class="status" id="status"></div>
 
   <div class="actions" id="actions"></div>
 
-  <div class="banner"><span id="bannerL">Standings</span><span>Points by week</span></div>
+  <div class="banner"><span id="bannerL">Standings</span><span>Points</span></div>
   <div class="tablewrap" id="board"><div class="empty">Loading...</div></div>
 
   <div class="signup" id="signup">
-    <div class="skicker">Free, every weekday at 6 AM</div>
+    <div class="skicker">Free, every weekday morning</div>
     <h3>Get the quiz by email</h3>
-    <div class="ssub">So you never miss a day and fall behind your league.</div>
+    <div class="ssub">So you never miss a day and fall behind your group.</div>
     <form id="kitFormLeague" action="https://app.kit.com/forms/9732657/subscriptions" method="post" data-sv-form="9732657" data-uid="8b33af2261">
-      <input type="email" name="email_address" placeholder="you@example.com" required aria-label="Email address">
-      <button type="submit">Send it to me</button>
+      <input type="email" name="email_address" placeholder="Your email" required aria-label="Email address">
+      <button type="submit">Email me the quiz</button>
     </form>
-    <div class="snote">No spam. Unsubscribe anytime.</div>
+    <div class="snote">Free. You can stop it anytime.</div>
   </div>
 
   <div class="small" id="small"></div>
 
-  <a class="back" href="/">&larr; Today's ten</a>
+  <a class="back" href="/">&larr; Today's quiz</a>
 
   <footer>10Everyday.com &middot; Fresh questions every weekday &middot; <a href="/contest">The monthly contest</a><div style="margin-top:4px;">10Everyday is edited in San Marcos, California &middot; <a href="work.html">Want one for your business?</a></div></footer>
  </div>
@@ -123,8 +128,8 @@ function trackPath(path){
   var monthName = new Date(month + "-15T12:00:00Z").toLocaleString("en-US", { month: "long", timeZone: "UTC" });
 
   if(!T || !code){
-    $("lname").textContent = "League not found";
-    $("status").textContent = "That league link looks incomplete. Ask whoever sent it for a fresh one.";
+    $("lname").textContent = "Group not found";
+    $("status").textContent = "That link is missing a piece. Ask the person who sent it to send it again.";
     $("board").innerHTML = "";
     return;
   }
@@ -133,23 +138,23 @@ function trackPath(path){
 
   function load(){
     T.call("/league?code=" + code + "&month=" + month + "&me=" + id).then(draw).catch(function(){
-      $("status").textContent = "The league didn't load. Try again in a minute.";
+      $("status").textContent = "The page didn't load. Please try again in a minute.";
     });
   }
 
   function draw(b){
     if(!b || !b.ok){
-      $("lname").textContent = "League not found";
-      $("status").textContent = (b && b.error) || "That league link doesn't work.";
+      $("lname").textContent = "Group not found";
+      $("status").textContent = (b && b.error) || "That link doesn't work. Ask the person who sent it to send it again.";
       $("board").innerHTML = "";
       return;
     }
-    document.title = b.name + " · a 10Everyday league";
+    document.title = b.name + " · 10Everyday";
     $("lname").textContent = b.name;
-    $("kicker").textContent = monthName + " league standings";
+    $("kicker").textContent = monthName + " scoreboard";
     $("bannerL").textContent = b.name;
     if(b.lastChampions && b.lastChampions.length){
-      $("champ").textContent = "Last month's champion" + (b.lastChampions.length > 1 ? "s: " : ": ") + b.lastChampions.join(" and ");
+      $("champ").textContent = "Last month's winner" + (b.lastChampions.length > 1 ? "s: " : ": ") + b.lastChampions.join(" and ");
       $("champ").hidden = false;
     }
 
@@ -157,35 +162,58 @@ function trackPath(path){
     var small = $("small"); small.innerHTML = "";
     if(b.member){
       $("status").textContent = pacificToday < "2026-11-02"
-        ? "You're in. Scoring starts with Monday's edition, Nov. 2."
-        : "You're in. Your first play of each edition counts.";
-      var play = el("a", "btn", "Play today's ten"); play.href = "/";
+        ? "You're in this group. Scores start Monday, Nov. 2."
+        : "You're in this group. Play once each weekday. Your first try each day counts.";
+      var play = el("a", "btn", "Play today's quiz"); play.href = "/";
       actions.appendChild(play);
       actions.appendChild(el("br"));
-      var inv = el("button", "btn2", "Invite more people");
+      var inv = el("button", "btn2", "Text the link to more people");
       var flash = el("div", "flash");
       inv.onclick = function(){ T.shareLeague(b.code, b.name, flash); };
       actions.appendChild(inv); actions.appendChild(flash);
-      var lv = el("button", null, "Leave this league");
+      var lv = el("button", null, "Leave this group");
       lv.onclick = function(){
         if(!window.confirm("Leave " + b.name + "?")) return;
         T.track("/league-leave");
         T.call("/league/leave", { id: id, code: b.code }).then(load);
       };
-      small.appendChild(document.createTextNode("Playing as " + T.playerName() + ". Change your name on the score card. "));
+      small.appendChild(document.createTextNode("Your name on the scoreboard: " + T.playerName() + ". "));
+      small.appendChild(el("br"));
       small.appendChild(lv);
     } else {
-      $("status").textContent = "You've been invited. Ten questions on the news every weekday, and this group is keeping score.";
-      var join = el("button", "btn", "Join and play today's ten");
+      $("status").textContent = (b.owner ? b.owner + " invited you. " : "You've been invited. ") +
+        "Answer 10 questions about the news, and your score goes on the " + b.name + " scoreboard.";
+      var box = el("div", "joinname");
+      var needName = T.isRandomName(T.playerName());
+      var you = null;
+      if(needName){
+        var lab = el("label", null, "Your first name"); lab.htmlFor = "joinName";
+        you = el("input"); you.id = "joinName"; you.maxLength = 20; you.placeholder = "So your family knows it's you"; you.autocomplete = "given-name";
+        box.appendChild(lab); box.appendChild(you);
+      }
+      var join = el("button", "btn", "Join and play today's quiz");
+      join.style.width = "100%";
+      var jerr = el("div", "jerr");
+      box.appendChild(join); box.appendChild(jerr);
+      var again = function(msg){ jerr.textContent = msg; join.disabled = false; join.textContent = "Join and play today's quiz"; };
       join.onclick = function(){
-        join.disabled = true; join.textContent = "Joining...";
-        T.call("/league/join", { id: id, code: b.code, name: T.playerName() }).then(function(r){
-          if(r && r.ok){ T.track("/league-join"); setTimeout(function(){ location.href = "/"; }, 300); }
-          else { join.disabled = false; join.textContent = "Join and play today's ten"; $("status").textContent = (r && r.error) || "Couldn't join just now."; }
-        }).catch(function(){ join.disabled = false; join.textContent = "Join and play today's ten"; });
+        jerr.textContent = "";
+        var nm = you ? you.value.replace(/\s+/g, " ").trim() : "";
+        if(you && nm.length < 2){ jerr.textContent = "Please type your first name."; you.focus(); return; }
+        join.disabled = true; join.textContent = "One moment...";
+        var p = you ? T.call("/name", { id: id, name: nm }).then(function(r){
+          if(!r || !r.ok) throw { msg: (r && r.error) || "Please try a different first name." };
+          T.setName(r.name);
+        }) : Promise.resolve();
+        p.then(function(){
+          return T.call("/league/join", { id: id, code: b.code, name: T.playerName() });
+        }).then(function(r){
+          if(r && r.ok){ T.track("/league-join"); join.textContent = "You're in! Opening the quiz..."; setTimeout(function(){ location.href = "/"; }, 600); }
+          else again((r && r.error) || "Something went wrong. Please try again.");
+        }).catch(function(x){ again((x && x.msg) || "Something went wrong. Please try again in a minute."); });
       };
-      actions.appendChild(join);
-      small.textContent = "No signup needed. You'll get a random name you can change after you play.";
+      actions.appendChild(box);
+      small.textContent = "It's free. No account or password.";
     }
 
     var wrap = $("board"); wrap.innerHTML = "";
@@ -194,7 +222,7 @@ function trackPath(path){
     hr.appendChild(el("th", null, "#"));
     var hn = el("th", null, "Name"); hn.style.textAlign = "left"; hr.appendChild(hn);
     var cw = curWeek(b.weeks);
-b.weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk", "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
+b.weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk"); var fu = el("span", "wkfull", "Wk " + (i + 1)); fu.appendChild(el("small", null, w.label)); th.appendChild(fu); th.appendChild(el("span", "wkshort", "This week")); hr.appendChild(th); });
     hr.appendChild(el("th", null, "Total"));
     t.appendChild(hr);
     b.players.forEach(function(p){
@@ -220,7 +248,7 @@ b.weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk", "W
       btn.disabled = true; btn.textContent = "Sending...";
       T.kitSubscribe(email).then(function(){
         T.track("/signup-league-page");
-        var ok = el("div", "sok", "You're in. See you at 6 AM.");
+        var ok = el("div", "sok", "Done. Look for it in your email tomorrow morning.");
         f.parentNode.replaceChild(ok, f);
       }).catch(function(){ T.track("/signup-league-page"); f.submit(); });
     });

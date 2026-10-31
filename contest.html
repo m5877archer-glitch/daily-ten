@@ -53,7 +53,8 @@
   th small{display:block;letter-spacing:0;text-transform:none;font-size:.68rem;}
   td.nm{text-align:left;white-space:normal;}
   td.tot{font-weight:bold;}
-  @media (max-width:560px){ th.wk:not(.cur),td.wk:not(.cur){display:none;} }
+  .wkshort{display:none;}
+  @media (max-width:560px){ th.wk:not(.cur),td.wk:not(.cur){display:none;} th.cur .wkfull{display:none;} th.cur .wkshort{display:inline;} }
   tr:nth-child(even) td{background:var(--ptrow);}
   tr.me td{background:#dfeedd !important;font-weight:bold;}
   .empty{padding:22px;text-align:center;color:#6b6455;font-style:italic;}
@@ -100,7 +101,7 @@
       <li>Every weekday counts. A missed day is a zero, so showing up matters.</li>
       <li>Highest total for the month wins. Ties go to whoever has more perfect 10s.</li>
       <li>The prize is glory. The winner is named in the first edition of the next month.</li>
-      <li>You get a random name to start. Change it, or leave the contest, anytime below or on your score card.</li>
+      <li>You get a random name to start. You can change it, or leave the contest, at the bottom of this page.</li>
       <li>Your scores are tied to this browser, so play on the same device all month.</li>
     </ul>
   </div>
@@ -178,7 +179,7 @@
       hr.appendChild(el("th", null, "#"));
       var hn = el("th", null, "Name"); hn.style.textAlign = "left"; hr.appendChild(hn);
       var cw = curWeek(weeks);
-weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk", "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
+weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk"); var fu = el("span", "wkfull", "Wk " + (i + 1)); fu.appendChild(el("small", null, w.label)); th.appendChild(fu); th.appendChild(el("span", "wkshort", "This week")); hr.appendChild(th); });
       hr.appendChild(el("th", null, "Total"));
       t.appendChild(hr);
       b.players.forEach(function(p){
@@ -206,7 +207,7 @@ weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk", "Wk 
       box.appendChild(back);
       return;
     }
-    var line = "You're playing as " + me.name + ". ";
+    var line = "Your name on the scoreboard: " + me.name + ". ";
     if(me.rank) line += "You're " + ord(me.rank) + " with " + me.total + " points over " + me.days + (me.days === 1 ? " day. " : " days. ");
     else if(me.outside) line += "You're outside the top 10 for now, with " + me.total + " points over " + me.days + (me.days === 1 ? " day. " : " days. ") + "Every weekday is a chance to climb. ";
     box.appendChild(document.createTextNode(line));

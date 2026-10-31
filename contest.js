@@ -45,6 +45,11 @@
     return n;
   }
 
+  function isRandomName(n) {
+    var p = String(n || "").split(" ");
+    return p.length === 2 && ADJ.indexOf(p[0]) >= 0 && ANIMAL.indexOf(p[1]) >= 0;
+  }
+
   function call(path, data) {
     var opts = data
       ? { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(data) }
@@ -70,27 +75,27 @@
   function leagueUrl(code) { return "https://10everyday.com/l?c=" + encodeURIComponent(code); }
   function shareLeague(code, name, flashEl) {
     var url = leagueUrl(code);
-    var text = "Join my 10Everyday league, \u201C" + name + "\u201D. Ten questions on the news every weekday. Let's see who knows the most.";
+    var text = "I'm doing a daily news quiz. Join my group, \u201C" + name + ",\u201D and let's see who gets the most right. Tap here:";
     track("/league-share");
     var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
     if (mobile && navigator.share) {
       navigator.share({ title: name, text: text, url: url }).catch(function () {});
       return;
     }
-    var done = function () { if (flashEl) flashEl.textContent = "Link copied. Paste it in your group chat."; };
+    var done = function () { if (flashEl) flashEl.textContent = "Copied. Now paste it into a text or email."; };
     try {
       navigator.clipboard.writeText(text + " " + url).then(done, function () { window.prompt("Copy this link:", url); });
     } catch (e) { window.prompt("Copy this link:", url); }
   }
   function pts(n) { return n + (n === 1 ? " point" : " points"); }
   function leagueText(l) {
-    if (l.alone) return "just you so far. Send the link.";
+    if (l.alone) return "just you so far. Text the link to your family.";
     if (!l.rank) return "you're in.";
     if (l.rank === 1) {
-      if (l.tiedWith) return "tied for 1st with " + l.tiedWith + ".";
-      return l.ahead > 0 ? "you're 1st, " + pts(l.ahead) + " ahead of " + l.nextName + "." : "you're 1st on the tiebreaker over " + l.nextName + ".";
+      if (l.tiedWith) return "you're tied for 1st with " + l.tiedWith + ".";
+      return l.ahead > 0 ? "you're in 1st place, " + pts(l.ahead) + " ahead of " + l.nextName + "." : "you're in 1st place.";
     }
-    return l.behind > 0 ? "you're " + ord(l.rank) + ", " + pts(l.behind) + " behind " + l.leaderName + "." : "you're " + ord(l.rank) + ", level on points with " + l.leaderName + ".";
+    return l.behind > 0 ? "you're in " + ord(l.rank) + " place, " + pts(l.behind) + " behind " + l.leaderName + "." : "you're tied with " + l.leaderName + ".";
   }
 
   function monthName(d) {
@@ -108,26 +113,25 @@
     st.id = "contestCss";
     st.textContent =
       ".contest{margin:18px auto 6px;max-width:400px;border:1px solid var(--ptdark,#1e3a1e);background:#fffdf6;padding:14px 14px 12px;}" +
-      ".contest .ck{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#6b6455;}" +
-      ".contest .cl{font-size:1.15rem;font-weight:bold;margin:6px 0 2px;color:var(--ink,#1c2733);}" +
-      ".contest .cs{font-size:.92rem;color:#3d3a33;}" +
-      ".contest .cn{font-size:.85rem;color:#6b6455;margin-top:8px;}" +
-      ".contest a,.contest button.clink{color:var(--ptdark,#1e3a1e);font:inherit;font-size:.85rem;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer;}" +
-      ".contest .cbar{margin-top:8px;font-size:.85rem;}" +
-      ".contest form{display:flex;gap:6px;justify-content:center;margin-top:8px;}" +
-      ".contest input{font:inherit;font-size:.95rem;padding:6px 8px;border:1px solid #b8b09c;width:60%;}" +
-      ".contest form button{font:inherit;font-size:.9rem;padding:6px 12px;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
-      ".contest .cerr{color:#a33;font-size:.82rem;margin-top:4px;}" +
+      ".contest .ck{font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:#3d3a33;font-weight:bold;}" +
+      ".contest .cl{font-size:1.35rem;font-weight:bold;margin:8px 0 4px;color:var(--ink,#1c2733);}" +
+      ".contest .cs{font-size:1.1rem;color:#1c2733;}" +
+      ".contest .cn{font-size:1.05rem;color:#1c2733;margin-top:12px;}" +
+      ".contest a,.contest button.clink{color:var(--ptdark,#1e3a1e);font:inherit;font-size:1.05rem;background:none;border:0;padding:4px 0;text-decoration:underline;cursor:pointer;}" +
+      ".contest .cbar{margin-top:10px;font-size:1.05rem;}" +
+      ".contest form{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-top:10px;text-align:left;}" +
+      ".contest label{font-size:1.1rem;font-weight:bold;color:#1c2733;margin-top:6px;}" +
+      ".contest input{font:inherit;font-size:1.15rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;background:#fff;}" +
+      ".contest form button{font:inherit;font-size:1.25rem;font-weight:bold;padding:16px 12px;margin-top:8px;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
+      ".contest .cerr{color:#a33;font-size:1.05rem;font-weight:bold;margin-top:8px;}" +
       ".contest .lg{margin-top:12px;padding-top:10px;border-top:1px dashed #cfc7b2;}" +
-      ".contest .lrow{font-size:.9rem;margin:4px 0;}" +
-      ".contest .lrow a{font-size:.9rem;font-weight:bold;}" +
-      ".contest .lform{flex-direction:column;align-items:center;}" +
-      ".contest .lform input{width:85%;}" +
-      ".contest .lnote{font-size:.78rem;color:#6b6455;margin-top:4px;}" +
-      ".contest .lready{font-size:.9rem;margin-top:8px;}" +
+      ".contest .lrow{font-size:1.1rem;margin:6px 0;color:#1c2733;}" +
+      ".contest .lrow a{font-size:1.1rem;font-weight:bold;}" +
+      ".contest .lnote{font-size:1rem;color:#3d3a33;margin-top:8px;}" +
+      ".contest .lready{font-size:1.25rem;font-weight:bold;margin-top:12px;color:#1c2733;}" +
       ".contest button.lbig{display:block;width:100%;margin:14px 0 4px;font:inherit;font-size:1.45rem;font-weight:bold;line-height:1.2;padding:20px 12px;background:var(--ptmid,#4a7c4a);color:#fff;border:3px solid var(--ptdark,#1e3a1e);box-shadow:0 4px 0 var(--ptdark,#1e3a1e);cursor:pointer;text-decoration:none;}" +
       ".contest button.lbig:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ptdark,#1e3a1e);}" +
-      ".contest .lshare{margin-top:8px;font:inherit;font-size:.95rem;padding:8px 16px;background:var(--ptmid,#4a7c4a);color:#fff;border:0;cursor:pointer;}";
+      ".contest .lshare{display:block;width:100%;margin:12px 0 4px;font:inherit;font-size:1.45rem;font-weight:bold;padding:20px 12px;background:var(--ptmid,#4a7c4a);color:#fff;border:3px solid var(--ptdark,#1e3a1e);box-shadow:0 4px 0 var(--ptdark,#1e3a1e);cursor:pointer;}";
     document.head.appendChild(st);
   }
 
@@ -176,41 +180,34 @@
 
     var me = state.me || {};
     var headline;
-    if (state.reason === "late") headline = "Contest scores count on the day of the edition.";
+    if (state.reason === "late") headline = "Only today's quiz counts in the contest.";
     else if (me.rank) headline = "You're " + ord(me.rank) + " this month, with " + me.total + " points.";
     else if (me.outside) headline = "You're outside the top 10 for now, with " + me.total + " points.";
     else headline = "You're in. Every weekday counts.";
     el.appendChild(node("div", "cl", headline));
 
     var sub;
-    if (state.counted) sub = "Today's " + state.score + " is on the board.";
-    else if (state.reason === "already") sub = "Only your first play of the day counts.";
-    else if (state.reason === "late") sub = "Today's edition is the one that counts. See you tomorrow.";
+    if (state.counted) sub = "Today's score of " + state.score + " counts.";
+    else if (state.reason === "already") sub = "Only your first try each day counts.";
+    else if (state.reason === "late") sub = "See you tomorrow.";
     else sub = "";
-    if (me.days) sub += (sub ? " " : "") + me.days + (me.days === 1 ? " day" : " days") + " played this month.";
     if (sub) el.appendChild(node("div", "cs", sub));
 
     var nm = node("div", "cn");
-    nm.appendChild(document.createTextNode("Playing as " + (me.name || playerName()) + ". "));
-    var ch = node("button", "clink", "Change name");
+    var shown = me.name || playerName();
+    nm.appendChild(document.createTextNode("Your name on the scoreboard: "));
+    nm.appendChild(node("b", null, shown));
+    nm.appendChild(node("br"));
+    var ch = node("button", "clink", isRandomName(shown) ? "Tap here to use your own name" : "Change your name");
     ch.onclick = function () { renameForm(el, state); };
     nm.appendChild(ch);
     el.appendChild(nm);
 
     var bar = node("div", "cbar");
-    var lb = node("a", null, "See the leaderboard");
+    var lb = node("a", null, "See the top 10");
     lb.href = "/contest";
     lb.onclick = function () { track("/contest-board"); };
     bar.appendChild(lb);
-    bar.appendChild(document.createTextNode(" · "));
-    var lv = node("button", "clink", "Leave the contest");
-    lv.onclick = function () {
-      set(K.out, "1");
-      track("/contest-out");
-      call("/optout", { id: playerId(), name: playerName(), out: true }).catch(function () {});
-      render({ out: true, first: state.first, leagues: state.leagues });
-    };
-    bar.appendChild(lv);
     el.appendChild(bar);
     leaguesBlock(el, state);
   }
@@ -224,11 +221,11 @@
         var a = node("a", null, l.name);
         a.href = "/l?c=" + encodeURIComponent(l.code);
         row.appendChild(a);
-        row.appendChild(document.createTextNode(": " + leagueText(l)));
+        row.appendChild(document.createTextNode(" group: " + leagueText(l)));
         wrap.appendChild(row);
       });
     }
-    var start = node("button", "lbig", leagues.length ? "Start another league" : "Start a league with friends");
+    var start = node("button", "lbig", leagues.length ? "Start another group" : "Play against your family and friends");
     start.onclick = function () { startForm(wrap, start, state); };
     var bar = node("div", "cbar");
     bar.appendChild(start);
@@ -236,54 +233,82 @@
     el.appendChild(wrap);
   }
 
+  function field(f, label, input) {
+    var id = "cf" + Math.random().toString(36).slice(2, 8);
+    var lb = node("label", null, label); lb.htmlFor = id; input.id = id;
+    f.appendChild(lb); f.appendChild(input);
+    return input;
+  }
+
   function startForm(wrap, startBtn, state) {
     if (wrap.querySelector("form")) return;
     startBtn.style.display = "none";
     var needEmail = !isSubbed();
+    var needName = isRandomName(playerName());
     var f = node("form", "lform");
-    var nm = node("input");
-    nm.maxLength = 30; nm.placeholder = "League name, like Smith Family";
-    nm.setAttribute("aria-label", "League name");
-    f.appendChild(nm);
-    var em = null;
-    if (needEmail) {
-      em = node("input"); em.type = "email"; em.required = true; em.placeholder = "you@example.com";
-      em.setAttribute("aria-label", "Email address");
-      f.appendChild(em);
+    var you = null, em = null;
+    if (needName) {
+      you = node("input"); you.maxLength = 20; you.autocomplete = "given-name";
+      field(f, "Your first name", you);
     }
-    var b = node("button", null, "Start the league"); b.type = "submit";
+    var nm = node("input"); nm.maxLength = 30; nm.placeholder = "Example: Smith Family";
+    field(f, "Name your group", nm);
+    if (needEmail) {
+      em = node("input"); em.type = "email"; em.autocomplete = "email";
+      field(f, "Your email", em);
+    }
+    var b = node("button", null, "Start my group"); b.type = "submit";
     f.appendChild(b);
     wrap.appendChild(f);
     var note = node("div", "lnote", needEmail
-      ? "Leagues come with the free daily quiz email. Unsubscribe anytime."
-      : "You'll get a link to send your group.");
+      ? "You'll also get the free daily quiz by email. You can stop it anytime."
+      : "Next, you'll text the link to your family.");
     wrap.appendChild(note);
     var err = node("div", "cerr");
     wrap.appendChild(err);
-    nm.focus();
+    (you || nm).focus();
+    var reset = function (msg) { err.textContent = msg; b.disabled = false; b.textContent = "Start my group"; };
     f.onsubmit = function (e) {
       e.preventDefault();
+      err.textContent = "";
+      var me = you ? you.value.replace(/\s+/g, " ").trim() : "";
       var name = nm.value.replace(/\s+/g, " ").trim();
-      if (name.length < 2) { err.textContent = "Give your league a name."; return; }
-      b.disabled = true; b.textContent = "Starting...";
-      var first = needEmail
-        ? kitSubscribe(em.value.trim()).then(function () { track("/signup-league"); })
+      var email = em ? em.value.trim() : "";
+      if (you && me.length < 2) { err.textContent = "Please type your first name."; you.focus(); return; }
+      if (name.length < 2) { err.textContent = "Please give your group a name."; nm.focus(); return; }
+      if (em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = "Please check your email address."; em.focus(); return; }
+      b.disabled = true; b.textContent = "One moment...";
+      var step = "name";
+      var p = you
+        ? call("/name", { id: playerId(), name: me }).then(function (r) {
+            if (!r || !r.ok) throw { msg: (r && r.error) || "Please try a different first name." };
+            set(K.name, r.name); if (state.me) state.me.name = r.name; track("/contest-rename");
+          })
         : Promise.resolve();
-      first.then(function () {
+      p.then(function () {
+        step = "email";
+        return needEmail ? kitSubscribe(email).then(function () { track("/signup-league"); }) : null;
+      }).then(function () {
+        step = "group";
         return call("/league/create", { id: playerId(), name: name, player: playerName() });
       }).then(function (r) {
-        if (!r || !r.ok) { err.textContent = (r && r.error) || "That didn't work. Try again."; b.disabled = false; b.textContent = "Start the league"; return; }
+        if (!r || !r.ok) { reset((r && r.error) || "Something went wrong. Please try again."); return; }
         track("/league-start");
         f.remove(); note.remove(); err.textContent = "";
-        var ready = node("div", "lready", "\u201C" + r.name + "\u201D is ready. Send the link to your group.");
-        var sh = node("button", "lshare", "Send the invite");
+        if (you) render(state);
+        var w = wrap.isConnected ? wrap : (document.querySelector("#contestBox .lg") || wrap);
+        var ready = node("div", "lready", "Your group, “" + r.name + ",” is ready.");
+        var how = node("div", "lnote", "Now send the link so your family can join.");
+        var sh = node("button", "lshare", "Text this to your family");
         var flash = node("div", "lnote");
         sh.onclick = function () { shareLeague(r.code, r.name, flash); };
-        wrap.appendChild(ready); wrap.appendChild(sh); wrap.appendChild(flash);
+        w.appendChild(ready); w.appendChild(how); w.appendChild(sh); w.appendChild(flash);
         state.leagues = (state.leagues || []).concat([{ code: r.code, name: r.name, alone: true }]);
-      }).catch(function () {
-        err.textContent = needEmail ? "Couldn't sign you up just now. Check the email and try again." : "Couldn't reach the scoreboard. Try again in a minute.";
-        b.disabled = false; b.textContent = "Start the league";
+        var big = w.querySelector("button.lbig"); if (big) big.style.display = "none";
+      }).catch(function (x) {
+        if (x && x.msg) { reset(x.msg); return; }
+        reset(step === "email" ? "That email didn't go through. Please check it and try again."
+                               : "Something went wrong. Please try again in a minute.");
       });
     };
   }
@@ -293,7 +318,8 @@
     var f = node("form");
     var inp = node("input");
     inp.maxLength = 20;
-    inp.value = playerName();
+    inp.value = isRandomName(playerName()) ? "" : playerName();
+    inp.placeholder = "Your first name";
     inp.setAttribute("aria-label", "Leaderboard name");
     var b = node("button", null, "Save");
     b.type = "submit";
@@ -372,7 +398,7 @@
 
   window.tenContest = {
     api: API, playerId: playerId, playerName: playerName, call: call, setName: function (n) { set(K.name, n); },
-    isSubbed: isSubbed, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
+    isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
   };
 
   try {

@@ -238,14 +238,16 @@ export default {
 
       if (url.pathname === "/league" && request.method === "GET") {
         const code = url.searchParams.get("code") || "";
-        const lg = await db.prepare("SELECT code, name FROM leagues WHERE code = ?1").bind(code).first();
-        if (!lg) return json({ ok: false, error: "That league link doesn't work." }, 404);
+        const lg = await db.prepare(
+          "SELECT l.code, l.name, CASE WHEN p.hidden = 1 THEN NULL ELSE p.name END AS owner FROM leagues l LEFT JOIN players p ON p.id = l.owner WHERE l.code = ?1"
+        ).bind(code).first();
+        if (!lg) return json({ ok: false, error: "That link doesn't work. Ask the person who sent it to send it again." }, 404);
         const me = url.searchParams.get("me");
         const { weeks, list } = await leagueTally(db, code, monthParam);
         const prev = await leagueTally(db, code, prevMonth(monthParam));
         const champs = prev.list.filter((p) => p.rank === 1 && p.total > 0).map((p) => p.name);
         return json({
-          ok: true, code: lg.code, name: lg.name, month: monthParam,
+          ok: true, code: lg.code, name: lg.name, owner: lg.owner || null, month: monthParam,
           weeks: weeks.map((w) => ({ label: w.label, dates: w.dates })),
           players: list.map((p) => ({ name: p.name, weeks: p.weeks, total: p.total, tens: p.tens, days: p.days, rank: p.rank, me: p.id === me || undefined })),
           member: list.some((p) => p.id === me),
@@ -290,7 +292,7 @@ export default {
 
       if (url.pathname === "/name") {
         const name = cleanName(b.name);
-        if (!name) return json({ ok: false, error: "Names need 2 to 20 letters or numbers, and nothing rude." }, 400);
+        if (!name) return json({ ok: false, error: "Please use 2 to 20 letters for your name." }, 400);
         await ensurePlayer(db, b.id, name);
         await db.prepare("UPDATE players SET name = ?2 WHERE id = ?1").bind(b.id, name).run();
         return json({ ok: true, name });
@@ -304,10 +306,10 @@ export default {
 
       if (url.pathname === "/league/create") {
         const lname = cleanLeagueName(b.name);
-        if (!lname) return json({ ok: false, error: "League names need 2 to 30 letters or numbers, and nothing rude." }, 400);
+        if (!lname) return json({ ok: false, error: "Please use 2 to 30 letters for the group name." }, 400);
         await ensurePlayer(db, b.id, cleanName(b.player) || "Mystery Reader");
         const owned = await db.prepare("SELECT COUNT(*) AS n FROM leagues WHERE owner = ?1").bind(b.id).first();
-        if (owned && owned.n >= 5) return json({ ok: false, error: "You can start up to 5 leagues." }, 400);
+        if (owned && owned.n >= 5) return json({ ok: false, error: "You can start up to 5 groups." }, 400);
         const slug = lname.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 24) || "league";
         let code = null;
         for (let i = 0; i < 5 && !code; i++) {
@@ -316,7 +318,7 @@ export default {
             .bind(c, lname, b.id, now.toISOString()).run();
           if (r.meta && r.meta.changes) code = c;
         }
-        if (!code) return json({ ok: false, error: "Couldn't start that league. Try again." }, 500);
+        if (!code) return json({ ok: false, error: "Something went wrong. Please try again." }, 500);
         await db.prepare("INSERT OR IGNORE INTO league_members (league, player, joined) VALUES (?1, ?2, ?3)")
           .bind(code, b.id, now.toISOString()).run();
         return json({ ok: true, code, name: lname });
@@ -324,10 +326,10 @@ export default {
 
       if (url.pathname === "/league/join") {
         const lg = await db.prepare("SELECT code, name FROM leagues WHERE code = ?1").bind(String(b.code || "")).first();
-        if (!lg) return json({ ok: false, error: "That league link doesn't work." }, 404);
+        if (!lg) return json({ ok: false, error: "That link doesn't work. Ask the person who sent it to send it again." }, 404);
         await ensurePlayer(db, b.id, cleanName(b.name) || "Mystery Reader");
         const mine = await db.prepare("SELECT COUNT(*) AS n FROM league_members WHERE player = ?1").bind(b.id).first();
-        if (mine && mine.n >= 10) return json({ ok: false, error: "You're already in 10 leagues. Leave one to join this." }, 400);
+        if (mine && mine.n >= 10) return json({ ok: false, error: "You're already in 10 groups. Leave one to join this one." }, 400);
         await db.prepare("INSERT OR IGNORE INTO league_members (league, player, joined) VALUES (?1, ?2, ?3)")
           .bind(lg.code, b.id, now.toISOString()).run();
         return json({ ok: true, code: lg.code, name: lg.name });
