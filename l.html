@@ -43,6 +43,7 @@
   th small{display:block;letter-spacing:0;text-transform:none;font-size:.68rem;}
   td.nm{text-align:left;white-space:normal;}
   td.tot{font-weight:bold;}
+  @media (max-width:560px){ th.wk:not(.cur),td.wk:not(.cur){display:none;} }
   tr:nth-child(even) td{background:var(--ptrow);}
   tr.me td{background:#dfeedd !important;font-weight:bold;}
   .empty{padding:22px;text-align:center;color:#6b6455;font-style:italic;}
@@ -114,6 +115,7 @@ function trackPath(path){
 (function(){
   var T = window.tenContest;
   var code = (location.search.match(/[?&]c=([a-z0-9-]{3,40})/) || [])[1];
+  function curWeek(ws){ var t = new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"}), c = 0; ws.forEach(function(w,i){ if(w.dates && w.dates[0] <= t) c = i; }); return c; }
   function el(tag, cls, text){ var n = document.createElement(tag); if(cls) n.className = cls; if(text != null) n.textContent = text; return n; }
   var $ = function(id){ return document.getElementById(id); };
   var pacificToday = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
@@ -191,14 +193,15 @@ function trackPath(path){
     var t = el("table"), hr = el("tr");
     hr.appendChild(el("th", null, "#"));
     var hn = el("th", null, "Name"); hn.style.textAlign = "left"; hr.appendChild(hn);
-    b.weeks.forEach(function(w, i){ var th = el("th", null, "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
+    var cw = curWeek(b.weeks);
+b.weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk", "Wk " + (i + 1)); th.appendChild(el("small", null, w.label)); hr.appendChild(th); });
     hr.appendChild(el("th", null, "Total"));
     t.appendChild(hr);
     b.players.forEach(function(p){
       var tr = el("tr", p.me ? "me" : null);
       tr.appendChild(el("td", null, String(p.rank)));
       tr.appendChild(el("td", "nm", p.name + (p.me ? " (you)" : "")));
-      p.weeks.forEach(function(v){ tr.appendChild(el("td", null, String(v))); });
+      p.weeks.forEach(function(v, i){ tr.appendChild(el("td", i === cw ? "wk cur" : "wk", String(v))); });
       tr.appendChild(el("td", "tot", String(p.total)));
       t.appendChild(tr);
     });

@@ -240,7 +240,7 @@
     var needEmail = !isSubbed();
     var f = node("form", "lform");
     var nm = node("input");
-    nm.maxLength = 30; nm.placeholder = "League name, like Archer Family";
+    nm.maxLength = 30; nm.placeholder = "League name, like Smith Family";
     nm.setAttribute("aria-label", "League name");
     f.appendChild(nm);
     var em = null;
