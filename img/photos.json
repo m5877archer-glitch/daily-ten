@@ -218,28 +218,10 @@
       "credit": "Brazil's National Congress, Brasília. Photo: Eurico Zimbres / Wikimedia Commons"
     },
     {
-      "commons_file": "Anchorage,_Alaska_skyline.jpg",
-      "credit": "Anchorage, Alaska. Photo: Quintin Soloviev / Wikimedia Commons",
-      "file": "img/photos/anchorage-skyline-2026.jpg",
-      "page": "https://commons.wikimedia.org/wiki/File:Anchorage,_Alaska_skyline.jpg"
-    },
-    {
-      "commons_file": "South_Carolina_State_House.jpg",
-      "credit": "South Carolina State House, Columbia. Photo: Thomas Kirchel / Wikimedia Commons",
-      "file": "img/photos/sc-state-house-2024.jpg",
-      "page": "https://commons.wikimedia.org/wiki/File:South_Carolina_State_House.jpg"
-    },
-    {
       "commons_file": "Widespread_Panic_Red_Rocks_Amphitheatre_6-24-2010.jpg",
       "credit": "Widespread Panic at Red Rocks Amphitheatre, 2010. Photo: Mike Hardaker / Wikimedia Commons, CC BY-SA 3.0",
       "file": "img/photos/widespread-panic-red-rocks.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Widespread_Panic_Red_Rocks_Amphitheatre_6-24-2010.jpg"
-    },
-    {
-      "commons_file": "Apple_Store_5th_Avenue_2024.jpg",
-      "credit": "Apple Fifth Avenue, New York. Photo: Wikimedia Commons",
-      "file": "img/photos/apple-fifth-avenue-2024.jpg",
-      "page": "https://commons.wikimedia.org/wiki/File:Apple_Store_5th_Avenue_2024.jpg"
     },
     {
       "commons_file": "Lambeau_Field_in_December_2016_during_a_game_versus_the_Seattle_Seahawks.jpg",
@@ -258,6 +240,12 @@
       "credit": "A diesel pump. Photo: Tony Webster / Wikimedia Commons",
       "file": "img/photos/diesel-pump-2025.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Diesel_Gas_Pump_(54474872295).jpg"
+    },
+    {
+      "commons_file": "Googleplex_-_June_2019_(5865).jpg",
+      "credit": "The Googleplex, Mountain View, Calif. Photo: Gregory Varnum / Wikimedia Commons, CC BY-SA 4.0",
+      "file": "img/photos/googleplex-2019.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Googleplex_-_June_2019_(5865).jpg"
     }
   ]
 }
