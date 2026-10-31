@@ -5,7 +5,7 @@
 // total wins; ties go to the most perfect 10s. Players can rename themselves
 // or leave (and rejoin) at any time.
 //
-// Deployed by .github/workflows/contest-deploy.yml (token: CF_WORKERS_TOKEN). Storage is a D1 database
+// Deployed by .github/workflows/contest-deploy.yml (token secret: CF_WORKERS_TOKEN). Storage is a D1 database
 // named tenevery-contest (schema in contest/schema.sql).
 //
 // Endpoints (all JSON):
