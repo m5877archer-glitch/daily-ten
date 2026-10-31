@@ -131,21 +131,9 @@
     "author": "Eurico Zimbres",
     "license": "CC BY-SA 2.5"
   },
-  "img/photos/anchorage-skyline-2026.jpg": {
-    "author": "Quintin Soloviev",
-    "license": "CC BY 4.0"
-  },
-  "img/photos/sc-state-house-2024.jpg": {
-    "author": "Thomas Kirchel",
-    "license": "CC BY-SA 4.0"
-  },
   "img/photos/widespread-panic-red-rocks.jpg": {
     "author": "Mike Hardaker",
     "license": "CC BY-SA 3.0"
-  },
-  "img/photos/apple-fifth-avenue-2024.jpg": {
-    "author": "Seasider53",
-    "license": "CC BY 4.0"
   },
   "img/photos/lambeau-game-2016.jpg": {
     "author": "Mtyson84",
@@ -158,5 +146,9 @@
   "img/photos/diesel-pump-2025.jpg": {
     "author": "Tony Webster",
     "license": "CC BY 2.0"
+  },
+  "img/photos/googleplex-2019.jpg": {
+    "author": "Gregory Varnum",
+    "license": "CC BY-SA 4.0"
   }
 }
