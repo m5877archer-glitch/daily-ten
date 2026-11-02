@@ -418,6 +418,10 @@
       "#lbSheet td.n{text-align:left;}" +
       "#lbSheet tr.me td{background:#dfeedd;font-weight:bold;}" +
       "#lbSheet .lbmine{margin-top:12px;font-size:1.05rem;}" +
+      "#lbSheet .lbgroups{margin-top:18px;padding-top:12px;border-top:2px solid #1c2733;text-align:left;}" +
+      "#lbSheet .lbgroups h3{font-size:1.25rem;text-align:center;margin-bottom:8px;}" +
+      "#lbSheet .lbg{display:block;margin-top:10px;padding:14px 12px;background:#fffdf7;border:2px solid var(--ptdark,#1e3a1e);border-radius:4px;color:#1c2733;text-decoration:none;font-size:1.05rem;line-height:1.4;}" +
+      "#lbSheet .lbg b{display:block;font-size:1.2rem;color:var(--ptdark,#1e3a1e);}" +
       "#lbSheet .lbclose{display:block;width:100%;margin-top:16px;padding:16px;font:inherit;font-size:1.25rem;font-weight:bold;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
       "#lbSheet .lbmore{display:block;margin-top:12px;font-size:1rem;color:var(--ptdark,#1e3a1e);}";
     document.head.appendChild(css);
@@ -469,6 +473,24 @@
         var me = b.me;
         if (me && !me.out && me.outside) box.appendChild(node("div", "lbmine", "You're outside the top 10 for now, with " + me.total + " points. Every weekday is a chance to climb."));
         else if (!me) box.appendChild(node("div", "lbmine", "Finish today's quiz and you're in."));
+        if (id) {
+          var gbox = node("div", "lbgroups");
+          box.appendChild(gbox);
+          call("/leagues?month=" + month + "&me=" + id).then(function (r) {
+            var ls = (r && r.leagues) || [];
+            if (!ls.length) { gbox.remove(); return; }
+            gbox.appendChild(node("h3", null, ls.length === 1 ? "Your group" : "Your groups"));
+            ls.forEach(function (l) {
+              var g = node("a", "lbg");
+              g.href = "/l?c=" + encodeURIComponent(l.code);
+              g.appendChild(node("b", null, l.name + " \u2192"));
+              var line = leagueText(l);
+              g.appendChild(document.createTextNode(line.charAt(0).toUpperCase() + line.slice(1)));
+              g.onclick = function () { track("/contest-group-pop"); };
+              gbox.appendChild(g);
+            });
+          }).catch(function () { gbox.remove(); });
+        }
         box.appendChild(closeBtn());
         var more = node("a", "lbmore", "See every week and the rules");
         more.href = "/contest";

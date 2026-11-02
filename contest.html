@@ -64,6 +64,10 @@
   .you input{font:inherit;padding:6px 8px;border:1px solid #b8b09c;width:55%;max-width:240px;}
   .you form button{text-decoration:none;padding:6px 12px;background:var(--ptdark);color:#fff;}
   .cerr{color:#a33;font-size:.85rem;}
+  .groups{margin-top:20px;padding-top:14px;border-top:3px double var(--ink);}
+  .groups h2{font-size:1.25rem;text-align:center;margin-bottom:6px;}
+  .groups a{display:block;margin-top:10px;padding:14px 12px;background:var(--card);border:2px solid var(--ptdark);border-radius:4px;color:var(--ink);text-decoration:none;font-size:1.05rem;line-height:1.4;}
+  .groups a b{display:block;font-size:1.2rem;color:var(--ptdark);}
   .rules{font-size:.88rem;color:#524b3e;line-height:1.55;margin-top:20px;padding-top:14px;border-top:1px solid var(--line);}
   .rules h2{font-size:1rem;margin-bottom:6px;color:var(--ink);}
   .rules li{margin:0 0 4px 18px;}
@@ -92,6 +96,7 @@
   <div class="tablewrap" id="board"><div class="empty">Loading...</div></div>
 
   <div class="you" id="you"></div>
+  <div class="groups" id="groups" hidden></div>
 
   <div class="rules">
     <h2>How it works</h2>
@@ -112,6 +117,7 @@
  </div>
 </div>
 
+<script src="contest.js"></script>
 <script>
 (function(){
   var API = "https://tenevery-contest.m5877archer.workers.dev";
@@ -233,7 +239,27 @@ weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk"); var
     box.appendChild(lv);
   }
 
+  function groups(){
+    var box = document.getElementById("groups");
+    if(!id) return;
+    fetch(API + "/leagues?month=" + month + "&me=" + id).then(function(r){ return r.json(); }).then(function(r){
+      var ls = (r && r.leagues) || [];
+      box.innerHTML = "";
+      if(!ls.length){ box.hidden = true; return; }
+      box.appendChild(el("h2", null, ls.length === 1 ? "Your group" : "Your groups"));
+      ls.forEach(function(l){
+        var a = el("a"); a.href = "/l?c=" + encodeURIComponent(l.code);
+        a.appendChild(el("b", null, l.name + " \u2192"));
+        var t = window.tenContest ? window.tenContest.leagueText(l) : "";
+        if(t) a.appendChild(document.createTextNode(t.charAt(0).toUpperCase() + t.slice(1)));
+        box.appendChild(a);
+      });
+      box.hidden = false;
+    }).catch(function(){});
+  }
+
   load();
+  groups();
 })();
 </script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
