@@ -1,0 +1,38 @@
+name: Contest report
+
+# Read-only look at the contest database: every group (league) with its
+# owner, member count and created time, plus players and scores so far.
+# Run by hand from the Actions tab. Changes nothing.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CF_WORKERS_TOKEN || secrets.CF_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 548962cab0a1c41df6c1579dbe54006f
+      CI: "true"
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install wrangler
+        run: npm install --no-save --no-audit --no-fund wrangler@3
+      - name: Clean up the token
+        run: |
+          T=$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '[:space:]"'"'" | sed 's/^Bearer//I')
+          echo "::add-mask::$T"
+          echo "CLOUDFLARE_API_TOKEN=$T" >> "$GITHUB_ENV"
+      - name: Groups
+        run: |
+          q() { echo "== $1"; npx wrangler d1 execute tenevery-contest --remote --json --command "$2" | python3 -c 'import json,sys
+          for r in json.load(sys.stdin)[0]["results"]: print(r)'; }
+          q "Groups" "SELECT l.code, l.name, l.created, p.name AS owner, (SELECT COUNT(*) FROM league_members m WHERE m.league = l.code) AS members FROM leagues l LEFT JOIN players p ON p.id = l.owner ORDER BY l.created"
+          q "Group members" "SELECT l.name AS grp, p.name AS player, m.joined FROM league_members m JOIN leagues l ON l.code = m.league LEFT JOIN players p ON p.id = m.player ORDER BY l.created, m.joined"
+          q "Totals" "SELECT (SELECT COUNT(*) FROM players) AS players, (SELECT COUNT(*) FROM players WHERE optout = 1) AS optouts, (SELECT COUNT(*) FROM scores) AS scores"
+          q "Scores by day" "SELECT date, COUNT(*) AS plays, ROUND(AVG(score),1) AS avg FROM scores GROUP BY date ORDER BY date"
