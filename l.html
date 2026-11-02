@@ -234,6 +234,7 @@ b.weeks.forEach(function(w, i){ var th = el("th", i === cw ? "wk cur" : "wk"); v
       t.appendChild(tr);
     });
     wrap.appendChild(t);
+    if(b.mine && b.mine.outside) wrap.appendChild(el("div", "empty", "You're outside the top 10 for now, with " + b.mine.total + " points. Every weekday is a chance to climb."));
   }
 
   // Email signup: same Kit form as the quiz.

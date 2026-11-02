@@ -261,7 +261,10 @@ export default {
         return json({
           ok: true, code: lg.code, name: lg.name, owner: lg.owner || null, month: monthParam,
           weeks: weeks.map((w) => ({ label: w.label, dates: w.dates })),
-          players: list.map((p) => ({ name: p.name, weeks: p.weeks, total: p.total, tens: p.tens, days: p.days, rank: p.rank, me: p.id === me || undefined })),
+          // Group boards show the top 10 too (Matt, Nov 2). A member past 10th
+          // gets their own points in `mine`, never their rank.
+          players: list.slice(0, TOP).map((p) => ({ name: p.name, weeks: p.weeks, total: p.total, tens: p.tens, days: p.days, rank: p.rank, me: p.id === me || undefined })),
+          mine: (() => { const m = list.find((p) => p.id === me); return m && m.rank > TOP ? { outside: true, total: m.total } : null; })(),
           member: list.some((p) => p.id === me),
           lastChampions: champs,
         });
