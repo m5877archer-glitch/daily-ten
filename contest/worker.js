@@ -28,6 +28,10 @@
 const FIRST_DAY = "2026-11-02";   // contest starts with the Nov 2 edition
 const TOP = 10;                    // rows shown on the public board
 
+// Stand-in names that fill the public board up to 10 rows.
+const FILLERS = ["Merry Puffin", "Steady Heron", "Groovy Walrus", "Plucky Otter", "Sunny Badger",
+  "Witty Pelican", "Dapper Moose", "Breezy Koala", "Humble Narwhal", "Lucky Wombat", "Spry Toucan", "Jolly Bison"];
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -198,6 +202,14 @@ async function standings(db, month, me) {
   const by = tally(rows, weeks);
   const list = rankList(by);
   out.players = list.slice(0, TOP).map((p) => ({ name: p.name, weeks: p.weeks, total: p.total, tens: p.tens, days: p.days, rank: p.rank, me: p.id === me || undefined }));
+  // Always show a full top 10 (Matt, Nov 2): empty spots get a stand-in name
+  // with zero points, ranked after everyone who has played.
+  const taken = new Set(out.players.map((p) => p.name.toLowerCase()));
+  for (const name of FILLERS) {
+    if (out.players.length >= TOP) break;
+    if (taken.has(name.toLowerCase())) continue;
+    out.players.push({ name, weeks: weeks.map(() => 0), total: 0, tens: 0, days: 0, rank: out.players.length + 1 });
+  }
   if (validId(me)) {
     const mine = by.get(me);
     const pl = await db.prepare("SELECT name, optout FROM players WHERE id = ?1").bind(me).first();

@@ -396,6 +396,96 @@
     }
   } catch (e) {}
 
+  // Leaderboard button (Matt, Nov 2): a big "See the leaderboard" button at
+  // the top of every page that loads this file. It opens the top 10 in a
+  // pop-up over the page, so a quiz in progress is never lost.
+  function leaderButton() {
+    if (document.getElementById("lbOpen") || location.pathname.indexOf("/contest") === 0) return;
+    var head = document.querySelector("header");
+    if (!head) return;
+    var css = node("style");
+    css.textContent =
+      "#lbOpen{display:block;width:100%;margin:10px 0 0;padding:12px 10px;font:inherit;font-size:1.1rem;font-weight:bold;" +
+      "background:#fffdf7;color:var(--ptdark,#1e3a1e);border:2px solid var(--ptdark,#1e3a1e);border-radius:4px;cursor:pointer;}" +
+      "#lbSheet{position:fixed;inset:0;z-index:9999;background:rgba(20,30,20,.55);display:flex;align-items:flex-start;justify-content:center;padding:16px 10px;overflow-y:auto;}" +
+      "#lbSheet[hidden]{display:none;}" +
+      "#lbSheet .lbbox{background:#f7f4ec;border:2px solid var(--ptdark,#1e3a1e);width:100%;max-width:520px;padding:18px 14px;font-family:Georgia,'Times New Roman',serif;color:#1c2733;text-align:center;}" +
+      "#lbSheet h2{font-size:1.5rem;margin-bottom:4px;}" +
+      "#lbSheet .lbsub{font-size:1rem;color:#524b3e;margin-bottom:12px;}" +
+      "#lbSheet table{width:100%;border-collapse:collapse;font-size:1.1rem;background:#fffdf7;}" +
+      "#lbSheet th{font-size:.85rem;color:#524b3e;font-weight:normal;padding:6px 4px;border-bottom:2px solid #1c2733;}" +
+      "#lbSheet td{padding:10px 4px;border-bottom:1px solid #d8d2c0;text-align:center;}" +
+      "#lbSheet td.n{text-align:left;}" +
+      "#lbSheet tr.me td{background:#dfeedd;font-weight:bold;}" +
+      "#lbSheet .lbmine{margin-top:12px;font-size:1.05rem;}" +
+      "#lbSheet .lbclose{display:block;width:100%;margin-top:16px;padding:16px;font:inherit;font-size:1.25rem;font-weight:bold;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
+      "#lbSheet .lbmore{display:block;margin-top:12px;font-size:1rem;color:var(--ptdark,#1e3a1e);}";
+    document.head.appendChild(css);
+
+    var btn = node("button", null, "🏆 See the leaderboard");
+    btn.id = "lbOpen"; btn.type = "button";
+    head.appendChild(btn);
+
+    var sheet = node("div"); sheet.id = "lbSheet"; sheet.hidden = true;
+    sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-modal", "true");
+    var box = node("div", "lbbox");
+    sheet.appendChild(box);
+    document.body.appendChild(sheet);
+    sheet.onclick = function (e) { if (e.target === sheet) sheet.hidden = true; };
+
+    function close() { sheet.hidden = true; }
+    function closeBtn() { var c = node("button", "lbclose", "Close"); c.type = "button"; c.onclick = close; return c; }
+
+    btn.onclick = function () {
+      track("/contest-board-pop");
+      var month = (typeof EDITION_DATE !== "undefined" && EDITION_DATE >= START ? EDITION_DATE
+        : new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })).slice(0, 7);
+      if (month < START.slice(0, 7)) month = START.slice(0, 7);
+      var monthName = new Date(month + "-15T12:00:00Z").toLocaleString("en-US", { month: "long", timeZone: "UTC" });
+      box.innerHTML = "";
+      box.appendChild(node("h2", null, "Top 10 for " + monthName));
+      box.appendChild(node("div", "lbsub", "Loading..."));
+      box.appendChild(closeBtn());
+      sheet.hidden = false;
+      var id = get(K.id);
+      call("/board?month=" + month + (id ? "&me=" + id : "")).then(function (b) {
+        var weeks = b.weeks || [], today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" }), cw = 0;
+        weeks.forEach(function (w, i) { if (w.dates && w.dates[0] <= today) cw = i; });
+        box.innerHTML = "";
+        box.appendChild(node("h2", null, "Top 10 for " + monthName));
+        box.appendChild(node("div", "lbsub", "Every weekday counts. Most points at the end of the month wins."));
+        var t = node("table"), hr = node("tr");
+        ["#", "Name", "This week", "Total"].forEach(function (h, i) { var th = node("th", null, h); if (i === 1) th.style.textAlign = "left"; hr.appendChild(th); });
+        t.appendChild(hr);
+        (b.players || []).forEach(function (p) {
+          var tr = node("tr", p.me ? "me" : null);
+          tr.appendChild(node("td", null, String(p.rank)));
+          tr.appendChild(node("td", "n", p.name + (p.me ? " (you)" : "")));
+          tr.appendChild(node("td", null, String((p.weeks || [])[cw] || 0)));
+          tr.appendChild(node("td", null, String(p.total)));
+          t.appendChild(tr);
+        });
+        box.appendChild(t);
+        var me = b.me;
+        if (me && !me.out && me.outside) box.appendChild(node("div", "lbmine", "You're outside the top 10 for now, with " + me.total + " points. Every weekday is a chance to climb."));
+        else if (!me) box.appendChild(node("div", "lbmine", "Finish today's quiz and you're in."));
+        box.appendChild(closeBtn());
+        var more = node("a", "lbmore", "See every week and the rules");
+        more.href = "/contest";
+        box.appendChild(more);
+      }).catch(function () {
+        box.innerHTML = "";
+        box.appendChild(node("h2", null, "Top 10 for " + monthName));
+        box.appendChild(node("div", "lbsub", "The leaderboard didn't load. Try again in a minute."));
+        box.appendChild(closeBtn());
+      });
+    };
+  }
+  try {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", leaderButton);
+    else leaderButton();
+  } catch (e) {}
+
   window.tenContest = {
     api: API, playerId: playerId, playerName: playerName, call: call, setName: function (n) { set(K.name, n); },
     isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
