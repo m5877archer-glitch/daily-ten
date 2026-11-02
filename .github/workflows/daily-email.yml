@@ -57,7 +57,8 @@ jobs:
           filename = "quiz-" + target.strftime("%B").lower() + "-" + str(target.day) + ".html"
           subject = "10Everyday, " + target.strftime("%A %B ") + str(target.day)
           # One-off subject lines for special editions, keyed by send date.
-          SUBJECT_OVERRIDES = {"2026-10-30": "10Everyday, the Halloween edition"}
+          SUBJECT_OVERRIDES = {"2026-10-30": "10Everyday, the Halloween edition",
+                               "2026-11-03": "10Everyday, the Election Day edition"}
           subject = SUBJECT_OVERRIDES.get(target.date().isoformat(), subject)
 
           print("Now:      " + now.isoformat())
@@ -153,6 +154,22 @@ jobs:
                   print("WARNING: could not read prediction result (" + str(e) + ").")
                   return None
 
+          def edition_note(path):
+              # Optional one-day message (const EDITION_NOTE in the quiz file).
+              # Only used when its date matches the send date.
+              try:
+                  src = open(path, encoding="utf-8").read()
+                  m = re.search(r'const EDITION_NOTE = (\{.*?\});', src)
+                  if not m:
+                      return None
+                  note = json.loads(m.group(1))
+                  if note.get("date") != target.date().isoformat() or not note.get("text"):
+                      return None
+                  return note
+              except Exception as e:
+                  print("WARNING: could not read edition note (" + str(e) + ").")
+                  return None
+
           def build_content(path):
               try:
                   question, options, img = first_question(path)
@@ -164,10 +181,16 @@ jobs:
                      'border-radius:6px;color:#1c2733;text-decoration:none;font-size:16px;')
               parts = ['<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;">Question 1 of 10</p>',
                        ]
+              note = edition_note(path)
+              if note:
+                  print("Edition note: " + note.get("title", ""))
+                  parts.insert(0, '<div style="border:2px solid #1c2733;background:#fffdf6;padding:14px 16px;margin:0 0 18px;text-align:center;">'
+                               '<p style="font-size:20px;margin:0 0 6px;"><strong>' + html.escape(note.get("title", "")) + '</strong></p>'
+                               '<p style="font-size:16px;line-height:1.45;margin:0;">' + html.escape(note["text"]) + '</p></div>')
               res = latest_resolved(path)
               if res:
                   print("Prediction payoff: " + res["q"] + " -> " + res["answer"])
-                  parts.insert(0, '<div style="border:1px solid #5b8c5b;background:#eef3ea;padding:12px 14px;margin:0 0 18px;">'
+                  parts.insert(1 if note else 0, '<div style="border:1px solid #5b8c5b;background:#eef3ea;padding:12px 14px;margin:0 0 18px;">'
                                '<p style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#6b6455;margin:0 0 4px;">Did you call it?</p>'
                                '<p style="font-size:16px;margin:0;"><strong>' + html.escape(res["q"]) + '</strong> Answer: ' + html.escape(res["answer"]) + '.'
                                + ((' ' + html.escape(res["note"])) if res["note"] else '') + '</p></div>')
