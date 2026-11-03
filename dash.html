@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>10Everyday dashboard</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<!-- Private dashboard for Matt. No Cloudflare beacon on purpose, so checking
+     the numbers never adds to them. Numbers come from the contest Worker's
+     /admin endpoint, which needs the key (kept in this browser only). Open it
+     once as /dash#k=KEY and the key is remembered. -->
+<style>
+  :root{--paper:#f7f4ec;--card:#fffdf7;--ink:#1c2733;--muted:#5d5648;--line:#d8d2c0;--ptdark:#1e3a1e;--ptmid:#4a7c4a;--good:#2e7d4f;--warn:#a5641a;--bad:#a33;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:Georgia,'Times New Roman',serif;padding:14px 12px 60px;}
+  .wrap{max-width:1100px;margin:0 auto;}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:3px double var(--ink);padding-bottom:8px;margin-bottom:14px;}
+  h1{font-size:1.7rem;}
+  .meta{font-size:.95rem;color:var(--muted);}
+  .meta select,.meta button{font:inherit;font-size:.95rem;padding:4px 8px;margin-left:6px;background:var(--card);border:1px solid var(--muted);cursor:pointer;}
+  h2{font-size:1.25rem;margin:26px 0 10px;border-bottom:1px solid var(--ink);padding-bottom:4px;}
+  .note{font-size:.88rem;color:var(--muted);margin-top:6px;}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;}
+  .tile{background:var(--card);border:1px solid var(--line);padding:12px 12px 10px;}
+  .tile .t{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:bold;}
+  .tile .row{display:flex;gap:6px;margin-top:8px;}
+  .tile .cell{flex:1;text-align:center;}
+  .tile .v{font-size:1.6rem;font-weight:bold;font-variant-numeric:tabular-nums;}
+  .tile .k{font-size:.78rem;color:var(--muted);}
+  .tile .x{font-size:.82rem;color:var(--muted);margin-top:8px;}
+  .tile.off .v{color:#b3ab98;}
+  ul.ins{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ptmid);padding:12px 14px 12px 32px;}
+  ul.ins li{margin:6px 0;line-height:1.4;font-size:1.02rem;}
+  table{width:100%;border-collapse:collapse;background:var(--card);font-size:.95rem;font-variant-numeric:tabular-nums;}
+  th{font-size:.78rem;color:var(--muted);font-weight:normal;text-align:right;padding:6px;border-bottom:2px solid var(--ink);white-space:nowrap;}
+  td{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;}
+  th.l,td.l{text-align:left;}
+  td.wrapt{white-space:normal;}
+  .scroll{overflow-x:auto;border:1px solid var(--line);}
+  .tag{display:inline-block;font-size:.72rem;padding:1px 5px;border:1px solid var(--muted);color:var(--muted);margin-left:4px;}
+  .bar{display:inline-block;height:10px;border-radius:0 4px 4px 0;background:var(--ptmid);vertical-align:middle;}
+  .bar.hard{background:#b8541f;}
+  .chart{background:var(--card);border:1px solid var(--line);padding:12px 8px 6px;position:relative;}
+  .chart svg{display:block;width:100%;height:auto;}
+  .chart .tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:.85rem;padding:5px 8px;white-space:nowrap;display:none;}
+  .err{color:var(--bad);font-weight:bold;}
+  .keybox{max-width:420px;margin:60px auto;background:var(--card);border:1px solid var(--line);padding:20px;text-align:center;}
+  .keybox input{font:inherit;width:100%;padding:10px;margin:12px 0;border:2px solid var(--muted);}
+  .keybox button{font:inherit;font-weight:bold;padding:12px 20px;background:var(--ptdark);color:#fff;border:0;cursor:pointer;}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;}
+  .qed{margin-bottom:14px;}
+  .qed h3{font-size:1.02rem;margin-bottom:4px;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="meta">Loading...</p></div>
+<script>
+(function(){
+  "use strict";
+  var API = "https://tenevery-contest.m5877archer.workers.dev";
+  var KEYK = "tenDash.key";
+  var app = document.getElementById("app");
+
+  function get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  function el(tag, cls, text){ var n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=text; return n; }
+  function fmt(n){ return n==null ? "-" : Number(n).toLocaleString("en-US"); }
+  function pct(a,b){ return b ? Math.round(a*100/b) + "%" : "-"; }
+  function money(n){ return "$" + Number(n||0).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:2}); }
+  var MONTHS=["january","february","march","april","may","june","july","august","september","october","november","december"];
+  function nice(d){ return new Date(d+"T12:00:00Z").toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric",timeZone:"UTC"}); }
+  function pacificToday(){ return new Date().toLocaleDateString("en-CA",{timeZone:"America/Los_Angeles"}); }
+  function addDays(d,n){ var t=new Date(d+"T12:00:00Z"); t.setUTCDate(t.getUTCDate()+n); return t.toISOString().slice(0,10); }
+  function mmddToDate(k){ var m=+k.slice(0,2); var y = m>=7 ? 2026 : 2027; if(new Date().getUTCFullYear()>2027) y=new Date().getUTCFullYear(); return y+"-"+k.slice(0,2)+"-"+k.slice(2); }
+
+  // Key: from #k=KEY once, then remembered here.
+  var m = location.hash.match(/k=([A-Za-z0-9]+)/);
+  if(m){ set(KEYK, m[1]); history.replaceState(null,"",location.pathname); }
+
+  function askKey(msg){
+    app.innerHTML="";
+    var b=el("div","keybox");
+    b.appendChild(el("h1",null,"10Everyday dashboard"));
+    b.appendChild(el("p",msg?"err":"meta",msg||"Paste your dashboard key."));
+    var i=el("input"); i.type="password"; i.autocomplete="off";
+    var go=el("button",null,"Open");
+    go.onclick=function(){ if(i.value.trim()){ set(KEYK,i.value.trim()); load(); } };
+    b.appendChild(i); b.appendChild(go); app.appendChild(b);
+  }
+
+  var month = pacificToday().slice(0,7);
+  var stems = {};   // date -> [question text]
+
+  function quizFile(d){ return "/quiz-" + MONTHS[+d.slice(5,7)-1] + "-" + (+d.slice(8)) + ".html"; }
+  function loadStems(d){
+    if(stems[d]) return Promise.resolve(stems[d]);
+    return fetch(quizFile(d),{cache:"no-store"}).then(function(r){ return r.ok ? r.text() : ""; }).then(function(t){
+      var i=t.indexOf("const QUESTIONS = ["), out=[];
+      if(i>=0){ var re=/\n\s{2,4}q:"((?:[^"\\]|\\.)*)"/g, s=t.slice(i), x; while((x=re.exec(s))) { try{ out.push(JSON.parse('"'+x[1]+'"')); }catch(e){ out.push(x[1]); } if(out.length>=10) break; } }
+      stems[d]=out; return out;
+    }).catch(function(){ stems[d]=[]; return []; });
+  }
+
+  function load(){
+    var key=get(KEYK);
+    if(!key){ askKey(); return; }
+    fetch(API+"/admin?month="+month,{headers:{Authorization:"Bearer "+key},cache:"no-store"})
+      .then(function(r){ if(r.status===401){ throw {auth:true}; } return r.json(); })
+      .then(function(d){
+        // Question text for recent editions, then draw.
+        var dates = questionDates(d).slice(0,6);
+        return Promise.all(dates.map(loadStems)).then(function(){ render(d); });
+      })
+      .catch(function(e){
+        if(e && e.auth){ set(KEYK,""); askKey("That key didn't work. Try again."); return; }
+        app.innerHTML=""; app.appendChild(el("p","err","Couldn't load the numbers. Check the connection and refresh."));
+      });
+  }
+
+  // ---------- per-question difficulty ----------
+  // First tries from the Worker (Nov 3 on) when there are at least 3;
+  // otherwise Cloudflare's /miss-MMDD-qN and /done-MMDD counts (all tries).
+  function questionData(d){
+    var out={}, c=d.contest||{}, w=(d.web&&d.web.d30)||{};
+    var qd=c.questions||{};
+    Object.keys(w.doneBy||{}).forEach(function(k){
+      var done=w.doneBy[k]; if(done<2) return;
+      var date=mmddToDate(k), miss=(w.miss||{})[k]||{}, right=[];
+      for(var i=1;i<=10;i++) right.push(Math.max(0, done-(miss[i]||0)));
+      out[date]={n:done,right:right,src:"Cloudflare, all tries"};
+    });
+    Object.keys(qd).forEach(function(date){ if(qd[date].n>=3) out[date]={n:qd[date].n,right:qd[date].right,src:"first tries"}; });
+    return out;
+  }
+  function questionDates(d){ return Object.keys(questionData(d)).sort().reverse(); }
+
+  // ---------- insights ----------
+  function insights(d){
+    var c=d.contest||{}, w=d.web||{}, em=d.email||{}, sh=d.shop||{}, out=[];
+    var qd=questionData(d), dates=Object.keys(qd).sort().reverse();
+    if(dates.length){
+      var last=dates[0], q=qd[last], st=stems[last]||[], lo=0, hi=0;
+      q.right.forEach(function(r,i){ if(r<q.right[lo]) lo=i; if(r>q.right[hi]) hi=i; });
+      out.push("Hardest question on " + nice(last) + ": Q" + (lo+1) + (st[lo] ? " (“" + st[lo].slice(0,90) + (st[lo].length>90?"...":"") + "”)" : "") + ", " + pct(q.right[lo],q.n) + " got it right. Easiest: Q" + (hi+1) + " at " + pct(q.right[hi],q.n) + ".");
+      // Across editions: how many questions land under 50%.
+      var hard=0, tot=0; dates.slice(0,10).forEach(function(k){ qd[k].right.forEach(function(r){ tot++; if(r/qd[k].n<0.5) hard++; }); });
+      if(tot) out.push(hard + " of the last " + tot + " questions were missed by more than half the players (the target is about 1 hard question per edition, so about " + Math.round(tot/10) + ").");
+    }
+    var daily=c.daily||[];
+    if(daily.length){
+      var n=0,s=0; daily.forEach(function(x){ n+=x.players; s+=x.avg*x.players; });
+      var avg=n? Math.round(s/n*10)/10 : 0;
+      out.push("Average first-try score this month: " + avg + " out of 10" + (avg<7 ? ", below the 7 to 8 target, so the quizzes are running a little hard." : avg>8.5 ? ", above the 7 to 8 target, so there's room for a harder question." : ", right in the 7 to 8 target."));
+    }
+    var b=c.board||[];
+    if(b.length){
+      var two=b.filter(function(p){return p.days>=2;}).length;
+      var grp=b.filter(function(p){return p.groups>0;}), solo=b.filter(function(p){return p.groups===0;});
+      var avgDays=function(a){ return a.length ? Math.round(a.reduce(function(t,p){return t+p.days;},0)/a.length*10)/10 : 0; };
+      out.push(pct(two,b.length) + " of this month's players have come back for 2 or more days (" + two + " of " + b.length + ").");
+      if(grp.length && solo.length) out.push("Players in a group average " + avgDays(grp) + " days played this month, against " + avgDays(solo) + " for players not in a group.");
+    }
+    var w7=w.d7||{};
+    if(w7.visits){
+      out.push("Last 7 days: " + fmt(w7.visits) + " visits and " + fmt(w7.done) + " finished quizzes, so about " + pct(w7.done,w7.visits) + " of visits end with a score (replays included).");
+      var src=w7.entries||{}, best=Object.keys(src).sort(function(a,b){return src[b]-src[a];})[0];
+      if(best && src[best]) out.push("Top tracked way in this week: " + ({email:"the morning email (/e)",share:"shared links (/s)",reddit:"Reddit (/r)",facebook:"Facebook (/f)",pt:"Phantasy Tour (/pt)"})[best] + " with " + fmt(src[best]) + " visits.");
+      if(w7.signups!=null) out.push("Email signup taps on the site this week: " + fmt(w7.signups) + ", about " + (w7.visits ? (Math.round(w7.signups*1000/w7.visits)/10) : 0) + " per 100 visits.");
+    }
+    var w30=w.d30||{};
+    if(w30.shopViews) out.push("Store, last 30 days: " + fmt(w30.shopViews) + " product views in the quiz and on the score card, " + fmt(w30.shopTaps) + " taps through to the shop (" + pct(w30.shopTaps,w30.shopViews) + ")." + (sh && !sh.error ? " Orders: " + fmt(sh.d30.orders) + "." : ""));
+    if(em && !em.error && em.d7!=null) out.push("Kit added " + fmt(em.d7) + " subscribers in the last 7 days" + (em.total!=null ? ", " + fmt(em.total) + " on the list now." : "."));
+    return out;
+  }
+
+  // ---------- drawing helpers ----------
+  function tile(parent, title, cells, extra, off){
+    var t=el("div","tile"+(off?" off":"")); t.appendChild(el("div","t",title));
+    var r=el("div","row");
+    cells.forEach(function(c){ var x=el("div","cell"); x.appendChild(el("div","v",c[1])); x.appendChild(el("div","k",c[0])); r.appendChild(x); });
+    t.appendChild(r); if(extra) t.appendChild(el("div","x",extra)); parent.appendChild(t);
+  }
+  function table(parent, heads, rows, leftCols){
+    var box=el("div","scroll"), t=el("table"), hr=el("tr");
+    heads.forEach(function(h,i){ var th=el("th",(leftCols||[]).indexOf(i)>=0?"l":null,h); hr.appendChild(th); });
+    t.appendChild(hr);
+    rows.forEach(function(r){ var tr=el("tr"); r.forEach(function(v,i){ var td=el("td",(leftCols||[]).indexOf(i)>=0?"l":null); if(v instanceof Node) td.appendChild(v); else td.textContent=v; tr.appendChild(td); }); t.appendChild(tr); });
+    box.appendChild(t); parent.appendChild(box); return t;
+  }
+
+  // Single-series bar chart, hover tooltip, value labels kept off.
+  function barChart(parent, items, label){
+    var box=el("div","chart"), W=760, Hh=200, pad={l:34,r:8,t:10,b:28};
+    var max=Math.max(1, Math.max.apply(null, items.map(function(i){return i.v;})));
+    var step=Math.pow(10,Math.floor(Math.log10(max))); var top=Math.ceil(max/step)*step; if(top/step>5 && step>=1) step*=2;
+    var bw=Math.min(48,(W-pad.l-pad.r)/Math.max(items.length,1));
+    var svg='<svg viewBox="0 0 '+W+' '+Hh+'" role="img" aria-label="'+label+'">';
+    for(var g=0; g<=top; g+=step){ var y=pad.t+(Hh-pad.t-pad.b)*(1-g/top); svg+='<line x1="'+pad.l+'" x2="'+(W-pad.r)+'" y1="'+y+'" y2="'+y+'" stroke="#e6e0cf" stroke-width="1"/><text x="'+(pad.l-6)+'" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="#5d5648">'+g+'</text>'; }
+    items.forEach(function(it,i){
+      var h=(Hh-pad.t-pad.b)*(it.v/top), x=pad.l+i*bw+2, w=Math.max(2,bw-4), y=Hh-pad.b-h;
+      var r=Math.min(4,w/2,h);
+      svg+='<path d="M'+x+','+(Hh-pad.b)+'V'+(y+r)+'Q'+x+','+y+' '+(x+r)+','+y+'H'+(x+w-r)+'Q'+(x+w)+','+y+' '+(x+w)+','+(y+r)+'V'+(Hh-pad.b)+'Z" fill="#4a7c4a"/>';
+      svg+='<rect data-i="'+i+'" x="'+(pad.l+i*bw)+'" y="'+pad.t+'" width="'+bw+'" height="'+(Hh-pad.t-pad.b)+'" fill="transparent"/>';
+      if(items.length<=16 || i%2===0) svg+='<text x="'+(x+w/2)+'" y="'+(Hh-10)+'" font-size="11" text-anchor="middle" fill="#5d5648">'+it.k+'</text>';
+    });
+    svg+='<line x1="'+pad.l+'" x2="'+(W-pad.r)+'" y1="'+(Hh-pad.b)+'" y2="'+(Hh-pad.b)+'" stroke="#1c2733" stroke-width="1"/></svg>';
+    box.innerHTML=svg; var tip=el("div","tip"); box.appendChild(tip);
+    box.addEventListener("mousemove",function(e){ var i=e.target.getAttribute && e.target.getAttribute("data-i"); if(i==null){ tip.style.display="none"; return; } var it=items[+i]; tip.textContent=it.tip; tip.style.display="block"; var rb=box.getBoundingClientRect(); tip.style.left=Math.min(e.clientX-rb.left+10, rb.width-160)+"px"; tip.style.top=(e.clientY-rb.top-30)+"px"; });
+    box.addEventListener("mouseleave",function(){ tip.style.display="none"; });
+    parent.appendChild(box);
+  }
+
+  // ---------- page ----------
+  function render(d){
+    var c=d.contest||{}, w=d.web||{}, em=d.email||{}, sh=d.shop||{};
+    app.innerHTML="";
+    var hd=el("header"); hd.appendChild(el("h1",null,"10Everyday dashboard"));
+    var meta=el("div","meta"); meta.appendChild(document.createTextNode("Updated " + new Date(d.at).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/Los_Angeles"}) + " Pacific"));
+    var sel=el("select"); var mo="2026-11", cur=pacificToday().slice(0,7);
+    while(mo<=cur){ var o=el("option",null,new Date(mo+"-15T12:00:00Z").toLocaleString("en-US",{month:"long",year:"numeric",timeZone:"UTC"})); o.value=mo; if(mo===month) o.selected=true; sel.appendChild(o); var y=+mo.slice(0,4), mm=+mo.slice(5); mo = mm===12 ? (y+1)+"-01" : y+"-"+String(mm+1).padStart(2,"0"); }
+    sel.onchange=function(){ month=sel.value; load(); };
+    var rf=el("button",null,"Refresh"); rf.onclick=load;
+    meta.appendChild(sel); meta.appendChild(rf); hd.appendChild(meta); app.appendChild(hd);
+
+    // Insights
+    app.appendChild(el("h2",null,"What the numbers say"));
+    var ul=el("ul","ins"); insights(d).forEach(function(s){ ul.appendChild(el("li",null,s)); });
+    if(!ul.children.length) ul.appendChild(el("li",null,"Not enough data yet. Check back after a few more plays."));
+    app.appendChild(ul);
+
+    // Tiles
+    app.appendChild(el("h2",null,"Right now"));
+    var tiles=el("div","tiles"); app.appendChild(tiles);
+    var P=c.players||{}, PF=c.perfect||{}, NG=c.newGroups||{}, NP=c.newPlayers||{};
+    tile(tiles,"Players (finished a quiz)",[["6 hours",fmt(P.h6)],["24 hours",fmt(P.h24)],["7 days",fmt(P.d7)],["This month",fmt(P.month)]],"Anyone who finished, first try or replay. Each browser counts once.");
+    if(w.error) tile(tiles,"Site visits",[["6 hours","-"],["24 hours","-"],["7 days","-"]],w.error,true);
+    else tile(tiles,"Site visits",[["6 hours",fmt(w.h6.visits)],["24 hours",fmt(w.h24.visits)],["7 days",fmt(w.d7.visits)],["30 days",fmt(w.d30.visits)]],"Cloudflare visits, bots left out. Includes your own visits.");
+    tile(tiles,"Got all 10 right",[["Today",fmt(PF.today)],["7 days",fmt(PF.d7)],["This month",fmt(PF.month)]],"Players with a perfect 10 on their first try.");
+    if(!w.error) tile(tiles,"Finished all 10 questions",[["Today",fmt(w.today.done)],["24 hours",fmt(w.h24.done)],["7 days",fmt(w.d7.done)]],"Finished quizzes, replays included. First tries today: " + fmt((c.finishes||{}).today) + ".");
+    if(em.error) tile(tiles,"New email signups",[["Today","-"],["7 days","-"],["30 days","-"]],em.error + (w.error?"":". Signup taps on the site, 7 days: " + fmt(w.d7.signups)),true);
+    else tile(tiles,"New email signups",[["Today",fmt(em.today)],["7 days",fmt(em.d7)],["30 days",fmt(em.d30)]],(em.total!=null?fmt(em.total)+" on the list. ":"") + (w.error?"":"Signup taps on the site, 7 days: " + fmt(w.d7.signups) + "."));
+    if(sh.error) tile(tiles,"Store sales",[["24 hours","-"],["7 days","-"],["30 days","-"]],sh.error + (w.error?"":". Taps to the shop, 7 days: " + fmt(w.d7.shopTaps)),true);
+    else tile(tiles,"Store sales",[["24 hours",fmt(sh.h24.orders)],["7 days",fmt(sh.d7.orders)],["30 days",fmt(sh.d30.orders)]],"30 days: " + money(sh.d30.revenue) + ". All time: " + fmt(sh.all.orders) + " orders, " + money(sh.all.revenue) + "." + (w.error?"":" Taps to the shop, 7 days: " + fmt(w.d7.shopTaps) + "."));
+    tile(tiles,"New groups",[["Today",fmt(NG.today)],["7 days",fmt(NG.d7)],["This month",fmt(NG.month)]],fmt((c.totals||{}).groups) + ((c.totals||{}).groups===1?" group":" groups") + " in all, " + fmt((c.totals||{}).memberships) + " memberships.");
+    tile(tiles,"New players",[["24 hours",fmt(NP.h24)],["7 days",fmt(NP.d7)],["This month",fmt(NP.month)]],fmt((c.totals||{}).players) + " in the contest database, " + fmt((c.totals||{}).optouts) + " sitting out.");
+
+    // Day by day
+    app.appendChild(el("h2",null,"Day by day"));
+    var daily=c.daily||[], byDate={}; daily.forEach(function(x){ byDate[x.date]=x; });
+    var rep={}; (c.replays||[]).forEach(function(x){ rep[x.date]=x.n; });
+    var days=(w.days)||{}, sig=(em.days)||{};
+    var secs={}; (c.secs||[]).forEach(function(x){ secs[x.date]=x.secs; });
+    var all=Object.keys(byDate).concat(Object.keys(days)).filter(function(x){ return x.slice(0,7)===month; });
+    all=all.filter(function(x,i){ return all.indexOf(x)===i; }).sort();
+    if(daily.length) barChart(app, daily.map(function(x){ return {k:x.date.slice(8).replace(/^0/,""), v:x.players, tip:nice(x.date)+": "+x.players+" players, avg "+x.avg}; }), "Players per edition this month");
+    var rows=all.slice().reverse().map(function(dt){ var x=byDate[dt]||{}, v=days[dt]||{}; return [nice(dt), fmt(v.visits), fmt(x.players||0), x.avg!=null?x.avg:"-", fmt(x.tens||0), fmt(rep[dt]||0), secs[dt]?Math.floor(secs[dt]/60)+":"+String(secs[dt]%60).padStart(2,"0"):"-", fmt(sig[dt]||0)]; });
+    table(app,["Day","Visits","First tries","Avg score","Perfect 10s","Replays","Avg time","New subscribers"],rows,[0]);
+    app.appendChild(el("p","note","First tries are contest scores on the day the edition is live. Visits come from Cloudflare (last 14 days), subscribers from Kit. Replays and times start Nov 3."));
+
+    // Leaderboard
+    app.appendChild(el("h2",null,"Monthly leaderboard (everyone)"));
+    var lb=(c.board||[]).map(function(p){
+      var nm=el("span",null,p.name);
+      if(p.out) nm.appendChild(el("span","tag","sat out"));
+      if(p.hidden) nm.appendChild(el("span","tag","hidden"));
+      if(p.playedToday) nm.appendChild(el("span","tag","played today"));
+      return [String(p.rank), nm].concat(p.weeks.map(String)).concat([String(p.total), String(p.days), String(p.avg), String(p.tens), String(p.groups)]);
+    });
+    if(lb.length) table(app,["#","Name"].concat(c.weeks||[]).concat(["Total","Days","Avg","10s","Groups"]),lb,[1]);
+    else app.appendChild(el("p","note","No scores yet this month."));
+    app.appendChild(el("p","note","Private. The site only ever shows the top 10, padded with stand-in names. Your incognito test players are in here too."));
+
+    // Questions
+    app.appendChild(el("h2",null,"Question by question"));
+    var qd=questionData(d), qdates=Object.keys(qd).sort().reverse().slice(0,6);
+    if(!qdates.length) app.appendChild(el("p","note","No per-question data yet."));
+    var grid=el("div","grid2"); app.appendChild(grid);
+    qdates.forEach(function(dt){
+      var q=qd[dt], st=stems[dt]||[], wrap=el("div","qed");
+      wrap.appendChild(el("h3",null,nice(dt) + " · " + q.n + " plays (" + q.src + ")"));
+      var rws=q.right.map(function(r,i){
+        var p=q.n?Math.round(r*100/q.n):0, cell=el("span"); var b=el("span","bar"+(p<50?" hard":"")); b.style.width=Math.max(2,p*0.8)+"px"; cell.appendChild(b); cell.appendChild(document.createTextNode(" "+p+"%"));
+        var s=el("span",null,(st[i]||"").slice(0,70)+((st[i]||"").length>70?"...":""));
+        return ["Q"+(i+1), cell, s];
+      });
+      var t=table(wrap,["","Right","Question"],rws,[1,2]);
+      [].forEach.call(t.querySelectorAll("td:nth-child(3)"),function(td){ td.className="l wrapt"; });
+      grid.appendChild(wrap);
+    });
+    app.appendChild(el("p","note","Orange bars: fewer than half got it right. From Nov 3 on this uses each player's first try; earlier editions use Cloudflare's miss counts, which include replays."));
+
+    // Groups
+    app.appendChild(el("h2",null,"Groups"));
+    var gr=(c.groups||[]).map(function(g){ return [g.name, g.owner||"-", String(g.members), String(g.active), new Date(g.created).toLocaleDateString("en-US",{month:"short",day:"numeric",timeZone:"America/Los_Angeles"})]; });
+    if(gr.length) table(app,["Group","Started by","Members","Played this month","Started"],gr,[0,1]);
+    else app.appendChild(el("p","note","No groups yet."));
+    if((c.board||[]).length) app.appendChild(el("p","note",fmt(c.inGroup) + " of this month's " + fmt(c.board.length) + " players are in at least one group."));
+
+    // Where they come from + signups by spot
+    if(!w.error){
+      app.appendChild(el("h2",null,"Where people come from, and where they sign up"));
+      var g2=el("div","grid2"); app.appendChild(g2);
+      var a=el("div"), b2=el("div"); g2.appendChild(a); g2.appendChild(b2);
+      var E=w.d7.entries, E30=w.d30.entries, L={email:"Morning email (/e)",share:"Shared links (/s)",reddit:"Reddit (/r)",facebook:"Facebook (/f)",pt:"Phantasy Tour (/pt)"};
+      table(a,["Way in","7 days","30 days"],Object.keys(L).map(function(k){ return [L[k],fmt(E[k]),fmt(E30[k])]; }),[0]);
+      a.appendChild(el("p","note","Only visits through the tracked links. Everything else (bookmarks, alldle, Goldles, search) isn't split out here."));
+      var S=w.d30.signupBy||{}, SL={mid:"Under a question",results:"Score card",merch:"Shop page",pick:"After a prediction pick",league:"Starting a group",other:"Other"};
+      table(b2,["Signup spot","30 days"],Object.keys(S).sort(function(x,y){return S[y]-S[x];}).map(function(k){ return [SL[k]||k, fmt(S[k])]; }),[0]);
+      b2.appendChild(el("p","note","Taps on the site's signup forms. Kit's count above is the real number of new subscribers."));
+      app.appendChild(el("p","note","Shares from the score card, 7 days: " + fmt(w.d7.shares) + ". Group invites sent: " + fmt(w.d7.groupInvites) + ". Leaderboard opens: " + fmt(w.d7.boardOpens) + "."));
+    }
+  }
+
+  load();
+  setInterval(function(){ if(!document.hidden && get(KEYK)) load(); }, 5*60*1000);
+})();
+</script>
+</body>
+</html>

@@ -18,12 +18,16 @@
 //   POST /league/leave  {id, code}
 //   GET  /league?code=CODE&month=YYYY-MM&me=ID   one league's standings
 //   GET  /leagues?me=ID&month=YYYY-MM       my leagues and where I stand in each
+//   POST /play  {id, date, score, answers, secs, first}   every finished quiz (dashboard only)
+//   GET  /admin?month=YYYY-MM               private dashboard numbers (key in Authorization header, see admin.js)
 //
 // Players who leave the contest still have scores recorded (for their
 // leagues); they are just left off the public board.
 //
 // Moderation: to hide a player from the board, run in the D1 console
 //   UPDATE players SET hidden = 1 WHERE name = 'Their Name';
+
+import { authorized, adminReport } from "./admin.js";
 
 const FIRST_DAY = "2026-11-02";   // contest starts with the Nov 2 edition
 const TOP = 10;                    // rows shown on the public board
@@ -35,7 +39,7 @@ const FILLERS = ["Merry Puffin", "Steady Heron", "Groovy Walrus", "Plucky Otter"
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Max-Age": "86400",
 };
 
@@ -270,6 +274,11 @@ export default {
         });
       }
 
+      if (url.pathname === "/admin" && request.method === "GET") {
+        if (!(await authorized(request))) return json({ ok: false, error: "not allowed" }, 401);
+        return json(await adminReport(env, now, monthParam, weeksOf));
+      }
+
       if (url.pathname === "/leagues" && request.method === "GET") {
         const me = url.searchParams.get("me");
         if (!validId(me)) return json({ ok: true, leagues: [] });
@@ -303,6 +312,26 @@ export default {
         const board = await standings(db, date.slice(0, 7), b.id);
         const leagues = await myLeagues(db, b.id, date.slice(0, 7));
         return json({ ok: true, counted, reason, me: board.me, weeks: board.weeks, leagues });
+      }
+
+      // Every finished quiz, first tries and replays, for the private
+      // dashboard. Never shown on the site and never used for contest points.
+      if (url.pathname === "/play") {
+        const date = String(b.date || "");
+        const score = b.score;
+        const answers = typeof b.answers === "string" && /^[01]{1,15}$/.test(b.answers) ? b.answers : null;
+        const secs = Number.isInteger(b.secs) && b.secs > 0 && b.secs < 86400 ? b.secs : null;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isInteger(score) || score < 0 || score > 10) {
+          return json({ ok: false, error: "bad play" }, 400);
+        }
+        const n = await db.prepare("SELECT COUNT(*) AS n FROM plays WHERE player = ?1 AND date = ?2").bind(b.id, date).first();
+        if (n && n.n >= 30) return json({ ok: true, kept: false });
+        // first = this browser's first finish of this edition, on any day.
+        const seen = await db.prepare("SELECT 1 AS x FROM plays WHERE player = ?1 AND date = ?2 AND first = 1").bind(b.id, date).first();
+        const first = b.first === true && !seen ? 1 : 0;
+        await db.prepare("INSERT INTO plays (player, date, score, answers, secs, first, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")
+          .bind(b.id, date, score, answers, secs, first, now.toISOString()).run();
+        return json({ ok: true, kept: true });
       }
 
       if (url.pathname === "/name") {

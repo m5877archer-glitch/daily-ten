@@ -555,6 +555,25 @@
     isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
   };
 
+  // Every finish, first try or replay, goes to the private dashboard (Nov 3):
+  // which questions were right ("1") or wrong ("0") in QUESTIONS order, plus
+  // how long it took. Read from the edition's own dots and timer.
+  function logPlay(first) {
+    var ans = null, secs = null;
+    try {
+      if (typeof dots !== "undefined" && dots.length) {
+        ans = dots.map(function (d) { return d === "\uD83D\uDFE2" ? "1" : "0"; }).join("");
+      }
+    } catch (e) {}
+    try {
+      if (typeof startTime !== "undefined") {
+        var end = (typeof finishedAt !== "undefined" && finishedAt) || Date.now();
+        secs = Math.round((end - startTime) / 1000);
+      }
+    } catch (e) {}
+    call("/play", { id: playerId(), date: EDITION_DATE, score: score, answers: ans, secs: secs, first: !!first }).catch(function () {});
+  }
+
   try {
     if (typeof EDITION_DATE === "undefined" || EDITION_DATE < START) return;
     if (typeof window.showResults !== "function") return;
@@ -564,6 +583,7 @@
       try { first = !localStorage.getItem("tenEveryday.done." + EDITION_DATE); } catch (e) {}
       var out = orig.apply(this, arguments);
       try { start(first); } catch (e) {}
+      try { logPlay(first); } catch (e) {}
       return out;
     };
   } catch (e) {}
