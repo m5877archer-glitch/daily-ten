@@ -364,6 +364,7 @@
       var out = get(K.out) === "1" || (r.me && r.me.out);
       if (out) { set(K.out, "1"); render({ out: true, first: first, leagues: r.leagues }); return; }
       render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first, leagues: r.leagues });
+      try { lbLabel(r.me, r.counted); } catch (e) {}
     }).catch(function () {});
   }
 
@@ -399,14 +400,27 @@
   // Leaderboard button (Matt, Nov 2): a big "See the leaderboard" button at
   // the top of every page that loads this file. It opens the top 10 in a
   // pop-up over the page, so a quiz in progress is never lost.
+  var lbLabel = function () {};
   function leaderButton() {
     if (document.getElementById("lbOpen") || location.pathname.indexOf("/contest") === 0) return;
     var head = document.querySelector("header");
     if (!head) return;
     var css = node("style");
     css.textContent =
-      "#lbOpen{display:block;width:100%;margin:10px 0 0;padding:12px 10px;font:inherit;font-size:1.1rem;font-weight:bold;" +
-      "background:#fffdf7;color:var(--ptdark,#1e3a1e);border:2px solid var(--ptdark,#1e3a1e);border-radius:4px;cursor:pointer;}" +
+      // Looks pressable (raised gold button with a shadow and an arrow) and
+      // pulses until it's been opened today. No motion if the phone asks for less.
+      "#lbOpen{display:block;width:100%;margin:12px 0 6px;padding:12px 10px 10px;font:inherit;font-weight:bold;line-height:1.25;" +
+      "background:#f6c945;color:#1c2733;border:3px solid var(--ptdark,#1e3a1e);border-radius:8px;box-shadow:0 5px 0 var(--ptdark,#1e3a1e);cursor:pointer;position:relative;}" +
+      "#lbOpen .lbm{display:block;font-size:1.2rem;}" +
+      "#lbOpen .lbs{display:block;font-size:.9rem;font-weight:normal;margin-top:3px;}" +
+      "#lbOpen .lbt{display:inline-block;}" +
+      "#lbOpen:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ptdark,#1e3a1e);}" +
+      "#lbOpen.pulse{animation:lbPulse 2.2s ease-out infinite;}" +
+      "#lbOpen.pulse .lbt{animation:lbWig 2.2s ease-in-out infinite;}" +
+      "@keyframes lbPulse{0%{box-shadow:0 5px 0 var(--ptdark,#1e3a1e),0 0 0 0 rgba(246,201,69,.9);}" +
+      "70%{box-shadow:0 5px 0 var(--ptdark,#1e3a1e),0 0 0 14px rgba(246,201,69,0);}100%{box-shadow:0 5px 0 var(--ptdark,#1e3a1e),0 0 0 0 rgba(246,201,69,0);}}" +
+      "@keyframes lbWig{0%,60%,100%{transform:rotate(0)}66%{transform:rotate(-14deg)}74%{transform:rotate(12deg)}82%{transform:rotate(-8deg)}90%{transform:rotate(4deg)}}" +
+      "@media (prefers-reduced-motion:reduce){#lbOpen.pulse,#lbOpen.pulse .lbt{animation:none;}}" +
       "#lbSheet{position:fixed;inset:0;z-index:9999;background:rgba(20,30,20,.55);display:flex;align-items:flex-start;justify-content:center;padding:16px 10px;overflow-y:auto;}" +
       "#lbSheet[hidden]{display:none;}" +
       "#lbSheet .lbbox{background:#f7f4ec;border:2px solid var(--ptdark,#1e3a1e);width:100%;max-width:520px;padding:18px 14px;font-family:Georgia,'Times New Roman',serif;color:#1c2733;text-align:center;}" +
@@ -426,9 +440,36 @@
       "#lbSheet .lbmore{display:block;margin-top:12px;font-size:1rem;color:var(--ptdark,#1e3a1e);}";
     document.head.appendChild(css);
 
-    var btn = node("button", null, "🏆 See the leaderboard");
+    // The label speaks to the player about their own spot, which is what makes
+    // people tap: "You're #3 this month" beats "See the leaderboard".
+    var btn = node("button");
     btn.id = "lbOpen"; btn.type = "button";
+    var bm = node("span", "lbm"), bs = node("span", "lbs", "Tap to see the leaderboard");
+    btn.appendChild(bm); btn.appendChild(bs);
+    function label(text) {
+      bm.innerHTML = "";
+      bm.appendChild(node("span", "lbt", "\uD83C\uDFC6"));
+      bm.appendChild(document.createTextNode(" " + text + " \u203A"));
+    }
+    var todayPT = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+    function pulse(on) { if (on) btn.classList.add("pulse"); else btn.classList.remove("pulse"); }
+    label("Who's winning this month?");
+    pulse(get("tenContest.boardSeen") !== todayPT);
     head.appendChild(btn);
+    lbLabel = function (me, fresh) {
+      if (me && !me.out && me.rank) label("You're #" + me.rank + " this month. See the board");
+      else if (me && !me.out && me.outside) label("How close are you to the top 10?");
+      else label("Who's winning this month?");
+      if (fresh) pulse(true);
+    };
+    try {
+      var pid = get(K.id);
+      if (pid) {
+        var m0 = (typeof EDITION_DATE !== "undefined" && EDITION_DATE >= START ? EDITION_DATE : todayPT).slice(0, 7);
+        if (m0 < START.slice(0, 7)) m0 = START.slice(0, 7);
+        call("/board?month=" + m0 + "&me=" + pid).then(function (b) { if (b && b.me) lbLabel(b.me); }).catch(function () {});
+      }
+    } catch (e) {}
 
     var sheet = node("div"); sheet.id = "lbSheet"; sheet.hidden = true;
     sheet.setAttribute("role", "dialog"); sheet.setAttribute("aria-modal", "true");
@@ -442,6 +483,7 @@
 
     btn.onclick = function () {
       track("/contest-board-pop");
+      set("tenContest.boardSeen", todayPT); pulse(false);
       var month = (typeof EDITION_DATE !== "undefined" && EDITION_DATE >= START ? EDITION_DATE
         : new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })).slice(0, 7);
       if (month < START.slice(0, 7)) month = START.slice(0, 7);

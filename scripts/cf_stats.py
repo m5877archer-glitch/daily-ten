@@ -37,7 +37,8 @@ COUNTED = {"/merch-view": "merch_view", "/merch-click": "merch_click", "/shop": 
            "/shop-q-view": "shop_q_view", "/merch-results-view-hi": "merch_results_view_hi",
            "/merch-results-tap-hi": "merch_results_tap_hi", "/merch-results-tap-lo": "merch_results_tap_lo",
            # Monthly contest and leagues (Nov 2026)
-           "/contest-in": "contest_in", "/contest-board": "contest_board", "/contest-rename": "contest_rename",
+           "/contest-in": "contest_in", "/contest-board": "contest_board", "/contest-board-pop": "contest_board_pop",
+           "/contest-group-pop": "contest_group_pop", "/contest": "contest_page", "/contest-rename": "contest_rename",
            "/contest-out": "contest_out", "/contest-rejoin": "contest_rejoin",
            "/league-start": "league_start", "/league-share": "league_share", "/league-join": "league_join",
            "/league-leave": "league_leave", "/league-view": "league_view",
