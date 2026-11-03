@@ -150,7 +150,7 @@ async function fromD1(db, now, month, weeksOf) {
 
 const PATHS_Q = (alias) => `${alias}: rumPageloadEventsAdaptiveGroups(filter: $${alias}, limit: 5000) { count sum { visits } dimensions { requestPath } }`;
 
-async function fromCloudflare(token, now) {
+export async function fromCloudflare(token, now) {
   if (!token) return { error: "Cloudflare token not set on the Worker yet" };
   const iso = (d) => d.toISOString().replace(/\.\d+Z$/, "Z");
   const today = pacificDate(now);
@@ -218,7 +218,7 @@ async function fromCloudflare(token, now) {
 
 // ---------- Kit (email list) ----------
 
-async function fromKit(key, now) {
+export async function fromKit(key, now) {
   if (!key) return { error: "Kit key not set on the Worker yet" };
   const hdr = { "X-Kit-Api-Key": key, Accept: "application/json" };
   const since = new Date(now.getTime() - 30 * 24 * H).toISOString();
@@ -258,7 +258,7 @@ function pickList(b) {
   return [];
 }
 
-async function fromFourthwall(user, pass, now) {
+export async function fromFourthwall(user, pass, now) {
   if (!user || !pass) return { error: "Fourthwall API user not set up yet" };
   const auth = { Authorization: "Basic " + btoa(user + ":" + pass), Accept: "application/json" };
   let orders = null, lastErr = "";

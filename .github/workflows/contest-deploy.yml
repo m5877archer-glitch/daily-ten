@@ -102,6 +102,14 @@ jobs:
             fi
           done
 
+      - name: Check dashboard sources
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          KIT_API_KEY: ${{ secrets.KIT_API_KEY }}
+          FOURTHWALL_USER: ${{ secrets.FOURTHWALL_USER }}
+          FOURTHWALL_PASS: ${{ secrets.FOURTHWALL_PASS }}
+        run: node check-sources.mjs 2>&1 | tee -a ../deploy-log.txt || true
+
       - name: Smoke test
         run: |
           sleep 10
