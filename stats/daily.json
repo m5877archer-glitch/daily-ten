@@ -1093,10 +1093,10 @@
   "signup_pick": 0,
   "pick_ask": 0,
   "share_pressed": 0,
+  "contest_in": 3,
+  "league_share": 1,
   "shop_q_view": 3,
   "league_view": 1,
-  "league_share": 1,
-  "contest_in": 3,
   "partial": true
  }
 }
