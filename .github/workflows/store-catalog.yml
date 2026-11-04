@@ -44,7 +44,7 @@ jobs:
                   val = u.get("value") if isinstance(u, dict) else u
                   if val is not None: prices.add(float(val))
               ps = ", ".join("$%.2f" % x for x in sorted(prices)) or "?"
-              print("%s | %s | %s | variants: %d" % (name, ps, state if isinstance(state, str) else json.dumps(state)[:60], len(p.get("variants") or [])))
+              print("%s | %s | %s | %s | variants: %d" % (p.get("id"), name, ps, state if isinstance(state, str) else json.dumps(state)[:60], len(p.get("variants") or [])))
           if items:
               print("\nFIELDS (first product):", ", ".join(sorted(items[0].keys())))
           EOF
