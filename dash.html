@@ -97,7 +97,9 @@
     if(stems[d]) return Promise.resolve(stems[d]);
     return fetch(quizFile(d),{cache:"no-store"}).then(function(r){ return r.ok ? r.text() : ""; }).then(function(t){
       var i=t.indexOf("const QUESTIONS = ["), out=[];
-      if(i>=0){ var re=/\n\s{2,4}q:"((?:[^"\\]|\\.)*)"/g, s=t.slice(i), x; while((x=re.exec(s))) { try{ out.push(JSON.parse('"'+x[1]+'"')); }catch(e){ out.push(x[1]); } if(out.length>=10) break; } }
+      if(i>=0){ var re=/\n\s{2,4}(q|answer):"((?:[^"\\]|\\.)*)"/g, s=t.slice(i), x, cur=null;
+        var un=function(v){ try{ return JSON.parse('"'+v+'"'); }catch(e){ return v; } };
+        while((x=re.exec(s))){ if(x[1]==="q"){ if(out.length>=10) break; cur={q:un(x[2]),a:""}; out.push(cur); } else if(cur && !cur.a){ cur.a=un(x[2]); } } }
       stems[d]=out; return out;
     }).catch(function(){ stems[d]=[]; return []; });
   }
@@ -109,7 +111,8 @@
       .then(function(r){ if(r.status===401){ throw {auth:true}; } return r.json(); })
       .then(function(d){
         // Question text for recent editions, then draw.
-        var dates = questionDates(d).slice(0,6);
+        var cut = addDays(pacificToday(),-30);
+        var dates = questionDates(d).filter(function(x){ return x>=cut; });
         return Promise.all(dates.map(loadStems)).then(function(){ render(d); });
       })
       .catch(function(e){
@@ -140,9 +143,6 @@
     var c=d.contest||{}, w=d.web||{}, em=d.email||{}, sh=d.shop||{}, out=[];
     var qd=questionData(d), dates=Object.keys(qd).sort().reverse();
     if(dates.length){
-      var last=dates[0], q=qd[last], st=stems[last]||[], lo=0, hi=0;
-      q.right.forEach(function(r,i){ if(r<q.right[lo]) lo=i; if(r>q.right[hi]) hi=i; });
-      out.push("Hardest question on " + nice(last) + ": Q" + (lo+1) + (st[lo] ? " (“" + st[lo].slice(0,90) + (st[lo].length>90?"...":"") + "”)" : "") + ", " + pct(q.right[lo],q.n) + " got it right. Easiest: Q" + (hi+1) + " at " + pct(q.right[hi],q.n) + ".");
       // Across editions: how many questions land under 50%.
       var hard=0, tot=0; dates.slice(0,10).forEach(function(k){ qd[k].right.forEach(function(r){ tot++; if(r/qd[k].n<0.5) hard++; }); });
       if(tot) out.push(hard + " of the last " + tot + " questions were missed by more than half the players (the target is about 1 hard question per edition, so about " + Math.round(tot/10) + ").");
@@ -271,24 +271,24 @@
     else app.appendChild(el("p","note","No scores yet this month."));
     app.appendChild(el("p","note","Private. The site only ever shows the top 10, padded with stand-in names. Your incognito test players are in here too."));
 
-    // Questions
-    app.appendChild(el("h2",null,"Question by question"));
-    var qd=questionData(d), qdates=Object.keys(qd).sort().reverse().slice(0,6);
-    if(!qdates.length) app.appendChild(el("p","note","No per-question data yet."));
-    var grid=el("div","grid2"); app.appendChild(grid);
-    qdates.forEach(function(dt){
-      var q=qd[dt], st=stems[dt]||[], wrap=el("div","qed");
-      wrap.appendChild(el("h3",null,nice(dt) + " · " + q.n + " plays (" + q.src + ")"));
-      var rws=q.right.map(function(r,i){
-        var p=q.n?Math.round(r*100/q.n):0, cell=el("span"); var b=el("span","bar"+(p<50?" hard":"")); b.style.width=Math.max(2,p*0.8)+"px"; cell.appendChild(b); cell.appendChild(document.createTextNode(" "+p+"%"));
-        var s=el("span",null,(st[i]||"").slice(0,70)+((st[i]||"").length>70?"...":""));
-        return ["Q"+(i+1), cell, s];
+    // Most-missed questions, across every edition in the last 30 days
+    app.appendChild(el("h2",null,"Most-missed questions"));
+    var qd=questionData(d), cut=addDays(pacificToday(),-30), flat=[];
+    Object.keys(qd).forEach(function(dt){ if(dt<cut) return; var q=qd[dt], st=stems[dt]||[];
+      q.right.forEach(function(r,i){ flat.push({dt:dt, n:q.n, wrong:q.n-r, p:q.n?Math.round(r*100/q.n):0, q:(st[i]||{}).q||("Q"+(i+1)), a:(st[i]||{}).a||""}); }); });
+    flat.sort(function(x,y){ return x.p-y.p || y.n-x.n; });
+    var top=flat.slice(0,20);
+    if(!top.length) app.appendChild(el("p","note","No per-question data yet."));
+    else {
+      var mr=top.map(function(x,i){
+        var cell=el("span"), b=el("span","bar"+(x.p<50?" hard":"")); b.style.width=Math.max(2,(100-x.p)*0.8)+"px"; cell.appendChild(b); cell.appendChild(document.createTextNode(" "+(100-x.p)+"%"));
+        var qs=el("span"); qs.appendChild(document.createTextNode(x.q)); if(x.a){ qs.appendChild(el("br")); var an=el("span","note","Answer: "+x.a); qs.appendChild(an); }
+        return [String(i+1), cell, qs, nice(x.dt), fmt(x.wrong)+" of "+fmt(x.n)];
       });
-      var t=table(wrap,["","Right","Question"],rws,[1,2]);
-      [].forEach.call(t.querySelectorAll("td:nth-child(3)"),function(td){ td.className="l wrapt"; });
-      grid.appendChild(wrap);
-    });
-    app.appendChild(el("p","note","Orange bars: fewer than half got it right. From Nov 3 on this uses each player's first try; earlier editions use Cloudflare's miss counts, which include replays."));
+      var mt=table(app,["#","Missed","Question","Edition","Wrong"],mr,[1,2]);
+      [].forEach.call(mt.querySelectorAll("td:nth-child(3)"),function(td){ td.className="l wrapt"; });
+    }
+    app.appendChild(el("p","note","The 20 questions players missed most, from every edition in the last 30 days. Orange: more than half got it wrong. From Nov 3 on this uses each player's first try; earlier editions use Cloudflare's miss counts, which include replays."));
 
     // Groups
     app.appendChild(el("h2",null,"Groups"));
@@ -296,6 +296,26 @@
     if(gr.length) table(app,["Group","Started by","Members","Played this month","Started"],gr,[0,1]);
     else app.appendChild(el("p","note","No groups yet."));
     if((c.board||[]).length) app.appendChild(el("p","note",fmt(c.inGroup) + " of this month's " + fmt(c.board.length) + " players are in at least one group."));
+
+    // Every group's board, all members
+    if((c.groups||[]).length){
+      app.appendChild(el("h2",null,"Group boards (everyone in each group)"));
+      var gg=el("div","grid2"); app.appendChild(gg);
+      c.groups.forEach(function(g){
+        var box=el("div","qed"); box.appendChild(el("h3",null,g.name + " · started by " + (g.owner||"-") + " · " + g.members + (g.members===1?" member":" members")));
+        var rws=(g.board||[]).map(function(p){
+          var nm=el("span",null,p.name);
+          if(p.out) nm.appendChild(el("span","tag","sat out"));
+          if(p.hidden) nm.appendChild(el("span","tag","hidden"));
+          if(p.playedToday) nm.appendChild(el("span","tag","played today"));
+          return [String(p.rank), nm].concat(p.weeks.map(String)).concat([String(p.total), String(p.days), String(p.tens)]);
+        });
+        if(rws.length) table(box,["#","Name"].concat(c.weeks||[]).concat(["Total","Days","10s"]),rws,[1]);
+        else box.appendChild(el("p","note","No members."));
+        gg.appendChild(box);
+      });
+      app.appendChild(el("p","note","Private. Full boards with every member; the site's group page shows the top 10 only."));
+    }
 
     // Where they come from + signups by spot
     if(!w.error){

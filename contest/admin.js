@@ -97,6 +97,23 @@ async function fromD1(db, now, month, weeksOf) {
   const groupCount = {};
   for (const g of await all(db, "SELECT player, COUNT(*) AS n FROM league_members GROUP BY player")) groupCount[g.player] = g.n;
   const board = [...by.values()].sort((a, b) => b.total - a.total || b.tens - a.tens || (a.created < b.created ? -1 : 1));
+  // Every group's full board this month (all members, no top-10 cap), for /dash.
+  const mem = await all(db,
+    "SELECT m.league, m.player, m.joined, p.name, p.hidden, p.optout FROM league_members m JOIN players p ON p.id = m.player");
+  const boardsBy = {};
+  for (const r of mem) {
+    const s = by.get(r.player);
+    (boardsBy[r.league] || (boardsBy[r.league] = [])).push({
+      name: r.name, hidden: !!r.hidden, out: !!r.optout, joined: r.joined,
+      weeks: s ? s.weeks.slice() : weeks.map(() => 0), total: s ? s.total : 0, tens: s ? s.tens : 0, days: s ? s.days : 0,
+      playedToday: s ? s.dates.includes(today) : false,
+    });
+  }
+  for (const list of Object.values(boardsBy)) {
+    list.sort((a, b) => b.total - a.total || b.tens - a.tens || (a.joined < b.joined ? -1 : 1));
+    list.forEach((p, i) => { const prev = list[i - 1]; p.rank = prev && prev.total === p.total && prev.tens === p.tens ? prev.rank : i + 1; delete p.joined; });
+  }
+
   board.forEach((p, i) => {
     const prev = board[i - 1];
     p.rank = prev && prev.total === p.total && prev.tens === p.tens ? prev.rank : i + 1;
@@ -119,6 +136,7 @@ async function fromD1(db, now, month, weeksOf) {
     "(SELECT COUNT(*) FROM league_members m WHERE m.league = l.code) AS members, " +
     "(SELECT COUNT(DISTINCT s.player) FROM scores s JOIN league_members m ON m.player = s.player AND m.league = l.code WHERE s.date >= ?1 AND s.date <= ?2) AS active " +
     "FROM leagues l LEFT JOIN players p ON p.id = l.owner ORDER BY l.created DESC", first, last);
+  for (const g of groups) g.board = boardsBy[g.code] || [];
   const newGroups = {};
   for (const [k, since] of Object.entries(win)) newGroups[k] = groups.filter((g) => g.created >= since).length;
   const inGroup = await one(db,
