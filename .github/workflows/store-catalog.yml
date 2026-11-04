@@ -1,0 +1,62 @@
+name: Store catalog
+
+# Lists every product in the Fourthwall store with its prices and saves the
+# list to the store-catalog branch (store-catalog.txt), so prices can be read
+# without logging in to Fourthwall. Prices are public anyway. Read-only.
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/store-catalog.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List products
+        env:
+          FW_USER: ${{ secrets.FOURTHWALL_USER }}
+          FW_PASS: ${{ secrets.FOURTHWALL_PASS }}
+        run: |
+          python3 - <<'EOF' > catalog.txt
+          import base64, json, os, urllib.request
+          auth = base64.b64encode((os.environ["FW_USER"].strip() + ":" + os.environ["FW_PASS"].strip()).encode()).decode()
+          def get(url):
+              req = urllib.request.Request(url, headers={"Authorization": "Basic " + auth, "Accept": "application/json"})
+              return json.load(urllib.request.urlopen(req, timeout=60))
+          items, page = [], 0
+          while page < 10:
+              b = get("https://api.fourthwall.com/open-api/v1.0/products?page=%d&size=100" % page)
+              rows = b.get("results") or b.get("content") or b.get("products") or (b if isinstance(b, list) else [])
+              items += rows
+              if len(rows) < 100: break
+              page += 1
+          for p in items:
+              name = p.get("name") or p.get("title")
+              state = p.get("state") or p.get("status") or (p.get("availability") or "")
+              prices = set()
+              for v in p.get("variants") or []:
+                  u = v.get("unitPrice") or v.get("price") or {}
+                  val = u.get("value") if isinstance(u, dict) else u
+                  if val is not None: prices.add(float(val))
+              ps = ", ".join("$%.2f" % x for x in sorted(prices)) or "?"
+              print("%s | %s | %s | variants: %d" % (name, ps, state if isinstance(state, str) else json.dumps(state)[:60], len(p.get("variants") or [])))
+          if items:
+              print("\nFIELDS (first product):", ", ".join(sorted(items[0].keys())))
+          EOF
+          cat catalog.txt
+
+      - name: Save to store-catalog branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir br && cd br && git init -q
+          git config user.name "10everyday-bot"; git config user.email "hello@10everyday.com"
+          git checkout -q --orphan store-catalog
+          cp ../catalog.txt store-catalog.txt
+          git add . && git commit -qm "Store catalog $(date -u +%FT%TZ)"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" HEAD:store-catalog
