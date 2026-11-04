@@ -12,6 +12,7 @@
 //   FOURTHWALL_USER /  Fourthwall Open API user (orders). Create one at
 //   FOURTHWALL_PASS    Fourthwall > Settings > For developers > Create API user.
 // A missing or failing source comes back as {error} and the rest still loads.
+// Fourthwall secrets added Nov 3, 2026.
 
 const KEY_SHA256 = "90b02ed671fbb4dfb957c336fa38e17d7bb6dbef2fe525e5a1d7e1774a9ffd2f";
 const CF_ACCOUNT = "548962cab0a1c41df6c1579dbe54006f";
