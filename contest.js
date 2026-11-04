@@ -131,6 +131,13 @@
       ".contest .lready{font-size:1.25rem;font-weight:bold;margin-top:12px;color:#1c2733;}" +
       ".contest button.lbig{display:block;width:100%;margin:14px 0 4px;font:inherit;font-size:1.45rem;font-weight:bold;line-height:1.2;padding:20px 12px;background:var(--ptmid,#4a7c4a);color:#fff;border:3px solid var(--ptdark,#1e3a1e);box-shadow:0 4px 0 var(--ptdark,#1e3a1e);cursor:pointer;text-decoration:none;}" +
       ".contest button.lbig:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ptdark,#1e3a1e);}" +
+      ".contest .lg.lhero{margin:12px 0 14px;padding:0;border-top:0;}" +
+      ".contest button.lbig.lhot{margin:4px 0 6px;padding:22px 12px 20px;background:#e8641c;border:3px solid #7a2e06;box-shadow:0 5px 0 #7a2e06;color:#fff;animation:lpulse 2.2s ease-in-out infinite;}" +
+      ".contest button.lbig.lhot:active{transform:translateY(4px);box-shadow:0 1px 0 #7a2e06;}" +
+      ".contest button.lbig.lhot .l1{display:block;font-size:1.85rem;line-height:1.1;}" +
+      ".contest button.lbig.lhot .l2{display:block;font-size:1.25rem;font-weight:bold;margin-top:6px;}" +
+      "@keyframes lpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.035);}}" +
+      "@media (prefers-reduced-motion:reduce){.contest button.lbig.lhot{animation:none;}}" +
       ".contest .lshare{display:block;width:100%;margin:12px 0 4px;font:inherit;font-size:1.45rem;font-weight:bold;padding:20px 12px;background:var(--ptmid,#4a7c4a);color:#fff;border:3px solid var(--ptdark,#1e3a1e);box-shadow:0 4px 0 var(--ptdark,#1e3a1e);cursor:pointer;}";
     document.head.appendChild(st);
   }
@@ -225,12 +232,23 @@
         wrap.appendChild(row);
       });
     }
-    var start = node("button", "lbig", leagues.length ? "Start another group" : "Play against your family and friends");
-    start.onclick = function () { startForm(wrap, start, state); };
+    var start;
+    if (leagues.length) start = node("button", "lbig", "Start another group");
+    else {
+      // Amplified (Matt, Nov 4): orange, gently pulsing, top of the box.
+      wrap.className = "lg lhero";
+      start = node("button", "lbig lhot");
+      start.appendChild(node("span", "l1", "Create a league!"));
+      start.appendChild(node("span", "l2", "Play your family and friends!"));
+      track("/league-cta-view");
+    }
+    start.onclick = function () { track("/league-cta-tap"); startForm(wrap, start, state); };
     var bar = node("div", "cbar");
     bar.appendChild(start);
     wrap.appendChild(bar);
-    el.appendChild(wrap);
+    // No groups yet: put the button right under the kicker, above everything else.
+    if (!leagues.length && el.children.length > 1) el.insertBefore(wrap, el.children[1]);
+    else el.appendChild(wrap);
   }
 
   function field(f, label, input) {
