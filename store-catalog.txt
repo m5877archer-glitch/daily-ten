@@ -1,0 +1,28 @@
+2f09065c-b010-486a-a7b5-e5efc6c81965 | IYKYK Tee, Green | $25.00, $27.00, $29.00, $31.00 | {"type": "AVAILABLE"} | variants: 7
+27e66d30-8a23-416e-8a0c-197e169c72e1 | IYKYK Mug | $9.00, $12.00, $14.00 | {"type": "AVAILABLE"} | variants: 3
+6b63935a-7dc7-4ecb-a2c1-da6cc4b3f6bd | IYKYK Tee, Ivory | $25.00, $27.00, $29.00, $31.00 | {"type": "AVAILABLE"} | variants: 7
+dcf6897f-e87e-4d57-9213-67ae881ca761 | IYKYK Pint Glass | $17.95 | {"type": "AVAILABLE"} | variants: 1
+2a93bd1e-2087-4531-b722-f13ad45165fe | IYKYK Koozie | $6.42 | {"type": "AVAILABLE"} | variants: 2
+834a3ade-8b0a-4f15-a797-95c9ed1892d1 | Score Row Hoodie | $65.00, $69.01, $69.37 | {"type": "SOLD_OUT"} | variants: 7
+a18b91da-223a-467a-9c34-2e24e15605f5 | IYKYK Hoodie | $60.00, $62.00, $64.00 | {"type": "SOLD_OUT"} | variants: 6
+0949cbf5-422d-4ab9-a4ab-115a835114c3 | IYKYK Hoodie | $67.00, $69.00 | {"type": "AVAILABLE"} | variants: 5
+14b4fddb-b2ad-407b-8f77-ef1085403f95 | 10Everyday Zip Hoodie | $45.10, $47.10 | {"type": "AVAILABLE"} | variants: 10
+045e0ab1-070b-4700-a47b-582f220bb26a | 10Everyday Scorecard Beanie | $16.79 | {"type": "AVAILABLE"} | variants: 1
+0d8280e6-2529-4211-b8db-68c490b87335 | IYKYK Sherpa Blanket | $49.50 | {"type": "AVAILABLE"} | variants: 1
+47d90e7c-1432-4779-8c91-76afb180cd62 | IYKYK Water Bottle | $27.95 | {"type": "AVAILABLE"} | variants: 1
+41a6e021-9201-419a-9351-c9bdfec6b34b | IYKYK Hoodie, Bone | $42.19, $44.19, $46.19 | {"type": "AVAILABLE"} | variants: 6
+5ddeae77-7454-4883-a749-df5398343e1f | IYKYK Cropped Tee | $33.51 | {"type": "AVAILABLE"} | variants: 4
+cc150430-7a8c-45db-87b7-371115376217 | IYKYK Sticker | $5.29, $5.49, $5.69 | {"type": "AVAILABLE"} | variants: 3
+dbb5784d-4925-41c7-bac6-6baaf4778691 | IYKYK Bumper Sticker | $8.36 | {"type": "AVAILABLE"} | variants: 1
+d5284cd6-ef23-4318-9dda-0b5eedf67217 | 10Everyday Scorecard Bumper Sticker | $8.36 | {"type": "AVAILABLE"} | variants: 1
+d64d604b-55b6-4f9e-b392-5fb96a41ac32 | IYKYK Mousepad | $12.13 | {"type": "AVAILABLE"} | variants: 1
+f4ca239c-149f-47f9-b423-963b5b164e18 | 10Everyday Holiday Ornament 2026 | $11.21 | {"type": "SOLD_OUT"} | variants: 6
+05c8d6ea-ae3d-4f50-b685-b9e219c38f6b | 10Everyday Holiday Ornament 2026 | $11.21 | {"type": "AVAILABLE"} | variants: 6
+cd05b414-660e-474f-b1de-c6de018426fc | The Morning Edition Candle | $25.00 | {"type": "AVAILABLE"} | variants: 1
+6aafe1ec-b0dd-4b31-b549-2b4079ad189d | IYKYK Candle | $26.00 | {"type": "SOLD_OUT"} | variants: 1
+48325eb7-3abe-4636-8bb6-cde1189fdd99 | 10Everyday Dad Hat | $21.60 | {"type": "SOLD_OUT"} | variants: 1
+8650921d-67c1-4278-aebc-30fd24143f14 | Copy of A PT Exclusive! | $69.00, $71.00, $73.00 | {"type": "AVAILABLE"} | variants: 6
+252261dd-536d-42fd-861c-1b3251ad0086 | IYKYK Limited edition hoodie | $69.00, $71.00, $73.00 | {"type": "AVAILABLE"} | variants: 6
+904bd3a8-08fe-4df2-8b2d-283ef1c5623e | A PT Exclusive! | $69.00, $71.00, $73.00 | {"type": "AVAILABLE"} | variants: 6
+
+FIELDS (first product): access, createdAt, customsInformation, description, id, images, name, slug, state, thumbnailImage, type, updatedAt, variants
