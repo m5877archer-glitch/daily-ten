@@ -238,7 +238,7 @@
       // Amplified (Matt, Nov 4): orange, gently pulsing, top of the box.
       wrap.className = "lg lhero";
       start = node("button", "lbig lhot");
-      start.appendChild(node("span", "l1", "Create a league!"));
+      start.appendChild(node("span", "l1", "Create a group!"));
       start.appendChild(node("span", "l2", "Play your family and friends!"));
       track("/league-cta-view");
     }
