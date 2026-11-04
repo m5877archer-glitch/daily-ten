@@ -263,7 +263,7 @@ export async function fromFourthwall(user, pass, now) {
   if (!user || !pass) return { error: "Fourthwall API user not set up yet" };
   const auth = { Authorization: "Basic " + btoa(user + ":" + pass), Accept: "application/json" };
   let orders = null, lastErr = "";
-  for (const base of ["https://api.fourthwall.com/open-api/v1.0/orders", "https://api.fourthwall.com/open-api/v1/order"]) {
+  for (const base of ["https://api.fourthwall.com/open-api/v1.0/order", "https://api.fourthwall.com/open-api/v1.0/orders"]) {
     try {
       const r = await fetch(base + "?page=0&size=100", { headers: auth });
       if (!r.ok) { lastErr = "HTTP " + r.status; continue; }
