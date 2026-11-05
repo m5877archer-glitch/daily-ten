@@ -270,6 +270,18 @@
       "commons_file": "Lumen_Field_north_side_at_dusk.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Lumen_Field_north_side_at_dusk.jpg",
       "credit": "Lumen Field, Seattle. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/nyse-wall-street-facade.jpg",
+      "commons_file": "NYC_-_New_York_Stock_Exchange.JPG",
+      "page": "https://commons.wikimedia.org/wiki/File:NYC_-_New_York_Stock_Exchange.JPG",
+      "credit": "The New York Stock Exchange. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/nba-finals-2006-game3.jpg",
+      "commons_file": "Game_3_of_the_2006_NBA_Finals.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Game_3_of_the_2006_NBA_Finals.jpg",
+      "credit": "An NBA Finals game in 2006. Photo: Wikimedia Commons"
     }
   ]
 }
