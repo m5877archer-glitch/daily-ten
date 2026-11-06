@@ -48,8 +48,28 @@ jobs:
           q plays "SELECT player, date, score, answers, secs, first, at FROM plays ORDER BY at"
           q scores "SELECT player, date, score, at FROM scores ORDER BY at"
           q players "SELECT id, created, optout, hidden FROM players"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: insights
-          path: insights
-          retention-days: 7
+      - name: Print data
+        run: |
+          python3 - <<'PY'
+          import json, hashlib, gzip, base64, os
+          out = {}
+          for f in ("plays", "scores", "players"):
+              try:
+                  rows = json.load(open(f"insights/{f}.json"))[0]["results"]
+              except Exception as e:
+                  rows = [{"error": str(e)}]
+              for r in rows:
+                  for k in ("player", "id"):
+                      if k in r and r[k]:
+                          r[k] = hashlib.sha256(r[k].encode()).hexdigest()[:10]
+              out[f] = rows
+          try:
+              out["cf"] = json.load(open("insights/cf.json"))
+          except Exception as e:
+              out["cf"] = {"error": str(e)}
+          blob = base64.b64encode(gzip.compress(json.dumps(out).encode())).decode()
+          print("INSIGHTS-BEGIN")
+          for i in range(0, len(blob), 4000):
+              print("B64:" + blob[i:i+4000])
+          print("INSIGHTS-END")
+          PY
