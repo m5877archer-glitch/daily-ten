@@ -573,6 +573,53 @@
     isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
   };
 
+  // Per-question timing and exact signup/shop events (Nov 6). Read-only
+  // listeners: they never change how the quiz plays.
+  var qStart = Date.now(), qsecs = [], sent = {};
+  function ev(name) {
+    try {
+      if (sent[name] || typeof EDITION_DATE === "undefined") return;
+      sent[name] = 1;
+      call("/ev", { id: playerId(), date: EDITION_DATE, ev: name }).catch(function () {});
+    } catch (e) {}
+  }
+  try {
+    if (typeof startTime !== "undefined") qStart = startTime;
+    document.addEventListener("click", function (e) {
+      try {
+        var t = e.target;
+        var opt = t.closest && t.closest(".opt");
+        if (opt && !opt.disabled && typeof current !== "undefined" && qsecs.length === current) {
+          qsecs.push(Math.max(0, Math.round((Date.now() - qStart) / 1000)));
+          var q = typeof QUESTIONS !== "undefined" && QUESTIONS[current];
+          if (q && q.shop) ev("seen_shop_q");
+        }
+        if (t.id === "nextBtn" || (t.closest && t.closest("#nextBtn"))) qStart = Date.now();
+        var a = t.closest && t.closest("a");
+        if (a && /shop|fourthwall/i.test(a.href || "")) ev("tap_shop_" + (a.className === "shoplink" ? "q" : (a.id || "other").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 20)));
+      } catch (x) {}
+    }, true);
+    document.addEventListener("submit", function (e) {
+      try { var f = e.target; if (f && f.id) ev("submit_" + f.id.toLowerCase().replace(/[^a-z0-9]/g, "")); } catch (x) {}
+    }, true);
+    // Which signup boxes were actually on screen: the denominator for signups.
+    var watch = function () {
+      if (!window.IntersectionObserver) return;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (x) {
+          if (x.isIntersecting && x.target.offsetParent !== null) {
+            ev("seen_" + x.target.id.toLowerCase().replace(/[^a-z0-9]/g, ""));
+            if (!isSubbed()) ev("seen_unsub_" + x.target.id.toLowerCase().replace(/[^a-z0-9]/g, ""));
+          }
+        });
+      }, { threshold: 0.5 });
+      ["kitForm", "kitFormMid", "kitFormPick", "kitFormMerch"].forEach(function (id) {
+        var el = document.getElementById(id); if (el) io.observe(el);
+      });
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", watch); else watch();
+  } catch (e) {}
+
   // Every finish, first try or replay, goes to the private dashboard (Nov 3):
   // which questions were right ("1") or wrong ("0") in QUESTIONS order, plus
   // how long it took. Read from the edition's own dots and timer.
@@ -589,7 +636,8 @@
         secs = Math.round((end - startTime) / 1000);
       }
     } catch (e) {}
-    call("/play", { id: playerId(), date: EDITION_DATE, score: score, answers: ans, secs: secs, first: !!first }).catch(function () {});
+    var qs = qsecs.length && typeof QUESTIONS !== "undefined" && qsecs.length === QUESTIONS.length ? qsecs.join(",") : null;
+    call("/play", { id: playerId(), date: EDITION_DATE, score: score, answers: ans, secs: secs, first: !!first, qsecs: qs, subbed: isSubbed() }).catch(function () {});
   }
 
   try {

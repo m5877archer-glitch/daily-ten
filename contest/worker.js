@@ -331,6 +331,30 @@ export default {
         const first = b.first === true && !seen ? 1 : 0;
         await db.prepare("INSERT INTO plays (player, date, score, answers, secs, first, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)")
           .bind(b.id, date, score, answers, secs, first, now.toISOString()).run();
+        // Seconds spent on each question, in QUESTIONS order (Nov 6), and
+        // whether the player was already an email subscriber.
+        const qsecs = typeof b.qsecs === "string" && /^\d{1,5}(,\d{1,5}){0,14}$/.test(b.qsecs) ? b.qsecs : null;
+        if (qsecs || typeof b.subbed === "boolean") {
+          await db.prepare("INSERT INTO qtimes (player, date, first, qsecs, subbed, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
+            .bind(b.id, date, first, qsecs, b.subbed ? 1 : 0, now.toISOString()).run();
+        }
+        return json({ ok: true, kept: true });
+      }
+
+      // Small exact event log (Nov 6): which signup boxes and shop links
+      // players saw and used. Cloudflare samples at this traffic, so these
+      // counts are the reliable ones. Whitelisted names only.
+      if (url.pathname === "/ev") {
+        const ev = String(b.ev || "");
+        const date = String(b.date || "");
+        if (!/^(seen|submit|tap)_[a-z0-9_]{1,30}$/.test(ev) || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          return json({ ok: false, error: "bad event" }, 400);
+        }
+        const n = await db.prepare("SELECT COUNT(*) AS n FROM events WHERE player = ?1 AND at >= ?2")
+          .bind(b.id, now.toISOString().slice(0, 10)).first();
+        if (n && n.n >= 60) return json({ ok: true, kept: false });
+        await db.prepare("INSERT INTO events (player, date, ev, at) VALUES (?1, ?2, ?3, ?4)")
+          .bind(b.id, date, ev, now.toISOString()).run();
         return json({ ok: true, kept: true });
       }
 

@@ -49,3 +49,29 @@ CREATE TABLE IF NOT EXISTS plays (
 
 CREATE INDEX IF NOT EXISTS plays_at ON plays (at);
 CREATE INDEX IF NOT EXISTS plays_date ON plays (date);
+
+-- Per-question seconds for each finish, in QUESTIONS order, plus whether the
+-- player was already subscribed (Nov 6, 2026).
+CREATE TABLE IF NOT EXISTS qtimes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  player TEXT NOT NULL,
+  date TEXT NOT NULL,
+  first INTEGER NOT NULL DEFAULT 0,
+  qsecs TEXT,
+  subbed INTEGER NOT NULL DEFAULT 0,
+  at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS qtimes_date ON qtimes (date);
+
+-- Exact event log (Nov 6, 2026): seen_/submit_/tap_ events for signup boxes
+-- and shop links. Never shown on the site.
+CREATE TABLE IF NOT EXISTS events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  player TEXT NOT NULL,
+  date TEXT NOT NULL,
+  ev TEXT NOT NULL,
+  at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS events_at ON events (at);
