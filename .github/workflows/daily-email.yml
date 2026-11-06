@@ -96,13 +96,30 @@ jobs:
           # answer as a button into the quiz. Falls back to the plain link if
           # the question cannot be read for any reason.
           import html, re
+          # Holiday shop block (Nov 6, 2026): a product photo and the gift pitch,
+          # replacing the small grey P.S. Rotates giftable items by day.
+          GIFTS = [("ornament", "ornament.jpg"), ("pint glass", "pint-glass.jpg"), ("candle", "candle.jpg"),
+                   ("hoodie", "hoodie-front.jpg"), ("coaster", "coaster.jpg")]
+          def merch_block():
+              name, img = GIFTS[target.timetuple().tm_yday % len(GIFTS)]
+              shop = "https://10everyday.com/shop"
+              return (
+                  '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:28px 0 8px;border-top:2px solid #1d1a14;">'
+                  '<tr><td style="padding:18px 0 0;text-align:center;">'
+                  '<p style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b6455;margin:0 0 8px;">From the holiday shop</p>'
+                  '<a href="' + shop + '"><img src="https://10everyday.com/img/products/' + img + '" width="260" alt="The 10Everyday ' + name + '" style="width:260px;max-width:100%;height:auto;border-radius:8px;border:0;"></a>'
+                  '<p style="font-size:19px;line-height:1.35;margin:14px 0 6px;"><strong>The gift for the friend who sends you the quiz.</strong></p>'
+                  '<p style="font-size:16px;margin:0 0 14px;">Today: the 10Everyday ' + name + '. Subscribers get 20% off.</p>'
+                  '<a href="' + shop + '" style="display:inline-block;background:#1d1a14;color:#ffffff;text-decoration:none;font-size:17px;padding:12px 26px;border-radius:6px;">See the holiday shop</a>'
+                  '</td></tr></table>'
+              )
+
           LINK = "https://10everyday.com/e"
           PLAIN = (
               '<p><a href="' + LINK + '">' + LINK + '</a></p>'
               '<p>Ten questions. About three minutes.</p>'
               '<p>Matt</p>'
-              '<p style="font-size:14px;color:#6b6455;">P.S. IYKYK shirts, mugs and hats are in the <a href="https://10everyday.com/shop">holiday shop</a>.</p>'
-          )
+          ) + merch_block()
 
           def first_question(path):
               src = open(path, encoding="utf-8").read()
@@ -211,7 +228,7 @@ jobs:
                   parts.append('<a href="' + href + '" style="' + btn + '">' + html.escape(str(o)) + '</a>')
               parts.append('<p>Tap your answer and it counts. Nine more after it, about three minutes.</p>')
               parts.append('<p>Matt</p>')
-              parts.append('<p style="font-size:14px;color:#6b6455;">P.S. IYKYK shirts, mugs and hats are in the <a href="https://10everyday.com/shop">holiday shop</a>.</p>')
+              parts.append(merch_block())
               return "".join(parts)
 
           content = build_content(filename)
