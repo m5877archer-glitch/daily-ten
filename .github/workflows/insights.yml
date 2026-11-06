@@ -1,0 +1,55 @@
+name: Insights
+
+# Read-only data pull for growth analysis: Cloudflare page loads by
+# path, referrer, country and device, plus the contest database's plays
+# and scores. Saved as a workflow artifact. Changes nothing.
+
+on:
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: "Days to pull"
+        default: "30"
+
+permissions:
+  contents: read
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 548962cab0a1c41df6c1579dbe54006f
+      CI: "true"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Cloudflare analytics
+        continue-on-error: true
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          DAYS_BACK: ${{ github.event.inputs.days_back || '30' }}
+        run: python3 scripts/insights.py insights
+      - name: Install wrangler
+        run: npm install --no-save --no-audit --no-fund wrangler@3
+      - name: Contest database
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_WORKERS_TOKEN || secrets.CF_API_TOKEN }}
+        run: |
+          T=$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '[:space:]"'"'" | sed 's/^Bearer//I')
+          echo "::add-mask::$T"
+          export CLOUDFLARE_API_TOKEN="$T"
+          mkdir -p insights
+          q() { npx wrangler d1 execute tenevery-contest --remote --json --command "$2" > "insights/$1.json"; echo "$1: $(wc -c < insights/$1.json) bytes"; }
+          q plays "SELECT player, date, score, answers, secs, first, at FROM plays ORDER BY at"
+          q scores "SELECT player, date, score, at FROM scores ORDER BY at"
+          q players "SELECT id, created, optout, hidden FROM players"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: insights
+          path: insights
+          retention-days: 7
