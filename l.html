@@ -60,6 +60,9 @@
   .small{text-align:center;font-size:1.05rem;color:#3d3a33;margin-top:16px;line-height:1.5;}
   .joinname{display:block;max-width:340px;margin:0 auto;text-align:left;}
   .joinname label{display:block;font-size:1.15rem;font-weight:bold;margin-bottom:6px;}
+  .joinhelp{font-size:1rem;color:#3d3a33;margin-bottom:8px;}
+  .you{font-size:1.15rem;margin:6px 0 2px;}
+  .done{max-width:340px;margin:12px auto;font-size:1.15rem;font-weight:bold;color:#1c2733;background:#dfeedd;border:2px solid var(--ptdark,#1e3a1e);padding:12px;}
   .joinname input{font:inherit;font-size:1.2rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;background:#fff;margin-bottom:12px;}
   .jerr{color:#a33;font-weight:bold;font-size:1.05rem;margin-top:8px;}
   .small button{font:inherit;font-size:.85rem;color:var(--ptdark);background:none;border:0;text-decoration:underline;cursor:pointer;}
@@ -135,6 +138,12 @@ function trackPath(path){
   }
 
   var id = T.playerId();
+  var justJoined = false;
+  // Same "done" flag the editions set when a quiz is finished.
+  function playedToday(){
+    var et = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    try { return !!(localStorage.getItem("tenEveryday.done." + pacificToday) || localStorage.getItem("tenEveryday.done." + et)); } catch(e){ return false; }
+  }
 
   function load(){
     T.call("/league?code=" + code + "&month=" + month + "&me=" + id).then(draw).catch(function(){
@@ -161,11 +170,29 @@ function trackPath(path){
     var actions = $("actions"); actions.innerHTML = "";
     var small = $("small"); small.innerHTML = "";
     if(b.member){
-      $("status").textContent = pacificToday < "2026-11-02"
-        ? "You're in this group. Scores start Monday, Nov. 2."
-        : "You're in this group. Play once each weekday. Your first try each day counts.";
-      var play = el("a", "btn", "Play today's quiz"); play.href = "/";
-      actions.appendChild(play);
+      // Name and play button up top, big (Nov 9: a nephew couldn't find how
+      // to change his name, and joining jumped straight to the quiz).
+      if(justJoined){
+        $("status").textContent = "You're in " + b.name + "! Your scores this month count on this scoreboard.";
+        justJoined = false;
+      } else {
+        $("status").textContent = pacificToday < "2026-11-02"
+          ? "You're in this group. Scores start Monday, Nov. 2."
+          : "You're in this group. Play once each weekday. Your first try each day counts.";
+      }
+      var nmLine = el("div", "you");
+      nmLine.appendChild(document.createTextNode("Your name on the scoreboard: "));
+      nmLine.appendChild(el("b", null, T.playerName()));
+      actions.appendChild(nmLine);
+      var nb = T.nameButton();
+      actions.appendChild(nb);
+      nb.onclick = function(){ T.openNameEditor(nb, nb, function(){ load(); }); };
+      if(playedToday()){
+        actions.appendChild(el("div", "done", "You already played today's quiz, so today's score is on the board. Come back tomorrow for the next one."));
+      } else {
+        var play = el("a", "btn", "Play today's quiz"); play.href = "/";
+        actions.appendChild(play);
+      }
       actions.appendChild(el("br"));
       var inv = el("button", "btn2", "Text the link to more people");
       var flash = el("div", "flash");
@@ -177,38 +204,37 @@ function trackPath(path){
         T.track("/league-leave");
         T.call("/league/leave", { id: id, code: b.code }).then(load);
       };
-      small.appendChild(document.createTextNode("Your name on the scoreboard: " + T.playerName() + ". "));
-      small.appendChild(el("br"));
       small.appendChild(lv);
     } else {
       $("status").textContent = (b.owner ? b.owner + " invited you. " : "You've been invited. ") +
         "Answer 10 questions about the news, and your score goes on the " + b.name + " scoreboard.";
       var box = el("div", "joinname");
-      var needName = T.isRandomName(T.playerName());
-      var you = null;
-      if(needName){
-        var lab = el("label", null, "Your first name"); lab.htmlFor = "joinName";
-        you = el("input"); you.id = "joinName"; you.maxLength = 20; you.placeholder = "So your family knows it's you"; you.autocomplete = "given-name";
-        box.appendChild(lab); box.appendChild(you);
-      }
-      var join = el("button", "btn", "Join and play today's quiz");
+      // Always ask for the name, filled in if they already have one, so it
+      // can be fixed before joining.
+      var cur = T.playerName(), random = T.isRandomName(cur);
+      var lab = el("label", null, "Your first name"); lab.htmlFor = "joinName";
+      var help = el("div", "joinhelp", "This is the name your family sees on the scoreboard.");
+      var you = el("input"); you.id = "joinName"; you.maxLength = 20; you.autocomplete = "given-name";
+      you.value = random ? "" : cur;
+      box.appendChild(lab); box.appendChild(help); box.appendChild(you);
+      var join = el("button", "btn", "Join " + b.name);
       join.style.width = "100%";
       var jerr = el("div", "jerr");
       box.appendChild(join); box.appendChild(jerr);
-      var again = function(msg){ jerr.textContent = msg; join.disabled = false; join.textContent = "Join and play today's quiz"; };
+      var again = function(msg){ jerr.textContent = msg; join.disabled = false; join.textContent = "Join " + b.name; };
       join.onclick = function(){
         jerr.textContent = "";
-        var nm = you ? you.value.replace(/\s+/g, " ").trim() : "";
-        if(you && nm.length < 2){ jerr.textContent = "Please type your first name."; you.focus(); return; }
+        var nm = you.value.replace(/\s+/g, " ").trim();
+        if(nm.length < 2){ jerr.textContent = "Please type your first name."; you.focus(); return; }
         join.disabled = true; join.textContent = "One moment...";
-        var p = you ? T.call("/name", { id: id, name: nm }).then(function(r){
+        var p = (random || nm !== cur) ? T.call("/name", { id: id, name: nm }).then(function(r){
           if(!r || !r.ok) throw { msg: (r && r.error) || "Please try a different first name." };
-          T.setName(r.name);
+          T.setName(r.name); T.track("/contest-rename");
         }) : Promise.resolve();
         p.then(function(){
           return T.call("/league/join", { id: id, code: b.code, name: T.playerName() });
         }).then(function(r){
-          if(r && r.ok){ T.track("/league-join"); join.textContent = "You're in! Opening the quiz..."; setTimeout(function(){ location.href = "/"; }, 600); }
+          if(r && r.ok){ T.track("/league-join"); justJoined = true; load(); try { window.scrollTo(0, 0); } catch(e){} }
           else again((r && r.error) || "Something went wrong. Please try again.");
         }).catch(function(x){ again((x && x.msg) || "Something went wrong. Please try again in a minute."); });
       };

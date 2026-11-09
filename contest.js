@@ -106,6 +106,73 @@
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
+  // ---------- name editor (Nov 9) ----------
+  // One name box used everywhere: score card, leaderboard pop-up and the
+  // group page. It opens right where the button was tapped, with a label,
+  // so it's never off the bottom of a phone screen.
+  function nameCss() {
+    if (document.getElementById("tenNameCss")) return;
+    var st = document.createElement("style");
+    st.id = "tenNameCss";
+    st.textContent =
+      ".tnmbtn{display:block;width:100%;max-width:340px;margin:8px auto 16px;font:inherit;font-size:1.15rem;font-weight:bold;padding:12px 10px;background:#fff;color:var(--ptdark,#1e3a1e);border:2px solid var(--ptdark,#1e3a1e);border-radius:4px;cursor:pointer;}" +
+      ".tnm{max-width:340px;margin:10px auto 6px;text-align:left;background:#fffdf6;border:2px solid var(--ptdark,#1e3a1e);padding:12px;}" +
+      ".tnm label{display:block;font-size:1.15rem;font-weight:bold;color:#1c2733;margin:0 0 4px;}" +
+      ".tnm .tnmhelp{font-size:1rem;color:#3d3a33;margin-bottom:8px;}" +
+      ".tnm input{display:block;font:inherit;font-size:1.2rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;background:#fff;color:#1c2733;}" +
+      ".tnm .tnmsave{display:block;width:100%;font:inherit;font-size:1.25rem;font-weight:bold;padding:14px 12px;margin-top:10px;background:var(--ptdark,#1e3a1e);color:#fff;border:0;cursor:pointer;}" +
+      ".tnm .tnmcancel{display:block;width:100%;font:inherit;font-size:1.05rem;padding:10px;margin-top:6px;background:none;color:#1c2733;border:0;text-decoration:underline;cursor:pointer;}" +
+      ".tnm .tnmerr{color:#a33;font-size:1.05rem;font-weight:bold;margin-top:8px;}";
+    document.head.appendChild(st);
+  }
+  function nameButton(label) {
+    nameCss();
+    var b = node("button", "tnmbtn", label || (isRandomName(playerName()) ? "Put your own name on the scoreboard" : "Change my name"));
+    b.type = "button";
+    return b;
+  }
+  // Puts the name box right after `after` (and hides `hideEl`). Calls
+  // onSaved(newName) once the Worker has saved it.
+  function openNameEditor(after, hideEl, onSaved) {
+    nameCss();
+    if (after.nextSibling && after.nextSibling.className === "tnm") return;
+    var f = node("form", "tnm");
+    var id = "tnm" + Math.random().toString(36).slice(2, 8);
+    var lab = node("label", null, "Your first name"); lab.htmlFor = id;
+    var help = node("div", "tnmhelp", "This is the name your family and friends see on the scoreboard.");
+    var inp = node("input"); inp.id = id; inp.maxLength = 20; inp.autocomplete = "given-name";
+    inp.value = isRandomName(playerName()) ? "" : playerName();
+    var save = node("button", "tnmsave", "Save my name"); save.type = "submit";
+    var cancel = node("button", "tnmcancel", "Never mind"); cancel.type = "button";
+    var err = node("div", "tnmerr");
+    f.appendChild(lab); f.appendChild(help); f.appendChild(inp); f.appendChild(save); f.appendChild(cancel); f.appendChild(err);
+    after.parentNode.insertBefore(f, after.nextSibling);
+    if (hideEl) hideEl.style.display = "none";
+    cancel.onclick = function () { f.remove(); if (hideEl) hideEl.style.display = ""; };
+    f.onsubmit = function (e) {
+      e.preventDefault();
+      var v = inp.value.replace(/\s+/g, " ").trim();
+      if (v.length < 2) { err.textContent = "Please type your first name."; inp.focus(); return; }
+      save.disabled = true; save.textContent = "Saving...";
+      call("/name", { id: playerId(), name: v }).then(function (r) {
+        if (r && r.ok) {
+          set(K.name, r.name);
+          track("/contest-rename");
+          f.remove(); if (hideEl) hideEl.style.display = "";
+          if (onSaved) onSaved(r.name);
+        } else {
+          err.textContent = (r && r.error) || "That name didn't work. Try another.";
+          save.disabled = false; save.textContent = "Save my name";
+        }
+      }).catch(function () {
+        err.textContent = "Couldn't save just now. Try again in a minute.";
+        save.disabled = false; save.textContent = "Save my name";
+      });
+    };
+    try { f.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (e) {}
+    inp.focus();
+  }
+
   // ---------- score card box ----------
   function css() {
     if (document.getElementById("contestCss")) return;
@@ -205,10 +272,12 @@
     nm.appendChild(document.createTextNode("Your name on the scoreboard: "));
     nm.appendChild(node("b", null, shown));
     nm.appendChild(node("br"));
-    var ch = node("button", "clink", isRandomName(shown) ? "Tap here to use your own name" : "Change your name");
-    ch.onclick = function () { renameForm(el, state); };
+    var ch = nameButton(isRandomName(shown) ? "Put your own name on the scoreboard" : "Change my name");
     nm.appendChild(ch);
     el.appendChild(nm);
+    ch.onclick = function () {
+      openNameEditor(nm, ch, function (n) { if (state.me) state.me.name = n; render(state); });
+    };
 
     var bar = node("div", "cbar");
     var lb = node("a", null, "See the top 10");
@@ -329,37 +398,6 @@
                                : "Something went wrong. Please try again in a minute.");
       });
     };
-  }
-
-  function renameForm(el, state) {
-    if (el.querySelector("form")) return;
-    var f = node("form");
-    var inp = node("input");
-    inp.maxLength = 20;
-    inp.value = isRandomName(playerName()) ? "" : playerName();
-    inp.placeholder = "Your first name";
-    inp.setAttribute("aria-label", "Leaderboard name");
-    var b = node("button", null, "Save");
-    b.type = "submit";
-    f.appendChild(inp); f.appendChild(b);
-    var err = node("div", "cerr");
-    f.onsubmit = function (e) {
-      e.preventDefault();
-      var v = inp.value.replace(/\s+/g, " ").trim();
-      call("/name", { id: playerId(), name: v }).then(function (r) {
-        if (r && r.ok) {
-          set(K.name, r.name);
-          track("/contest-rename");
-          if (state.me) state.me.name = r.name;
-          render(state);
-        } else {
-          err.textContent = (r && r.error) || "That name didn't work. Try another.";
-        }
-      }).catch(function () { err.textContent = "Couldn't save just now. Try again in a minute."; });
-    };
-    el.appendChild(f);
-    el.appendChild(err);
-    inp.focus();
   }
 
   function start(first) {
@@ -533,6 +571,15 @@
         var me = b.me;
         if (me && !me.out && me.outside) box.appendChild(node("div", "lbmine", "You're outside the top 10 for now, with " + me.total + " points. Every weekday is a chance to climb."));
         else if (!me) box.appendChild(node("div", "lbmine", "Finish today's quiz and you're in."));
+        if (me) {
+          var yn = node("div", "lbmine");
+          yn.appendChild(document.createTextNode("Your name on the scoreboard: "));
+          yn.appendChild(node("b", null, me.name || playerName()));
+          box.appendChild(yn);
+          var nb = nameButton();
+          box.appendChild(nb);
+          nb.onclick = function () { openNameEditor(nb, nb, function () { btn.onclick(); }); };
+        }
         if (id) {
           var gbox = node("div", "lbgroups");
           box.appendChild(gbox);
@@ -570,7 +617,8 @@
 
   window.tenContest = {
     api: API, playerId: playerId, playerName: playerName, call: call, setName: function (n) { set(K.name, n); },
-    isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track
+    isSubbed: isSubbed, isRandomName: isRandomName, kitSubscribe: kitSubscribe, shareLeague: shareLeague, leagueText: leagueText, ord: ord, track: track,
+    nameButton: nameButton, openNameEditor: openNameEditor
   };
 
   // Per-question timing and exact signup/shop events (Nov 6). Read-only
