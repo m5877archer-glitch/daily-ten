@@ -306,6 +306,24 @@
       "commons_file": "30_Rockefeller_Plaza.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:30_Rockefeller_Plaza.jpg",
       "credit": "30 Rockefeller Plaza. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/nvidia-hq-santa-clara-2023.jpg",
+      "commons_file": "2788-2888_San_Tomas_Expwy.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:2788-2888_San_Tomas_Expwy.jpg",
+      "credit": "Nvidia headquarters, Santa Clara, Calif. Photo: Coolcaesar / Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/kenan-stadium-from-stands.jpg",
+      "commons_file": "UNC_chapel_hill_kenan_football_stadium_from_stands.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:UNC_chapel_hill_kenan_football_stadium_from_stands.jpg",
+      "credit": "Kenan Stadium, home of the Tar Heels. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/toccoa-river-fannin-county.jpg",
+      "commons_file": "Toccoa_River_in_Fannin_County,_June_2017.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Toccoa_River_in_Fannin_County,_June_2017.jpg",
+      "credit": "The Toccoa River in north Georgia. Photo: Thomson200 / Wikimedia Commons"
     }
   ]
 }
