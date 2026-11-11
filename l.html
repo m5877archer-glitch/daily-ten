@@ -239,6 +239,16 @@ function trackPath(path){
         }).catch(function(x){ again((x && x.msg) || "Something went wrong. Please try again in a minute."); });
       };
       actions.appendChild(box);
+      // Nov 11: about 30 invitees opened group links and only one joined.
+      // Let them play first; the score card asks them to join when they finish.
+      try { localStorage.setItem("tenPendingLeague", JSON.stringify({ code: b.code, name: b.name, at: pacificToday })); } catch(e){}
+      if(!playedToday()){
+        var pf = el("a", "btn2", "Or play today's quiz first");
+        pf.href = "/"; pf.style.textAlign = "center"; pf.style.textDecoration = "none"; pf.style.boxSizing = "border-box";
+        pf.onclick = function(){ T.track("/league-play-first"); };
+        actions.appendChild(pf);
+        actions.appendChild(el("div", "joinhelp", "We'll ask you to join " + b.name + " when you finish."));
+      }
       small.textContent = "It's free. No account or password.";
     }
 

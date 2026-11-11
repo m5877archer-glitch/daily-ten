@@ -427,7 +427,54 @@
       render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first, leagues: r.leagues });
       try { lbLabel(r.me, r.counted); } catch (e) {}
       try { contestPitch(r.me); } catch (e) {}
+      try { pendingJoin(r.leagues || []); } catch (e) {}
     }).catch(function () {});
+  }
+
+  // Nov 11: someone opened a group invite, chose "play first", and has now
+  // finished. Offer the join right here, at the top of the contest box.
+  function pendingJoin(leagues) {
+    var raw = get("tenPendingLeague"); if (!raw) return;
+    var p; try { p = JSON.parse(raw); } catch (e) { p = null; }
+    var drop = function () { try { localStorage.removeItem("tenPendingLeague"); } catch (e) {} };
+    if (!p || !p.code) return drop();
+    var ageDays = (Date.now() - Date.parse(p.at || "2000-01-01")) / 864e5;
+    if (!(ageDays < 8)) return drop();
+    for (var i = 0; i < leagues.length; i++) if (leagues[i].code === p.code) return drop();
+    var el = box();
+    if (document.getElementById("pjCard")) return;
+    var card = node("div", "lg lhero"); card.id = "pjCard";
+    card.appendChild(node("div", "cl", "Put your score on the " + p.name + " board"));
+    var cur = playerName(), random = isRandomName(cur);
+    var lab = node("label", null, "Your first name"); lab.htmlFor = "pjName";
+    lab.style.display = "block"; lab.style.fontWeight = "bold"; lab.style.marginTop = "8px";
+    var inp = node("input"); inp.id = "pjName"; inp.maxLength = 20; inp.autocomplete = "given-name";
+    inp.value = random ? "" : cur;
+    inp.style.cssText = "font:inherit;font-size:1.2rem;padding:12px;border:2px solid #8f8670;width:100%;box-sizing:border-box;background:#fff;margin:6px 0 10px;";
+    var btn = node("button", "lshare", "Join " + p.name);
+    var err = node("div", "cs");
+    card.appendChild(lab); card.appendChild(inp); card.appendChild(btn); card.appendChild(err);
+    btn.onclick = function () {
+      var nm = inp.value.replace(/\s+/g, " ").trim();
+      if (nm.length < 2) { err.textContent = "Please type your first name."; inp.focus(); return; }
+      btn.disabled = true; btn.textContent = "One moment...";
+      var fail = function (m) { err.textContent = m || "Something went wrong. Please try again."; btn.disabled = false; btn.textContent = "Join " + p.name; };
+      (random || nm !== cur ? call("/name", { id: playerId(), name: nm }).then(function (r) {
+        if (!r || !r.ok) throw { msg: (r && r.error) || "Please try a different first name." };
+        set(K.name, r.name);
+      }) : Promise.resolve()).then(function () {
+        return call("/league/join", { id: playerId(), code: p.code, name: playerName() });
+      }).then(function (r) {
+        if (!r || !r.ok) return fail(r && r.error);
+        track("/league-join"); track("/league-join-after-play"); drop();
+        card.innerHTML = "";
+        card.appendChild(node("div", "cl", "You're in " + p.name + "! Today's score counts."));
+        var a = node("a", null, "See the " + p.name + " board"); a.href = "/l?c=" + encodeURIComponent(p.code);
+        card.appendChild(a);
+      }).catch(function (x) { fail(x && x.msg); });
+    };
+    el.insertBefore(card, el.children[1] || null);
+    track("/league-join-offer");
   }
 
   // Nov 11: contest players have a reason to want the email that a generic
