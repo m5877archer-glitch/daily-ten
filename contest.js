@@ -217,6 +217,11 @@
     el.className = "contest";
     el.id = "contestBox";
     var anchor = document.getElementById("shareBtn");
+    // Oct 21 order: share, then email signup, then everything else. Editions
+    // from Nov 11 on put the signup right after the share button; keep the
+    // contest box below it there instead of wedging it in between.
+    var nx = anchor && anchor.nextElementSibling;
+    if (nx && nx.classList && nx.classList.contains("signup")) anchor = nx;
     if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(el, anchor.nextSibling);
     else (document.getElementById("results") || document.body).appendChild(el);
     return el;
@@ -421,7 +426,20 @@
       if (out) { set(K.out, "1"); render({ out: true, first: first, leagues: r.leagues }); return; }
       render({ counted: r.counted, reason: r.reason, me: r.me, score: score, first: first, leagues: r.leagues });
       try { lbLabel(r.me, r.counted); } catch (e) {}
+      try { contestPitch(r.me); } catch (e) {}
     }).catch(function () {});
+  }
+
+  // Nov 11: contest players have a reason to want the email that a generic
+  // pitch misses: missing a day costs them points. The streak line wins if
+  // it is already showing.
+  function contestPitch(me) {
+    if (isSubbed() || !me || me.out) return;
+    var s = document.getElementById("ssub");
+    if (!s || /streak/i.test(s.textContent)) return;
+    if (me.rank) s.textContent = "You're #" + me.rank + " this month. Every day you play adds points, so get it by email each morning and never miss one.";
+    else s.textContent = "Every day you play adds to your monthly score. Get it by email each morning and never miss one.";
+    track("/ssub-contest");
   }
 
   // The edition's trackPath pushes a fake path and restores the "real" URL
