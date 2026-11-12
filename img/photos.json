@@ -342,6 +342,18 @@
       "commons_file": "NotreDameStadiumNight.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:NotreDameStadiumNight.jpg",
       "credit": "Notre Dame Stadium at night. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/nasdaq-marketsite-2015.jpg",
+      "commons_file": "NASDAQ_Market_Site_201506.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:NASDAQ_Market_Site_201506.jpg",
+      "credit": "Nasdaq MarketSite, Times Square. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/us-capitol-west-front-full.jpg",
+      "commons_file": "Capitol_Building_Full_View.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Capitol_Building_Full_View.jpg",
+      "credit": "The U.S. Capitol, Washington. Photo: Wikimedia Commons"
     }
   ]
 }
