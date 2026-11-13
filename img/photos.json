@@ -354,6 +354,24 @@
       "commons_file": "Capitol_Building_Full_View.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Capitol_Building_Full_View.jpg",
       "credit": "The U.S. Capitol, Washington. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/server-racks-nersc.jpg",
+      "commons_file": "Front_of_server_racks_at_NERSC.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Front_of_server_racks_at_NERSC.jpg",
+      "credit": "Server racks in a data center. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/ss-united-states-philadelphia.jpg",
+      "commons_file": "SS-United_States.JPG",
+      "page": "https://commons.wikimedia.org/wiki/File:SS-United_States.JPG",
+      "credit": "The SS United States, docked in Philadelphia in 2009. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/allianz-arena-munich.jpg",
+      "commons_file": "Allianz_Arena_Munich.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Allianz_Arena_Munich.jpg",
+      "credit": "Allianz Arena, Munich. Photo: Wikimedia Commons"
     }
   ]
 }
