@@ -222,5 +222,17 @@
   "img/photos/us-capitol-west-front-full.jpg": {
     "author": "Noclip",
     "license": "Public domain"
+  },
+  "img/photos/server-racks-nersc.jpg": {
+    "author": "Derrick Coetzee from Berkeley, CA, USA",
+    "license": "CC0"
+  },
+  "img/photos/ss-united-states-philadelphia.jpg": {
+    "author": "Lowlova",
+    "license": "CC BY-SA 3.0"
+  },
+  "img/photos/allianz-arena-munich.jpg": {
+    "author": "Wolfgang Manousek",
+    "license": "CC BY 2.0"
   }
 }
