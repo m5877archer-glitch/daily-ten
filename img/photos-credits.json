@@ -234,5 +234,13 @@
   "img/photos/allianz-arena-munich.jpg": {
     "author": "Wolfgang Manousek",
     "license": "CC BY 2.0"
+  },
+  "img/photos/washington-artcc-controllers.jpg": {
+    "author": "Work of the United States Federal Government under the terms of 17 U.S.C. \u00a7 105",
+    "license": "Public domain"
+  },
+  "img/photos/senate-chamber-desks.jpg": {
+    "author": "United States Senate",
+    "license": "Public domain"
   }
 }
