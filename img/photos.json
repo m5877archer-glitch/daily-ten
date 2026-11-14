@@ -372,6 +372,18 @@
       "commons_file": "Allianz_Arena_Munich.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Allianz_Arena_Munich.jpg",
       "credit": "Allianz Arena, Munich. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/washington-artcc-controllers.jpg",
+      "commons_file": "Air traffic controllers at the Washington ARTCC.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Air_traffic_controllers_at_the_Washington_ARTCC.jpg",
+      "credit": "Controllers at the Washington Air Route Traffic Control Center. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/senate-chamber-desks.jpg",
+      "commons_file": "Senate chamber desks.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:Senate_chamber_desks.jpg",
+      "credit": "Desks in the U.S. Senate chamber. Photo: Wikimedia Commons"
     }
   ]
 }
