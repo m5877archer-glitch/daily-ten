@@ -1465,8 +1465,8 @@
   "partial": false
  },
  "2026-11-15": {
-  "visits": 2,
-  "pageviews": 18,
+  "visits": 4,
+  "pageviews": 22,
   "done": 1,
   "merch_view": 0,
   "merch_click": 0,
@@ -1485,6 +1485,38 @@
   "pick_ask": 0,
   "share_pressed": 0,
   "shop_q_view": 1,
+  "partial": false
+ },
+ "2026-11-16": {
+  "visits": 8,
+  "pageviews": 76,
+  "done": 4,
+  "merch_view": 0,
+  "merch_click": 0,
+  "shop": 0,
+  "shop_q": 0,
+  "email": 2,
+  "share": 0,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "signup_pick": 0,
+  "pick_ask": 0,
+  "share_pressed": 0,
+  "contest_in": 4,
+  "shop_q_view": 4,
+  "picks": 1,
+  "pick_split": {
+   "1116-mnf-lac-bal-o1": 1
+  },
+  "merch_results_view_hi": 2,
+  "contest_board_pop": 1,
+  "league_view": 1,
+  "contest_group_pop": 1,
   "partial": true
  }
 }
