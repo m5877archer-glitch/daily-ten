@@ -384,6 +384,24 @@
       "commons_file": "Senate chamber desks.jpg",
       "page": "https://commons.wikimedia.org/wiki/File:Senate_chamber_desks.jpg",
       "credit": "An early photo of the U.S. Senate chamber. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/chase-branch-wilmington.jpg",
+      "commons_file": "A Chase bank building in Wilmington, Delaware.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:A_Chase_bank_building_in_Wilmington,_Delaware.jpg",
+      "credit": "A Chase branch in Wilmington, Delaware. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/starbase-across-bay.jpg",
+      "commons_file": "SpaceX Starbase launch facility (51438071556).jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:SpaceX_Starbase_launch_facility_(51438071556).jpg",
+      "credit": "SpaceX's Starbase launch site, seen across the bay in 2021. Photo: Wikimedia Commons"
+    },
+    {
+      "file": "img/photos/waimea-monster-wave.jpg",
+      "commons_file": "A monster wave at Waimea Bay on the north shore of Oahu.jpg",
+      "page": "https://commons.wikimedia.org/wiki/File:A_monster_wave_at_Waimea_Bay_on_the_north_shore_of_Oahu.jpg",
+      "credit": "A surfer and a giant wave in Hawaii. Photo: Wikimedia Commons"
     }
   ]
 }
