@@ -1520,9 +1520,41 @@
   "partial": false
  },
  "2026-11-17": {
-  "visits": 19,
-  "pageviews": 181,
-  "done": 8,
+  "visits": 32,
+  "pageviews": 300,
+  "done": 14,
+  "merch_view": 0,
+  "merch_click": 0,
+  "shop": 0,
+  "shop_q": 0,
+  "email": 3,
+  "share": 1,
+  "reddit": 0,
+  "facebook": 0,
+  "pt": 0,
+  "signups": 0,
+  "signup_mid": 0,
+  "signup_results": 0,
+  "signup_merch": 0,
+  "signup_pick": 0,
+  "pick_ask": 2,
+  "share_pressed": 1,
+  "contest_in": 13,
+  "picks": 3,
+  "pick_split": {
+   "1117-trump-xi-putin-o1": 3
+  },
+  "shop_q_view": 14,
+  "called_wrong": 1,
+  "league_view": 1,
+  "contest_group_pop": 1,
+  "contest_board_pop": 1,
+  "partial": false
+ },
+ "2026-11-18": {
+  "visits": 8,
+  "pageviews": 127,
+  "done": 6,
   "merch_view": 0,
   "merch_click": 0,
   "shop": 0,
@@ -1537,18 +1569,17 @@
   "signup_results": 0,
   "signup_merch": 0,
   "signup_pick": 0,
-  "pick_ask": 1,
-  "share_pressed": 1,
-  "contest_in": 8,
-  "picks": 2,
-  "pick_split": {
-   "1117-trump-xi-putin-o1": 2
-  },
+  "pick_ask": 0,
+  "share_pressed": 0,
+  "shop_q_view": 7,
   "contest_board_pop": 1,
-  "contest_group_pop": 1,
-  "shop_q_view": 8,
-  "called_wrong": 1,
-  "league_view": 1,
+  "contest_in": 6,
+  "called_right": 1,
+  "merch_results_view_hi": 1,
+  "picks": 1,
+  "pick_split": {
+   "1118-tnf-ind-hou-o1": 1
+  },
   "partial": true
  }
 }
