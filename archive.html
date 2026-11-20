@@ -85,6 +85,26 @@
         2. The date text
         3. The teaser line (a cryptic hint about that edition)
     -->
+    <a class="edition" href="quiz-november-27.html" data-date="2026-11-27">
+      <div class="date">Friday, November 27, 2026</div>
+      <div class="teaser">The police name a day, dolls start a stampede, and a towel waves in Pittsburgh</div>
+    </a>
+    <a class="edition" href="quiz-november-26.html" data-date="2026-11-26">
+      <div class="date">Thursday, November 26, 2026</div>
+      <div class="teaser">Edition No. 100: a ship lands, a balloon sets a record, and turkeys can't fly</div>
+    </a>
+    <a class="edition" href="quiz-november-25.html" data-date="2026-11-25">
+      <div class="date">Wednesday, November 25, 2026</div>
+      <div class="teaser">A bone makes a wish, a song runs 18 minutes, and the bars fill up</div>
+    </a>
+    <a class="edition" href="quiz-november-24.html" data-date="2026-11-24">
+      <div class="date">Tuesday, November 24, 2026</div>
+      <div class="teaser">Two birds check into a hotel, a nursery rhyme writer wins over Lincoln, and Snoopy makes toast</div>
+    </a>
+    <a class="edition" href="quiz-november-23.html" data-date="2026-11-23">
+      <div class="date">Monday, November 23, 2026</div>
+      <div class="teaser">A city mourns its hippo, a giant goes gentle, and old rivals play in a ballpark</div>
+    </a>
     <a class="edition" href="quiz-november-20.html">
       <div class="date">Friday, November 20, 2026</div>
       <div class="teaser">The robots cash in, a pop star comes home to Nashville, and the prisons go quiet</div>
@@ -477,6 +497,10 @@
 </div>
 </div>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "19de40f2795749c7beea08f80745705b"}'></script><!-- End Cloudflare Web Analytics -->
+<script>
+// Editions built ahead stay hidden here until their day arrives (Pacific time).
+(function(){try{var t=new Date().toLocaleDateString("en-CA",{timeZone:"America/Los_Angeles"});var els=document.querySelectorAll("a.edition[data-date]");for(var i=0;i<els.length;i++){if(els[i].getAttribute("data-date")>t){els[i].style.display="none";}}}catch(e){}})();
+</script>
 <script src="contest.js" defer></script>
 </body>
 </html>
