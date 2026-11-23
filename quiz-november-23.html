@@ -402,6 +402,7 @@ const PREDICTION = {
   reveal: "Tuesday's quiz"
 };
 const RESOLVED = [
+  {id: "1120-snf-min-sf", q: "Who wins Sunday night in Mexico City, Vikings vs. 49ers?", answer: "49ers", note: "San Francisco won 35-10 behind three first-half touchdown passes from Brock Purdy."},
   {id: "1118-tnf-ind-hou", q: "Who wins Thursday night, Colts at Texans?", answer: "Texans", note: "Houston won 26-3 at home behind three touchdown passes from C.J. Stroud."},
   {id: "1119-ant-debut", q: "Will Anthropic's stock close its first day of trading above its $83 IPO price?", answer: "Yes", note: "Anthropic opened at $111.50 and closed at $97.17, about 17% above its IPO price."},
   {id: "1117-trump-xi-putin", q: "Will Trump, Xi and Putin sit down together at this week's summit in China?", answer: "Yes", note: "The three met for about 90 minutes in Shenzhen on Thursday, the first meeting of its kind."},
@@ -410,8 +411,7 @@ const RESOLVED = [
   {id: "1112-tnf-wsh-nyg", q: "Who wins Thursday night, Commanders at Giants?", answer: "Commanders", note: "Washington won 24-21 at MetLife Stadium."},
   {id: "1110-nfl-taylor", q: "Will the Colts trade Jonathan Taylor before Tuesday's 4 p.m. Eastern deadline?", answer: "No", note: "The Colts turned down offers of a second-round pick and more, so Taylor stays in Indianapolis."},
   {id: "1109-mnf-buf-min", q: "Who wins Monday night, Bills at Vikings?", answer: "Bills", note: "Buffalo won 23-6 in Minneapolis to move to 7-1."},
-  {id: "1106-snf-tb-chi", q: "Who wins Sunday night, Buccaneers at Bears?", answer: "Bears", note: "Chicago won 27-24 at Soldier Field."},
-  {id: "1105-tnf-jax-bal", q: "Who wins Thursday night, Jaguars at Ravens?", answer: "Jaguars", note: "Jacksonville won 33-10 in Baltimore."}
+  {id: "1106-snf-tb-chi", q: "Who wins Sunday night, Buccaneers at Bears?", answer: "Bears", note: "Chicago won 27-24 at Soldier Field."}
 ];
 
 const QUESTIONS = [
@@ -441,10 +441,10 @@ const QUESTIONS = [
     explain:"Treasury Secretary Scott Bessent blamed Lutnick's department for being slow to limit Nvidia chips. Lutnick still went on Trump's Asia trip."
   },
   {
-    q:"A federal judge has paused the Army's plan to blow up about five tons of unstable explosive at an Iowa ammunition plant. What did neighbors fear the blasts would spread?",
+    q:"A federal court paused the Army's plan to blow up about five tons of unstable explosive at an Iowa ammunition plant, but the Army says it will go ahead by Tuesday anyway. What do neighbors fear the blasts will spread?",
     options:["Radiation", "Wildfire smoke", "Glitter", "Lead dust"],
     answer:"Lead dust",
-    explain:"The explosive, lead azide, had been stored at the plant for more than 20 years. The Army had already moved the blasts from Friday to Monday."
+    explain:"The Army says falling temperatures make the old lead azide more likely to go off on its own. The blasts were first set for last Friday."
   },
   {
     q:"Trump left Asia last week without the meeting he had floated with Kim Jong Un. North Korean state media instead showed Kim watching his daughter do what?",
@@ -462,10 +462,10 @@ const QUESTIONS = [
     q:"Harvard and Yale played the 142nd edition of their famous football rivalry, known as The Game, on Saturday at which famous baseball park?",
     options:["Wrigley Field", "Yankee Stadium", "Fenway Park", "Camden Yards"],
     answer:"Fenway Park",
-    explain:"It was only the second time The Game was played at the home of the Red Sox. The first was in 2018."
+    explain:"Yale won 20-17 for its fifth straight win over Harvard. Harvard still won the Ivy League title outright."
   },
   {
-    q:"\"The Hunger Games: Sunrise on the Reaping\" was on track for an opening weekend of more than $100 million. Its hero, young Haymitch, later mentors which character from the first books?",
+    q:"\"The Hunger Games: Sunrise on the Reaping\" opened to about $120 million this weekend. Its hero, young Haymitch, later mentors which character from the first books?",
     options:["Hermione Granger", "Tris Prior", "Katniss Everdeen", "Bella Swan"],
     answer:"Katniss Everdeen",
     explain:"Woody Harrelson played the grown-up Haymitch in the earlier movies. Joseph Zada plays him as a teen."
